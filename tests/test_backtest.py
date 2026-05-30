@@ -1,5 +1,5 @@
 """Run the full backtest suite and assert directional accuracy."""
-from cida.backtest.runner import run_backtest
+from backtest.runner import run_backtest
 
 
 def test_backtest_tier_accuracy_minimum():

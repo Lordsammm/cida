@@ -1,8 +1,8 @@
 """Tests for the Nessus CSV and XML parsers."""
 from __future__ import annotations
 
-from cida.ingest.nessus import parse_nessus_csv, parse_nessus_xml, parse_nessus
-from cida.models import Domain, Severity
+from ingest.nessus import parse_nessus_csv, parse_nessus_xml, parse_nessus
+from models import Domain, Severity
 
 
 # ---------------------------------------------------------------------------

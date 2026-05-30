@@ -10,15 +10,15 @@ from pathlib import Path
 
 import yaml
 
-from cida.actuarial.model import run_actuarial_model
-from cida.enrich.intel import gather_company_intel, derive_intel_impact
-from cida.enrich.intel.base import IntelSource
-from cida.ingest.questionnaire import parse_questionnaire_csv
-from cida.models import CompanyIntelSnapshot, OrgProfile
-from cida.scoring.engine import score_organization
-from cida.scoring.risk_summary import build_risk_summary
+from actuarial.model import run_actuarial_model
+from enrich.intel import gather_company_intel, derive_intel_impact
+from enrich.intel.base import IntelSource
+from ingest.questionnaire import parse_questionnaire_csv
+from models import CompanyIntelSnapshot, OrgProfile
+from scoring.engine import score_organization
+from scoring.risk_summary import build_risk_summary
 
-EXAMPLES = Path(__file__).resolve().parent.parent / "cida" / "examples"
+EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
 
 
 def _org() -> OrgProfile:

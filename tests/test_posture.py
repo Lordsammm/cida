@@ -1,10 +1,10 @@
 """Unit tests for posture & remediation."""
 from datetime import datetime, timezone
 
-from cida.catalog.loader import load_catalog
-from cida.config.loader import context_for
-from cida.models import ControlResponse, QuestionnaireResponses, Sector
-from cida.posture.compliance import build_remediation_roadmap, compute_posture
+from catalog.loader import load_catalog
+from config.loader import context_for
+from models import ControlResponse, QuestionnaireResponses, Sector
+from posture.compliance import build_remediation_roadmap, compute_posture
 
 
 def _responses(score):

@@ -1,14 +1,12 @@
-# CIDA - Cyber Intelligence Decision Algorithm
+# CIDA, Cyber Intelligence Decision Algorithm
 
 Underwriting decision-support engine for cyber-insurance carriers operating in Africa.
 
-CIDA ingests a filled questionnaire (CSV) and technical assessment artefacts (VAPT reports, vulnerability scans, cloud CSPM, attack-surface data, dark-web intel, DMARC checks), enriches vulnerabilities with CVE / EPSS / KEV, scores the organisation on a **two-layer model - 14 ThreatVectors × 10 LossDrivers** wired through a calibrated multiplier matrix, runs a hierarchical Bayesian actuarial model with blended global + African priors, and produces JSON + HTML + PDF underwriting reports.
+CIDA ingests a filled questionnaire (CSV) and technical assessment artefacts (VAPT reports, vulnerability scans, cloud CSPM, attack-surface data, dark-web intel, DMARC checks), enriches vulnerabilities with CVE / EPSS / KEV, scores the organisation on a **two-layer model, 14 ThreatVectors × 10 LossDrivers** wired through a calibrated multiplier matrix, runs a hierarchical Bayesian actuarial model with blended global + African priors, and produces JSON + HTML + PDF underwriting reports.
 
 > **CIDA is decision support.** Final pricing and binding authority remain with the issuing carrier.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full technical design.
-
----
 
 ## Quick start
 
@@ -27,8 +25,6 @@ python -m cida.cli list-countries
 python -m cida.cli list-regulators --kind data_protection
 ```
 
----
-
 ## Scoring a real client
 
 ```powershell
@@ -40,7 +36,7 @@ python -m cida.cli score-project "clients/Tangerine Bank 2025" --offline  # skip
 python -m cida.cli score-project "clients/Tangerine Bank 2025" --limitation "GCP not in scope"
 ```
 
-Drop any combination of artefacts in the folder - file names don't matter, content is auto-detected:
+Drop any combination of artefacts in the folder, file names don't matter, content is auto-detected:
 
 ```
 clients/Tangerine Bank 2025/
@@ -64,7 +60,7 @@ Output goes to `clients/Tangerine Bank 2025/output/`:
 | `<org_id>_report.json` | Full data payload |
 | `<org_id>_scored_block.json` | Compact underwriting summary |
 
-Terminal output (Nigerian org - all figures in USD + NGN):
+Terminal output (Nigerian org, all figures in USD + NGN):
 
 ```
 -- UNDERWRITING SUMMARY --------------------------------------------------
@@ -82,14 +78,12 @@ Terminal output (Nigerian org - all figures in USD + NGN):
     Ransomware Risk                23.4%
     Phishing / BEC                 41.2%
     Data Breach / Privacy Liability 18.7%
---------------------------------------------------------------------------
-```
 
----
+```
 
 ## Pricing and local currency
 
-All actuarial calculations - expected loss, VaR, TVaR, premium - are computed in USD, which is the universal reinsurance reference currency. At output time, every monetary figure is converted to the org's local currency using the rate from `cida/config/fx_rates.yaml`.
+All actuarial calculations, expected loss, VaR, TVaR, premium, are computed in USD, which is the universal reinsurance reference currency. At output time, every monetary figure is converted to the org's local currency using the rate from `cida/config/fx_rates.yaml`.
 
 The conversion is automatic: the org's `country` field in `org_profile.yaml` resolves the currency code from the country config (e.g. `NG → NGN`, `ZA → ZAR`, `KE → KES`), which maps to the FX rate table. No manual input needed.
 
@@ -103,9 +97,7 @@ The conversion is automatic: the org's `country` field in `org_profile.yaml` res
 | Maximum probable loss (P99) | ✓ | ✓ |
 | Per-driver sub-limits | ✓ | - |
 
-The FX rates in `fx_rates.yaml` are indicative mid-2026 mid-market estimates. Update them periodically or swap in a live API call if needed - they only affect display output, not the actuarial model.
-
----
+The FX rates in `fx_rates.yaml` are indicative mid-2026 mid-market estimates. Update them periodically or swap in a live API call if needed, they only affect display output, not the actuarial model.
 
 ## Alternative: explicit file paths
 
@@ -118,8 +110,6 @@ python -m cida.cli score `
   --findings path/to/scanner_outputs/ `
   --out out/report.pdf
 ```
-
----
 
 ## How CIDA scores an organisation
 
@@ -155,11 +145,9 @@ Questionnaire CSV  +  Org profile YAML  +  Assessment artefacts
    JSON + HTML + PDF reports
 ```
 
----
-
 ## Supported assessment artefacts
 
-Classification is content-based - file names and extensions do not matter.
+Classification is content-based, file names and extensions do not matter.
 
 | Category | Supported tools |
 |----------|----------------|
@@ -178,8 +166,6 @@ Classification is content-based - file names and extensions do not matter.
 | **Pre-normalised** | CIDA Finding JSON (skip parsing, go straight to scoring) |
 
 Full tool list with supported formats → [`cida/ingest/README.md`](cida/ingest/README.md)
-
----
 
 ## Compliance frameworks
 
@@ -202,8 +188,6 @@ frameworks are selected automatically based on sector and country.
 | FSCA Joint Standard 1:2023 | South African financial services |
 
 Full framework config → [`cida/config/README.md`](cida/config/README.md)
-
----
 
 ## Supported countries (54)
 
@@ -267,20 +251,16 @@ Run `python -m cida.cli list-countries` for the full table, or see below:
 | ZM | Zambia | ZMW | Southern Africa |
 | ZW | Zimbabwe | ZWL | Southern Africa |
 
----
-
 ## Currency handling
 
 All actuarial calculations (expected loss, VaR, premium) are in **USD** as the
 universal base currency. In `org_profile.yaml`:
 
-- `annual_revenue_usd` - used by the actuarial model for severity scaling
-- `annual_revenue_local` + `local_currency` - displayed in the report header for the client's reference, not used in calculations
+* `annual_revenue_usd`, used by the actuarial model for severity scaling
+* `annual_revenue_local` + `local_currency`, displayed in the report header for the client's reference, not used in calculations
 
 Exchange rates are not applied automatically. If the client's revenue is stated
 in a local currency, convert to USD before entering it in `annual_revenue_usd`.
-
----
 
 ## Supported regulators
 
@@ -312,8 +292,6 @@ Run `python -m cida.cli list-regulators --kind <type>` where type is one of
 | SEC-NG | Securities and Exchange Commission | sector | NG |
 
 Full regulator config → [`cida/config/README.md`](cida/config/README.md)
-
----
 
 ## Repository layout
 
@@ -349,8 +327,6 @@ cida/                        ← project root
   foundation/                ← source reference documents (BRD, sample reports, …)
 ```
 
----
-
 ## Status
 
 | Check | Result |
@@ -367,8 +343,6 @@ cida/                        ← project root
 
 The ML residual layer ships neutral (1.0×) until trained on real African claim data. The Bayesian baseline carries the full prediction until then.
 
----
-
 ## Refreshing priors with real claims
 
 Once pilot carriers feed back observed claims:
@@ -378,8 +352,6 @@ python -m cida.cli update-priors --claims path/to/claims.yaml --out cida/config/
 ```
 
 The command runs Gamma (frequency) and Lognormal (severity) conjugate posterior updates and writes the updated priors back to the config. This sharpens all future assessments without retraining the ML layer.
-
----
 
 ## Disclaimer
 

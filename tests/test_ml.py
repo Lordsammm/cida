@@ -4,10 +4,10 @@ from datetime import datetime, timezone
 
 import pytest
 
-from cida.actuarial.model import run_actuarial_model
-from cida.catalog.loader import load_catalog
-from cida.ml.modifier import FeatureVector, build_features, predict_modifier, train_modifier, MODEL_PATH
-from cida.models import ControlResponse, OrgProfile, QuestionnaireResponses, Sector
+from actuarial.model import run_actuarial_model
+from catalog.loader import load_catalog
+from ml.modifier import FeatureVector, build_features, predict_modifier, train_modifier, MODEL_PATH
+from models import ControlResponse, OrgProfile, QuestionnaireResponses, Sector
 
 
 def _setup():

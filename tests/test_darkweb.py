@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import json
 
-from cida.ingest.darkweb import parse_darkweb
-from cida.models import Domain, Severity
+from ingest.darkweb import parse_darkweb
+from models import Domain, Severity
 
 
 def test_parse_credential_leak_csv(tmp_path):
@@ -88,7 +88,7 @@ def test_parse_breach_mention(tmp_path):
 def test_dispatcher_picks_up_all_sources(tmp_path):
     """End-to-end: drop one file per source into a dir and confirm dispatcher
     routes them all."""
-    from cida.ingest.findings import load_findings_from_dir
+    from ingest.findings import load_findings_from_dir
 
     # AWS
     (tmp_path / "prowler.json").write_text(

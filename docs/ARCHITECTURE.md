@@ -3,23 +3,17 @@
 **Cyber Intelligence Decision Algorithm**
 Underwriting decision support for cyber insurance in Africa
 
----
-
 ## What is CIDA?
 
 CIDA is a risk scoring and actuarial engine built for cyber insurance underwriters operating across African markets. It takes structured questionnaire data from an assessed organisation, combines it with technical security findings from a full 360-degree assessment, and produces a carrier-ready underwriting package: a risk score, an expected loss estimate, a technical premium recommendation in both USD and local currency, and two detailed reports.
 
 The output tells an insurer: how risky is this organisation, how likely are specific cyber incidents, how much should coverage cost, and what conditions or exclusions should be attached to the policy.
 
----
-
 ## The Problem CIDA Solves
 
 Writing a cyber insurance policy requires actuarial data: historical incident frequencies, loss sizes, and sector benchmarks. For markets like auto or property insurance, decades of claims data exist. For cyber insurance in Africa, this data is almost nonexistent. African incident reporting rates are estimated at roughly one in every three or four actual incidents.
 
 CIDA addresses this cold-start problem with a Bayesian approach. Rather than waiting for claims data that does not yet exist, it starts from global actuarial priors drawn from 20+ international industry reports and applies Africa-specific overlays calibrated from continental cybersecurity research. As real claims data accumulates over time, the model updates itself through Bayesian posterior updates, getting sharper without being rebuilt from scratch.
-
----
 
 ## Assessment Workflow
 
@@ -29,9 +23,9 @@ A CIDA assessment runs in two phases.
 
 Three representatives from the client organisation are onboarded onto the CIDA platform. Each covers their domain:
 
-- **SecOps** - security operations, threat detection, incident response
-- **ITOps** - infrastructure, patching, endpoint management, backups
-- **RiskOps** - governance, compliance, third-party risk, business continuity
+* **SecOps**, security operations, threat detection, incident response
+* **ITOps**, infrastructure, patching, endpoint management, backups
+* **RiskOps**, governance, compliance, third-party risk, business continuity
 
 They complete hundreds of structured questions across ten security domains. The questions are tailored to the organisation's sector: a bank answers different SecOps questions than a hospital or a pension fund. When all three have submitted, the platform exports a single merged CSV file.
 
@@ -39,23 +33,21 @@ They complete hundreds of structured questions across ten security domains. The 
 
 The client's environment is assessed across every attack surface:
 
-- External network and attack surface exposure
-- Web application vulnerabilities (VAPT, penetration testing)
-- Cloud security posture (AWS, Azure, GCP)
-- Internal network and server scanning
-- Email security (DMARC, SPF, DKIM)
-- Dark web and credential exposure monitoring
-- OSINT and public intelligence gathering
-- Compliance control gap analysis
-- Incident response readiness review
+* External network and attack surface exposure
+* Web application vulnerabilities (VAPT, penetration testing)
+* Cloud security posture (AWS, Azure, GCP)
+* Internal network and server scanning
+* Email security (DMARC, SPF, DKIM)
+* Dark web and credential exposure monitoring
+* OSINT and public intelligence gathering
+* Compliance control gap analysis
+* Incident response readiness review
 
 The outputs from all assessment tools are dropped into a client folder alongside the questionnaire CSV. One command processes everything:
 
 ```
 python -m cida.cli score-project "clients/Tangerine Bank 2025"
 ```
-
----
 
 ## How CIDA Scores an Organisation
 
@@ -65,9 +57,9 @@ The scoring pipeline has five sequential stages.
 
 Each questionnaire response maps to a control in the master catalog. Controls are scored 0 to 100:
 
-- Yes/no controls: 100 for yes, 0 for no
-- Scale controls (1 to 5): maps to 0, 25, 50, 75, 100
-- Evidence controls: 100 if evidence is provided, 0 if absent
+* Yes/no controls: 100 for yes, 0 for no
+* Scale controls (1 to 5): maps to 0, 25, 50, 75, 100
+* Evidence controls: 100 if evidence is provided, 0 if absent
 
 Technical findings apply additional penalties. A Critical finding deducts 8 points from its domain; High deducts 3.5; Medium deducts 1. A CVE on the CISA Known Exploited Vulnerabilities list adds a further 6-point penalty.
 
@@ -102,7 +94,7 @@ The overall score is the weighted geometric mean of domain scores. A geometric m
 
 ### Stage 4: Threat Vector Scoring
 
-Fourteen threat vectors are scored from a blend of technical findings and questionnaire responses, each on a scale of 0 (no exposure) to 100 (fully saturated). A confidence flag - HIGH, MEDIUM, or LOW - tells the underwriter how much hard telemetry backs each score.
+Fourteen threat vectors are scored from a blend of technical findings and questionnaire responses, each on a scale of 0 (no exposure) to 100 (fully saturated). A confidence flag, HIGH, MEDIUM, or LOW, tells the underwriter how much hard telemetry backs each score.
 
 | Vector | What it measures |
 |--------|-----------------|
@@ -125,20 +117,18 @@ Fourteen threat vectors are scored from a blend of technical findings and questi
 
 For each of ten insurance coverage lines (called Loss Drivers), the model computes annual frequency and severity using:
 
-- A Bayesian Gamma prior calibrated from global industry reports
-- An Africa-specific frequency overlay from continental research
-- A per-country adjustment for local threat environment and under-reporting rates
-- A sector multiplier for the organisation's industry
-- A vector-derived modifier: each threat vector score lifts or suppresses specific driver frequencies through a calibrated multiplier matrix
+* A Bayesian Gamma prior calibrated from global industry reports
+* An Africa-specific frequency overlay from continental research
+* A per-country adjustment for local threat environment and under-reporting rates
+* A sector multiplier for the organisation's industry
+* A vector-derived modifier: each threat vector score lifts or suppresses specific driver frequencies through a calibrated multiplier matrix
 
 The model runs 10,000 Monte Carlo simulations per assessment and produces:
 
-- Expected Annual Loss
-- 95th percentile Value at Risk (VaR95)
-- Tail VaR at the 99th percentile (TVaR99) - the Maximum Probable Loss
-- Loss percentiles at P50, P90, P99
-
----
+* Expected Annual Loss
+* 95th percentile Value at Risk (VaR95)
+* Tail VaR at the 99th percentile (TVaR99), the Maximum Probable Loss
+* Loss percentiles at P50, P90, P99
 
 ## The Two-Layer Risk Model
 
@@ -168,8 +158,6 @@ Each vector-to-driver cell in the matrix holds a multiplier representing how muc
 
 Calibration sources: Verizon DBIR, Coalition Claims, IBM Cost of Data Breach, Mandiant M-Trends, CrowdStrike Global Threat Report, MITRE ATT&CK, CISA KEV, FBI IC3, Sophos State of Ransomware, GSMA Africa Fraud, Mastercard Africa data.
 
----
-
 ## Pricing and Premium Output
 
 ```
@@ -185,14 +173,12 @@ Every monetary output appears in both USD and the organisation's local currency,
 
 The underwriter also receives:
 
-- Suggested aggregate limit
-- Suggested retention / deductible (scaled to risk tier)
-- Per-driver sub-limits (proportional to each coverage line's expected loss)
-- Conditions: time-bound remediation requirements the insured must meet
-- Exclusions: coverage lines restricted until specific controls are in place
-- Regulatory risk flags: compliance gaps likely to generate regulatory fines
-
----
+* Suggested aggregate limit
+* Suggested retention / deductible (scaled to risk tier)
+* Per-driver sub-limits (proportional to each coverage line's expected loss)
+* Conditions: time-bound remediation requirements the insured must meet
+* Exclusions: coverage lines restricted until specific controls are in place
+* Regulatory risk flags: compliance gaps likely to generate regulatory fines
 
 ## Compliance Frameworks Evaluated
 
@@ -214,8 +200,6 @@ Framework selection is automatic based on the organisation's sector and country.
 | FSCA Joint Standard 1:2023 | South African financial services |
 
 Posture is measured as the percentage of crosswalked controls scoring 70 or above. A prioritised remediation roadmap ranks the highest-value controls to fix first, ordered by expected score improvement and annual loss reduction per unit of remediation effort.
-
----
 
 ## Regulators
 
@@ -278,8 +262,6 @@ Posture is measured as the percentage of crosswalked controls scoring 70 or abov
 | PenCom | National Pension Commission | Pension | Nigeria |
 | SEC-NG | Securities and Exchange Commission | Capital markets | Nigeria |
 
----
-
 ## Supported Countries (54)
 
 | Region | Countries |
@@ -291,8 +273,6 @@ Posture is measured as the percentage of crosswalked controls scoring 70 or abov
 | North Africa | EG, MA, DZ, TN, LY |
 
 Each country carries: base frequency multipliers, disclosure correction factor, mobile money penetration level, currency code, and regulator references. Run `python -m cida.cli list-countries` for the full table.
-
----
 
 ## Supported Assessment Tools
 
@@ -325,8 +305,6 @@ checkdmarc, hardenize, dmarcian, mail-tester
 **Other formats**
 VAPT narrative PDFs, evidence screenshots (PNG/JPEG/SVG), CIDA narrative Word reports
 
----
-
 ## Report Outputs
 
 | File | For |
@@ -341,8 +319,6 @@ VAPT narrative PDFs, evidence screenshots (PNG/JPEG/SVG), CIDA narrative Word re
 The YOA (Year of Assessment) report is designed for the insured organisation. It explains the risk score, shows what specific cyber incidents would cost, lists findings by severity, maps compliance gaps, and gives a prioritised list of what to fix first. It includes an evidence appendix with screenshots from the assessment.
 
 The underwriting scorecard is for the carrier's team. It includes actuarial detail, vector-to-driver contributions, peer comparison, premium construction, and proposed policy terms.
-
----
 
 ## Technical Architecture
 
@@ -447,8 +423,6 @@ org_profile.yaml + questionnaire.csv + assessment artefacts
 
 **Update priors from real claims**: `python -m cida.cli update-priors --claims claims.yaml --out cida/config/priors/global.yaml`
 
----
-
 ## Calibration and Validation
 
 Ten reference cases validate the model across sectors and countries. Run `python -m cida.cli backtest` after any config change.
@@ -466,40 +440,36 @@ Ten reference cases validate the model across sectors and countries. Run `python
 | 09 | Tier 5 healthcare | Zimbabwe | HIPAA analogue gaps |
 | 10 | Tier 2 education | South Africa | FSCA regulatory context |
 
----
-
 ## Prior Sources
 
 **Global** (frequency and severity priors): Verizon DBIR, NetDiligence Cyber Claims, Coalition Cyber Claims Report, IBM/Ponemon Cost of a Data Breach, Sophos State of Ransomware, Hiscox Cyber Readiness Report, FBI IC3 Internet Crime Report, ENISA Threat Landscape, Mandiant M-Trends, CrowdStrike Global Threat Report, Cyentia IRIS, Munich Re Cyber, CRO Forum Cyber Risk, Chainalysis Crypto Crime Report, Dragos Year in Review, CBN Annual Report, NDPC Enforcement Actions, POPIA Information Regulator Annual Report, AON Cyber Risk Report.
 
 **Africa-specific** (frequency overlays): Interpol Africa Cybercrime Assessment, Serianu Africa Cybersecurity Report, GSMA Mobile Money, Mastercard Africa Fraud Report, Smile ID Digital Identity Report, KE-CIRT Threat Intelligence, ngCERT Annual Report, CSEAN Nigeria Cybersecurity, AON Africa Report, African Development Bank Digital Finance data.
 
----
-
 ## Glossary
 
-**CVE** - Common Vulnerabilities and Exposures. A public identifier for a known software vulnerability.
+**CVE**, Common Vulnerabilities and Exposures. A public identifier for a known software vulnerability.
 
-**EPSS** - Exploit Prediction Scoring System. A probability score (0 to 1) for how likely a CVE is to be exploited within 30 days.
+**EPSS**, Exploit Prediction Scoring System. A probability score (0 to 1) for how likely a CVE is to be exploited within 30 days.
 
-**Expected Annual Loss (EL)** - The average total loss expected per year across all covered cyber incidents.
+**Expected Annual Loss (EL)**, The average total loss expected per year across all covered cyber incidents.
 
-**KEV** - CISA Known Exploited Vulnerabilities. CVEs with confirmed active exploitation in the wild.
+**KEV**, CISA Known Exploited Vulnerabilities. CVEs with confirmed active exploitation in the wild.
 
-**Loss Driver** - One of ten insurance coverage lines: what the carrier actually pays out for.
+**Loss Driver**, One of ten insurance coverage lines: what the carrier actually pays out for.
 
-**Monte Carlo simulation** - A technique that runs thousands of random scenarios to estimate a probability distribution. CIDA runs 10,000 simulations per assessment.
+**Monte Carlo simulation**, A technique that runs thousands of random scenarios to estimate a probability distribution. CIDA runs 10,000 simulations per assessment.
 
-**NDPR** - Nigeria Data Protection Regulation (2019), superseded by NDPA 2023.
+**NDPR**, Nigeria Data Protection Regulation (2019), superseded by NDPA 2023.
 
-**POPIA** - Protection of Personal Information Act. South Africa's primary data protection legislation.
+**POPIA**, Protection of Personal Information Act. South Africa's primary data protection legislation.
 
-**Threat Vector** - One of fourteen technical attack pathways an attacker can exploit.
+**Threat Vector**, One of fourteen technical attack pathways an attacker can exploit.
 
-**Tier** - A 1-5 risk grade assigned by CIDA. Tier 1 is the best risk; Tier 5 is the highest.
+**Tier**, A 1-5 risk grade assigned by CIDA. Tier 1 is the best risk; Tier 5 is the highest.
 
-**TVaR99** - Tail Value at Risk at the 99th percentile. The Maximum Probable Loss presented to the underwriter.
+**TVaR99**, Tail Value at Risk at the 99th percentile. The Maximum Probable Loss presented to the underwriter.
 
-**VaR95** - Value at Risk at the 95th percentile. The loss level exceeded only 5% of simulated years.
+**VaR95**, Value at Risk at the 95th percentile. The loss level exceeded only 5% of simulated years.
 
-**YOA** - Year of Assessment. The client-facing report format.
+**YOA**, Year of Assessment. The client-facing report format.

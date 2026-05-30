@@ -1,8 +1,8 @@
 """Unit tests for config + catalog loaders."""
 import pytest
 
-from cida.catalog.loader import load_catalog
-from cida.config.loader import (
+from catalog.loader import load_catalog
+from config.loader import (
     CountryContext,
     list_countries,
     list_regulators,
@@ -11,7 +11,7 @@ from cida.config.loader import (
     load_regulator,
     load_sector,
 )
-from cida.models import Domain, LossDriver, Sector
+from models import Domain, LossDriver, Sector
 
 
 def test_53_or_more_countries():

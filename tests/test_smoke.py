@@ -5,16 +5,16 @@ from pathlib import Path
 
 import pytest
 
-from cida.actuarial.model import run_actuarial_model
-from cida.ingest.findings import load_findings_from_dir
-from cida.ingest.questionnaire import parse_questionnaire_csv
-from cida.models import OrgProfile
-from cida.report.renderer import build_report, render_json, render_html, render_yoa_html
-from cida.scoring.engine import score_organization
+from actuarial.model import run_actuarial_model
+from ingest.findings import load_findings_from_dir
+from ingest.questionnaire import parse_questionnaire_csv
+from models import OrgProfile
+from report.renderer import build_report, render_json, render_html, render_yoa_html
+from scoring.engine import score_organization
 
 import yaml
 
-EXAMPLES = Path(__file__).resolve().parent.parent / "cida" / "examples"
+EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
 
 
 def test_smoke_end_to_end(tmp_path: Path) -> None:

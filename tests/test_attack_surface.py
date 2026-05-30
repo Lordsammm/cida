@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import json
 
-from cida.ingest.attack_surface import parse_attack_surface
-from cida.models import Domain, Severity
+from ingest.attack_surface import parse_attack_surface
+from models import Domain, Severity
 
 
 def test_parse_shodan(tmp_path):

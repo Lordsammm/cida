@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from cida.ingest.questionnaire import parse_questionnaire_csv, _score_yes_no, _score_scale_1_5
-from cida.ingest.findings import load_findings_from_dir
+from ingest.questionnaire import parse_questionnaire_csv, _score_yes_no, _score_scale_1_5
+from ingest.findings import load_findings_from_dir
 
-EXAMPLES = Path(__file__).resolve().parent.parent / "cida" / "examples"
+EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
 
 
 def test_yes_no_scoring():

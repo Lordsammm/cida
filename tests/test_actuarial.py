@@ -4,14 +4,14 @@ from datetime import datetime, timezone
 
 import pytest
 
-from cida.actuarial.model import run_actuarial_model, _control_modifier_for
-from cida.actuarial.posterior_update import (
+from actuarial.model import run_actuarial_model, _control_modifier_for
+from actuarial.posterior_update import (
     ClaimObservation,
     gamma_posterior,
     lognormal_posterior,
 )
-from cida.catalog.loader import load_catalog
-from cida.models import ControlResponse, LossDriver, OrgProfile, QuestionnaireResponses, Sector
+from catalog.loader import load_catalog
+from models import ControlResponse, LossDriver, OrgProfile, QuestionnaireResponses, Sector
 
 
 def _org():

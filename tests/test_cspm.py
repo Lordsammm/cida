@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import json
 
-from cida.ingest.cspm_aws import parse_aws_cspm
-from cida.ingest.cspm_azure import parse_azure_cspm
-from cida.ingest.cspm_gcp import parse_gcp_cspm
-from cida.models import Domain, Severity
+from ingest.cspm_aws import parse_aws_cspm
+from ingest.cspm_azure import parse_azure_cspm
+from ingest.cspm_gcp import parse_gcp_cspm
+from models import Domain, Severity
 
 
 # ---------- AWS ----------

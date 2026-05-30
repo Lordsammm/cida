@@ -3,9 +3,9 @@ from datetime import datetime, timezone
 
 import pytest
 
-from cida.catalog.loader import load_catalog
-from cida.models import ControlResponse, QuestionnaireResponses
-from cida.scoring.engine import score_organization, _tier_for, TIER_BANDS
+from catalog.loader import load_catalog
+from models import ControlResponse, QuestionnaireResponses
+from scoring.engine import score_organization, _tier_for, TIER_BANDS
 
 
 def _make_responses(score_per_control: float) -> QuestionnaireResponses:

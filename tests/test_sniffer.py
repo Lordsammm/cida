@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from cida.ingest.sniffer import sniff, format_unknown_diagnostic, SniffResult
+from ingest.sniffer import sniff, format_unknown_diagnostic, SniffResult
 
 
 # ---------------------------------------------------------------------------

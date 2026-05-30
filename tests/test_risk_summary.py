@@ -3,14 +3,14 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from cida.actuarial.model import run_actuarial_model, ActuarialResult
-from cida.catalog.loader import load_catalog
-from cida.models import (
+from actuarial.model import run_actuarial_model, ActuarialResult
+from catalog.loader import load_catalog
+from models import (
     ControlResponse, Finding, LossDriver, OrgProfile,
     QuestionnaireResponses, Sector, Severity, Domain,
 )
-from cida.scoring.engine import score_organization
-from cida.scoring.risk_summary import build_risk_summary
+from scoring.engine import score_organization
+from scoring.risk_summary import build_risk_summary
 
 
 # ---------------------------------------------------------------------------
@@ -127,8 +127,8 @@ def test_supply_chain_evidence_triggers():
     We raise _MAX_SHOWN to bypass the display cap so we can verify the selection
     logic itself - not whether supply_chain beats 8 other high-probability items.
     """
-    import cida.scoring.risk_summary as rs_mod
-    from cida.scoring.risk_summary import _incident_probabilities
+    import scoring.risk_summary as rs_mod
+    from scoring.risk_summary import _incident_probabilities
 
     org = _org(Sector.MANUFACTURING)
     responses = _responses(org, score=80.0)
@@ -221,7 +221,7 @@ def test_universal_types_always_qualify():
 
     Tests the selection function directly, bypassing the display cap.
     """
-    from cida.scoring.risk_summary import _incident_probabilities
+    from scoring.risk_summary import _incident_probabilities
 
     for sector in (Sector.BANKING, Sector.HEALTHCARE, Sector.INSURANCE, Sector.FINTECH):
         org = _org(sector)

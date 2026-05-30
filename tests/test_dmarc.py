@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import json
 
-from cida.ingest.dmarc import parse_dmarc_check
-from cida.models import Domain, Severity
+from ingest.dmarc import parse_dmarc_check
+from models import Domain, Severity
 
 
 def _write(tmp_path, payload) -> object:
