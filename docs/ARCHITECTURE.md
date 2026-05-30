@@ -1,369 +1,505 @@
 # CIDA Architecture
 
-> Audience: engineers, actuaries, and underwriters who need to understand what
-> CIDA does, *why* it produces a given number, and where to extend it.
+**Cyber Intelligence Decision Algorithm**
+Underwriting decision support for cyber insurance in Africa
 
 ---
 
-## 1. Design goals
+## What is CIDA?
 
-1. **Decision support, never opaque.** Every output number must be traceable back to a finding, a questionnaire response, a prior, or a documented multiplier.
-2. **Two-layer model.** Separate *how* an attacker breaks in (ThreatVector) from *what the insurer pays* (LossDriver / coverage line). The old hybrid that mixed actors with coverage lines made the math nonsensical.
-3. **Calibrated uncertainty.** Every estimate carries an interval. Confidence flags on each vector tell the underwriter when "we don't have telemetry for this".
-4. **Africa-first, world-aware.** Global priors blended from 18 named industry sources, then lifted by an Africa overlay sourced from continental reporting; per-country YAMLs layer on top.
-5. **Plain YAML over code.** Priors, regulators, sectors, frameworks, the vector × driver matrix - all human-readable, version-controllable, citable.
+CIDA is a risk scoring and actuarial engine built for cyber insurance underwriters operating across African markets. It takes structured questionnaire data from an assessed organisation, combines it with technical security findings from a full 360-degree assessment, and produces a carrier-ready underwriting package: a risk score, an expected loss estimate, a technical premium recommendation in both USD and local currency, and two detailed reports.
+
+The output tells an insurer: how risky is this organisation, how likely are specific cyber incidents, how much should coverage cost, and what conditions or exclusions should be attached to the policy.
 
 ---
 
-## 2. The two-layer risk model
+## The Problem CIDA Solves
 
-```
-                        ┌─────────────────────────────────────────┐
-                        │       14 ThreatVectors (technical)      │
-                        │  external_network_exposure              │
-                        │  unpatched_vulnerabilities              │
-                        │  web_application_weaknesses             │
-                        │  email_hygiene                          │
-                        │  identity_and_access                    │
-                        │  endpoint_security                      │
-                        │  cloud_misconfiguration                 │
-                        │  data_protection                        │
-                        │  third_party_supply_chain               │
-                        │  detection_and_response                 │
-                        │  credential_secrets_exposure            │
-                        │  ddos_resilience                        │
-                        │  insider_risk                           │
-                        │  mobile_agent_network                   │
-                        └────────────────┬────────────────────────┘
-                                         │
-                            14 × 10 multiplier matrix
-                          (cida/config/vector_matrix.yaml)
-                                         │
-                        ┌────────────────▼────────────────────────┐
-                        │     10 LossDrivers (coverage lines)     │
-                        │  cyber_extortion                        │
-                        │  business_interruption                  │
-                        │  data_recovery                          │
-                        │  funds_transfer_fraud                   │
-                        │  social_engineering                     │
-                        │  computer_fraud                         │
-                        │  privacy_liability                      │
-                        │  network_sec_liability                  │
-                        │  regulatory_penalties                   │
-                        │  pci_fines                              │
-                        └─────────────────────────────────────────┘
-```
+Writing a cyber insurance policy requires actuarial data: historical incident frequencies, loss sizes, and sector benchmarks. For markets like auto or property insurance, decades of claims data exist. For cyber insurance in Africa, this data is almost nonexistent. African incident reporting rates are estimated at roughly one in every three or four actual incidents.
 
-**Why this matters.** Previously the engine had 7 "loss drivers" that mixed coverage lines (ransomware, BEC, data_breach) with attacker types (DDoS, insider, third_party). Two consequences fell out:
-
-1. Frequencies couldn't be summed cleanly - a single intrusion could be counted as both *insider* and *data_breach*.
-2. An African mobile-money fraud incident didn't map cleanly to any of the 7.
-
-The new model fixes both: actor types are **vectors** (they *lift* the frequency of one or more coverage lines), and coverage lines align 1:1 with what carriers actually write on policy schedules (Coalition, Beazley, Munich Re wording).
+CIDA addresses this cold-start problem with a Bayesian approach. Rather than waiting for claims data that does not yet exist, it starts from global actuarial priors drawn from 20+ international industry reports and applies Africa-specific overlays calibrated from continental cybersecurity research. As real claims data accumulates over time, the model updates itself through Bayesian posterior updates, getting sharper without being rebuilt from scratch.
 
 ---
 
-## 3. Data flow (end-to-end)
+## Assessment Workflow
+
+A CIDA assessment runs in two phases.
+
+### Phase 1: Onboarding and Questionnaire
+
+Three representatives from the client organisation are onboarded onto the CIDA platform. Each covers their domain:
+
+- **SecOps** - security operations, threat detection, incident response
+- **ITOps** - infrastructure, patching, endpoint management, backups
+- **RiskOps** - governance, compliance, third-party risk, business continuity
+
+They complete hundreds of structured questions across ten security domains. The questions are tailored to the organisation's sector: a bank answers different SecOps questions than a hospital or a pension fund. When all three have submitted, the platform exports a single merged CSV file.
+
+### Phase 2: Technical Security Assessment
+
+The client's environment is assessed across every attack surface:
+
+- External network and attack surface exposure
+- Web application vulnerabilities (VAPT, penetration testing)
+- Cloud security posture (AWS, Azure, GCP)
+- Internal network and server scanning
+- Email security (DMARC, SPF, DKIM)
+- Dark web and credential exposure monitoring
+- OSINT and public intelligence gathering
+- Compliance control gap analysis
+- Incident response readiness review
+
+The outputs from all assessment tools are dropped into a client folder alongside the questionnaire CSV. One command processes everything:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│  INPUTS                                                                  │
-│  • Org profile YAML (sector, country, revenue, headcount, data class)    │
-│  • Questionnaire CSV  (one row per control_id, 0–100 normalised)         │
-│  • Findings  (Nessus / Burp / ZAP / Prowler / Shodan / VAPT-PDF /        │
-│               dark-web / DMARC / SPF / ASM …)                            │
-└────────────────────────────────────┬─────────────────────────────────────┘
-                                     │
-                                     ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│  STEP 1 - Scoring engine  (cida/scoring/engine.py)                       │
-│  ▸ control_score[c] = response.score                                     │
-│  ▸ domain_score[d]  = weighted_mean(controls_in_d) − tech_penalty(d)     │
-│  ▸ overall_score    = weighted_geometric_mean(domains)                   │
-│  ▸ tier             = 1–5 from threshold bands                           │
-└────────────────────────────────────┬─────────────────────────────────────┘
-                                     │
-                                     ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│  STEP 2 - Threat vector scoring  (cida/scoring/vectors.py)               │
-│  For each of the 14 vectors:                                             │
-│   findings → routed by source string + Domain fallback                   │
-│              → severity points (CRIT 25 / HIGH 12 / MED 4 / KEV +15 …)   │
-│   controls → routed by Control.threat_vectors tag OR Domain fallback     │
-│              → deficit = 100 − weighted_mean(score)                      │
-│   Combine:                                                               │
-│     no evidence       → 50 (neutral) + confidence LOW                    │
-│     controls only     → deficit                                          │
-│     findings only     → finding_pts × 100/70                             │
-│     both              → 0.6 × deficit + 0.4 × finding_component          │
-│   Confidence: HIGH (telemetry) / MED (mixed) / LOW (questionnaire only). │
-│   Output: 14 × VectorScore(score_0_100, confidence, n_findings,          │
-│                           n_controls, top_evidence, contributing_drivers)│
-└────────────────────────────────────┬─────────────────────────────────────┘
-                                     │
-                                     ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│  STEP 3 - Bayesian actuarial model  (cida/actuarial/model.py)            │
-│  For each of the 10 LossDrivers:                                         │
-│     α, β  ← priors/global.yaml × Africa overlay                          │
-│     λ_eff = (α/β)                                                        │
-│            × sector_freq_multiplier                                      │
-│            × country_base_frequency_multiplier                           │
-│            × disclosure_correction          (capped 2.0×)                │
-│            × Π over 14 vectors of                                        │
-│                (1 + score_v/100 × (matrix[v][driver] − 1))               │
-│              (capped at 6.0× per driver)                                 │
-│     Frequency uncertainty:  λ ~ Gamma(α, α/λ_eff)                        │
-│     Counts:                 n ~ Poisson(λ_sample)        × 10 000 sims   │
-│     Severity:               s ~ Lognormal(μ_adj, σ)                      │
-│                             μ_adj = μ + ln(size_scale × sector_sev_mult) │
-│                             size_scale = (revenue / $50M) ^ 0.45         │
-│     Annual loss per driver: sum of severity draws over n events          │
-│  Aggregate across drivers → EL, VaR₉₅, TVaR₉₉, P50 / P90 / P99           │
-└────────────────────────────────────┬─────────────────────────────────────┘
-                                     │
-                                     ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│  STEP 4 - ML residual layer  (cida/ml/modifier.py)                       │
-│  XGBoost trained on (features → log(actual_loss) − log(baseline_EL)).    │
-│  Returns multiplier ∈ [0.2, 5.0]. Neutral 1.0× until artefact is shipped │
-│  (no fabricated signal).                                                 │
-└────────────────────────────────────┬─────────────────────────────────────┘
-                                     │
-                                     ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│  STEP 5 - Risk summary  (cida/scoring/risk_summary.py)                   │
-│  risk_score = 100 − overall_score          (high = bad, Coalition style) │
-│  likelihood_multiplier_vs_peer                                           │
-│       = avg_org_vector_mult / avg_peer_baseline_vector_mult              │
-│  attack_surface   = sub-domains, IPs, apps, services from findings + org │
-│  posture_signals  = DMARC / SPF / Malware / Data Leaks …                 │
-│  vector_scores         (carried through unchanged)                       │
-│  top_likelihood_drivers = vectors ranked by                              │
-│       Σ over drivers of (per_vector_mult − 1) × driver_freq_weight       │
-└────────────────────────────────────┬─────────────────────────────────────┘
-                                     │
-                                     ▼
-                            JSON + PDF report
+python -m cida.cli score-project "clients/Tangerine Bank 2025"
 ```
 
 ---
 
-## 4. Vector scoring - how the 14 scores get made
+## How CIDA Scores an Organisation
 
-### 4.1 Source-to-vector routing (findings side)
+The scoring pipeline has five sequential stages.
 
-Defined in `_SOURCE_TO_VECTORS` in `cida/scoring/vectors.py`. Examples:
+### Stage 1: Control Scoring
 
-| Finding source          | Vector(s) it feeds                                          |
-|-------------------------|-------------------------------------------------------------|
-| `shodan` / `censys` / `amass` | external_network_exposure                              |
-| `nessus` / `qualys` / `tenable` | unpatched_vulnerabilities                            |
-| `burp` / `zap` / `appsec`     | web_application_weaknesses                             |
-| `vapt_pdf`              | web_application_weaknesses + unpatched_vulnerabilities      |
-| `dmarc` / `spf` / `dkim`      | email_hygiene                                          |
-| `prowler` / `securityhub` / `defender` / `scc` | cloud_misconfiguration              |
-| `darkweb_credentials` / `darkweb_stealer` | credential_secrets_exposure              |
+Each questionnaire response maps to a control in the master catalog. Controls are scored 0 to 100:
 
-When the source string doesn't match, the finding falls back to the `Domain` → `ThreatVector` map (e.g. `Domain.APPSEC` → web_application_weaknesses).
+- Yes/no controls: 100 for yes, 0 for no
+- Scale controls (1 to 5): maps to 0, 25, 50, 75, 100
+- Evidence controls: 100 if evidence is provided, 0 if absent
 
-### 4.2 Control-to-vector routing (questionnaire side)
+Technical findings apply additional penalties. A Critical finding deducts 8 points from its domain; High deducts 3.5; Medium deducts 1. A CVE on the CISA Known Exploited Vulnerabilities list adds a further 6-point penalty.
 
-Each `Control` can declare `threat_vectors: [...]` explicitly. When the catalog doesn't tag a control (legacy 41-control catalog), the loader falls back to a `Domain → [ThreatVector]` map in `vectors.py::_DOMAIN_FALLBACK`. This is how the old catalog continues to drive scoring without being rewritten.
+### Stage 2: Domain Scoring
 
-### 4.3 Confidence
+Controls roll up into ten security domains, each scored as the weighted mean of its controls minus technical penalties from findings.
 
-`Confidence` enum: `HIGH | MEDIUM | LOW`. Base tier per vector is in `_VECTOR_CONFIDENCE`. The actual emitted confidence downgrades when telemetry is absent:
+| Domain | Weight |
+|--------|--------|
+| Governance | 10% |
+| Identity and Access Management | 14% |
+| Asset and Data Management | 10% |
+| Network Security | 10% |
+| Endpoint Security | 12% |
+| Application Security | 9% |
+| Cloud Security | 8% |
+| Third-Party and Supply Chain | 7% |
+| Detection and Response | 12% |
+| Resilience and Recovery | 8% |
 
-- No findings AND no control responses → `LOW` (score 50 placeholder)
-- No findings, base tier was `HIGH` → `MEDIUM`
-- Otherwise → base tier
+### Stage 3: Overall Score and Tier
 
-Questionnaire-only vectors (`third_party_supply_chain`, `detection_and_response`, `ddos_resilience`, `insider_risk`, `mobile_agent_network`) stay at their base `LOW` even with responses, because we can't independently verify.
+The overall score is the weighted geometric mean of domain scores. A geometric mean is used because it punishes weakness in any single domain more harshly than an arithmetic mean: an organisation cannot average a critical gap away with strong scores elsewhere.
+
+| Tier | Score | Label | Underwriting implication |
+|------|-------|-------|--------------------------|
+| 1 | 85 and above | Excellent | Preferred risk, standard terms |
+| 2 | 70 to 84 | Good | Strong programme, standard terms |
+| 3 | 55 to 69 | Adequate | Acceptable, remediation conditions required |
+| 4 | 40 to 54 | Below Standard | Material gaps, restricted terms or sub-limits |
+| 5 | Below 40 | High Risk | Declination or conditional cover only |
+
+### Stage 4: Threat Vector Scoring
+
+Fourteen threat vectors are scored from a blend of technical findings and questionnaire responses, each on a scale of 0 (no exposure) to 100 (fully saturated). A confidence flag - HIGH, MEDIUM, or LOW - tells the underwriter how much hard telemetry backs each score.
+
+| Vector | What it measures |
+|--------|-----------------|
+| External Network Exposure | Open ports, exposed services, misconfigured perimeter |
+| Unpatched Vulnerabilities | CVE coverage, patch SLA adherence, KEV presence |
+| Web Application Weaknesses | OWASP Top 10, injection, broken authentication |
+| Email Hygiene | DMARC, SPF, DKIM, phishing simulation results |
+| Identity and Access | MFA coverage, PAM, privileged access controls |
+| Endpoint Security | EDR deployment, patch compliance, USB controls |
+| Cloud Misconfiguration | CSPM findings, public storage buckets, over-privileged IAM |
+| Data Protection | DLP controls, encryption at rest, data classification |
+| Third-Party Supply Chain | Vendor due diligence, contractual clauses, monitoring |
+| Detection and Response | SIEM coverage, SOC hours, IR playbooks, exercises |
+| Credential and Secrets Exposure | Dark web leaks, stealer logs, hardcoded secrets |
+| DDoS Resilience | Anti-DDoS controls, uptime SLAs, scrubbing capacity |
+| Insider Risk | Access monitoring, user behaviour analytics, offboarding |
+| Mobile Agent Network | USSD/mobile money controls, agent fraud monitoring |
+
+### Stage 5: Bayesian Actuarial Model
+
+For each of ten insurance coverage lines (called Loss Drivers), the model computes annual frequency and severity using:
+
+- A Bayesian Gamma prior calibrated from global industry reports
+- An Africa-specific frequency overlay from continental research
+- A per-country adjustment for local threat environment and under-reporting rates
+- A sector multiplier for the organisation's industry
+- A vector-derived modifier: each threat vector score lifts or suppresses specific driver frequencies through a calibrated multiplier matrix
+
+The model runs 10,000 Monte Carlo simulations per assessment and produces:
+
+- Expected Annual Loss
+- 95th percentile Value at Risk (VaR95)
+- Tail VaR at the 99th percentile (TVaR99) - the Maximum Probable Loss
+- Loss percentiles at P50, P90, P99
 
 ---
 
-## 5. The vector × driver matrix
+## The Two-Layer Risk Model
 
-Defined in [cida/config/vector_matrix.yaml](../cida/config/vector_matrix.yaml). Each cell holds the **frequency multiplier when the vector is fully saturated (score = 100)**. Linear interpolation between 1.0 (score 0) and the cell value (score 100):
+The central design decision is separating *how attackers get in* (Threat Vectors) from *what the insurer pays for* (Loss Drivers). This prevents double-counting and maps cleanly to actual policy schedule wording.
 
-```python
-per_vector_mult = 1.0 + (score / 100) * (matrix_cell - 1.0)
-combined_mult   = min( ∏ per_vector_mult,  per_driver_cap )    # cap = 6.0×
+```
+THREAT VECTORS                        LOSS DRIVERS
+(how attackers get in)                (what the policy covers)
+
+External Network Exposure  ---------> Cyber Extortion
+Unpatched Vulnerabilities  ---------> Business Interruption
+Web Application Weaknesses ---------> Data Recovery and Forensics
+Email Hygiene              ---------> Funds Transfer Fraud
+Identity and Access        ---+-----> Social Engineering / BEC
+Endpoint Security          ---+-----> Computer Fraud (USSD, API abuse)
+Cloud Misconfiguration     ---+-----> Privacy Liability (data breach)
+Data Protection            ---+-----> Network Security Liability
+Third-Party Supply Chain   ---+-----> Regulatory Penalties
+Detection and Response     ---+-----> PCI Fines
+Credential Exposure        ---+
+DDoS Resilience            ---+
+Insider Risk               ---+
+Mobile Agent Network       ---+
 ```
 
-Calibration sources for the matrix:
+Each vector-to-driver cell in the matrix holds a multiplier representing how much that vector lifts a driver's frequency when fully saturated (score = 100). The engine interpolates linearly between 1.0 at score 0 and the cell value at score 100.
 
-- Verizon DBIR 2024 breach pattern × action mapping (Tables 3-4)
-- Coalition 2024 Cyber Claims Report - initial access vector breakdown
-- IBM Cost of a Data Breach 2024 - initial-attack-vector cost analysis
-- Mandiant M-Trends 2024 - initial-compromise vector frequencies
-- CrowdStrike Global Threat Report 2024 - TTP frequency tables
-- MITRE ATT&CK technique catalog v15 + CISA KEV
-- FBI IC3 BEC investigations 2024
-- Sophos State of Ransomware 2024 - entry-point analysis
-- GSMA / Mastercard Africa fraud reports (for mobile_agent_network → computer_fraud)
-- Dragos Year in Review 2024 (for OT exposure to BI)
-
-### Notable cells
-
-| Vector → Driver | Multiplier | Why |
-|-----------------|-----------:|------|
-| identity_and_access → funds_transfer_fraud | 2.5× | Coalition'24: no-MFA = #1 root cause of FTF claims |
-| email_hygiene → social_engineering         | 3.0× | IC3'24: DMARC absence correlates strongly with BEC |
-| mobile_agent_network → computer_fraud      | 3.0× | GSMA'24 + Mastercard'24: USSD/agent fraud is the African signature |
-| ddos_resilience → business_interruption    | 3.0× | ENISA'24 + Cloudflare'24: record 4.2 Tbps Q3'24 attacks |
-| endpoint_security → cyber_extortion        | 2.2× | Sophos'24: no-EDR coverage doubles ransomware payout rate |
-| unpatched_vulnerabilities → cyber_extortion| 2.0× | CISA KEV + EPSS: primary precursor to ransomware (Mandiant'24) |
+Calibration sources: Verizon DBIR, Coalition Claims, IBM Cost of Data Breach, Mandiant M-Trends, CrowdStrike Global Threat Report, MITRE ATT&CK, CISA KEV, FBI IC3, Sophos State of Ransomware, GSMA Africa Fraud, Mastercard Africa data.
 
 ---
 
-## 6. Priors - the actuarial backbone
+## Pricing and Premium Output
 
-### 6.1 Global (`cida/config/priors/global.yaml`)
-
-For each of the 10 LossDrivers, a Gamma prior over annual frequency:
-
-```yaml
-frequency_priors:
-  cyber_extortion:        { alpha: 0.08, beta: 1.0 }
-  business_interruption:  { alpha: 0.22, beta: 1.0 }
-  data_recovery:          { alpha: 0.25, beta: 1.0 }
-  funds_transfer_fraud:   { alpha: 0.18, beta: 1.0 }
-  social_engineering:     { alpha: 0.40, beta: 1.0 }
-  computer_fraud:         { alpha: 0.04, beta: 1.0 }
-  privacy_liability:      { alpha: 0.12, beta: 1.0 }
-  network_sec_liability:  { alpha: 0.02, beta: 1.0 }
-  regulatory_penalties:   { alpha: 0.06, beta: 1.0 }
-  pci_fines:              { alpha: 0.03, beta: 1.0 }
+```
+Technical Premium = Expected Annual Loss
+                  + Risk Loading    (20% of VaR - EL, charges for variance)
+                  + Expense Load    (25% - acquisition and administration)
+                  + Profit Margin   (10%)
 ```
 
-Severity priors are Lognormal in USD; e.g. cyber_extortion μ = 12.13, σ = 1.60 → median ≈ $185k (Coalition'24).
+The premium is benchmarked against a sector base rate derived from market data. The ratio of technical premium to base rate is the pricing multiplier, telling the underwriter at a glance how this risk compares to sector peers.
 
-A `size_severity_elasticity` of 0.45 means a $500M revenue org has a roughly $50M-org's median × $(500/50)^{0.45}$ = ~2.8× severity scaling.
+Every monetary output appears in both USD and the organisation's local currency, resolved automatically from the country config. A Nigerian org produces NGN figures, South African produces ZAR, Kenyan produces KES, and so on across all 54 supported countries.
 
-A 9-sector × 10-driver frequency multiplier matrix (banking, insurance, fintech, pension, education, healthcare, telecom, manufacturing, other) overlays sector-specific risk.
+The underwriter also receives:
 
-Cited sources (18): DBIR, NetDiligence, Coalition, IBM/Ponemon, Sophos, Hiscox, IC3, ENISA, Mandiant, CrowdStrike, Cyentia IRIS, Munich Re, CRO Forum, Chainalysis, CBN, NDPC, POPIA Info Reg, Dragos.
-
-### 6.2 Africa overlay (`cida/config/priors/africa-overlay.yaml`)
-
-Multipliers applied to `alpha` at load time:
-
-| Driver                  | Africa lift | Rationale source |
-|-------------------------|------------:|------------------|
-| computer_fraud          | 3.50×       | GSMA'24 + Mastercard'24 - USSD/MMO fraud dominant |
-| funds_transfer_fraud    | 1.80×       | Serianu'24 + CSEAN'24 - FTF dominates African FSI |
-| social_engineering      | 1.60×       | Interpol'24 - BEC widespread + weak DMARC adoption |
-| regulatory_penalties    | 1.30×       | NDPC'24 first 9-figure NGN fines; POPIA intensifying |
-| privacy_liability       | 1.20×       | NDPR / POPIA enforcement maturing |
-| business_interruption   | 1.10×       | Power/connectivity fragility + DDoS uplift |
-| data_recovery           | 1.10×       | Slower MTTR + sparser IR talent |
-| network_sec_liability   | 1.10×       | - |
-| cyber_extortion         | 0.85×       | Sophos SA'24 historically lower, rising |
-| pci_fines               | 0.80×       | Card penetration lower outside SA / KE / NG |
-
-A `disclosure_correction_factor_continental_mean: 3.5` represents continental under-reporting - observed incidents are ~1/3.5 of true incidents. Per-country YAMLs refine this.
-
-### 6.3 Country layer (`cida/config/countries/{ISO2}.yaml`)
-
-Each country file references its regulators by ID and provides:
-- `base_frequency_multipliers` (per-driver, on top of the Africa overlay)
-- `disclosure_correction_factor` (country-specific under-reporting)
+- Suggested aggregate limit
+- Suggested retention / deductible (scaled to risk tier)
+- Per-driver sub-limits (proportional to each coverage line's expected loss)
+- Conditions: time-bound remediation requirements the insured must meet
+- Exclusions: coverage lines restricted until specific controls are in place
+- Regulatory risk flags: compliance gaps likely to generate regulatory fines
 
 ---
 
-## 7. Module map
+## Compliance Frameworks Evaluated
 
-| Module | Responsibility |
-|--------|----------------|
-| [cida/models.py](../cida/models.py) | Pydantic source of truth - all enums + types. `LEGACY_LOSS_DRIVER_ALIASES` for backward compat. |
-| [cida/config/loader.py](../cida/config/loader.py) | YAML loaders, `_alias_driver_keys` translation, `load_vector_matrix`, `CountryContext`. |
-| [cida/catalog/loader.py](../cida/catalog/loader.py) | Control catalog loader (applies alias layer). |
-| [cida/ingest/](../cida/ingest/) | Questionnaire CSV parser + finding parsers (Nessus, Burp, ZAP, Prowler, Shodan, VAPT-PDF, dark-web, DMARC/SPF). |
-| [cida/enrich/](../cida/enrich/) | CVE / EPSS / KEV / news / breach mention enrichers. |
-| [cida/scoring/engine.py](../cida/scoring/engine.py) | Per-control → per-domain → overall scoring + tier assignment. |
-| [cida/scoring/vectors.py](../cida/scoring/vectors.py) | 14-vector scoring, finding routing, control routing, peer baseline. |
-| [cida/scoring/risk_summary.py](../cida/scoring/risk_summary.py) | Builds the underwriter-facing `RiskSummary`. |
-| [cida/actuarial/model.py](../cida/actuarial/model.py) | Bayesian frequency × severity × Monte Carlo. |
-| [cida/actuarial/premium.py](../cida/actuarial/premium.py) | Technical premium, retention, sub-limits, exclusions. |
-| [cida/actuarial/posterior_update.py](../cida/actuarial/posterior_update.py) | Gamma + Lognormal posterior updates from observed claims. |
-| [cida/ml/modifier.py](../cida/ml/modifier.py) | XGBoost residual on log(EL). Neutral until trained. |
-| [cida/posture/](../cida/posture/) | Multi-framework compliance scoring. |
-| [cida/report/](../cida/report/) | JSON + PDF (xhtml2pdf / WeasyPrint) renderers + Jinja templates. |
-| [cida/backtest/runner.py](../cida/backtest/runner.py) | 10 reference cases under `tests/backtest/cases/`. |
-| [cida/cli.py](../cida/cli.py) | Typer CLI: score / demo / backtest / update-priors / list-countries / list-regulators / version. |
+Framework selection is automatic based on the organisation's sector and country.
+
+| Framework | Applies to |
+|-----------|-----------|
+| NIST Cybersecurity Framework 2.0 | All sectors |
+| ISO/IEC 27001:2022 | All sectors |
+| CIS Controls v8 | All sectors |
+| SOC 2 Trust Services Criteria | All sectors |
+| PCI-DSS v4.0 | Banks, fintechs, card issuers |
+| HIPAA Security Rule | Healthcare, HMOs |
+| EU GDPR | Any organisation handling EU personal data |
+| Nigeria NDPR / NDPA 2023 | Nigerian organisations |
+| South Africa POPIA | South African organisations |
+| CCPA | Organisations with California data subjects |
+| African Union Malabo Convention | AU member states |
+| FSCA Joint Standard 1:2023 | South African financial services |
+
+Posture is measured as the percentage of crosswalked controls scoring 70 or above. A prioritised remediation roadmap ranks the highest-value controls to fix first, ordered by expected score improvement and annual loss reduction per unit of remediation effort.
 
 ---
 
-## 8. Backward compatibility
+## Regulators
 
-The 30+ country YAMLs and 41-control catalog were written against the **old 7-driver enum** (`bec`, `ransomware`, `data_breach`, `ddos`, `insider`, `third_party`, `mobile_money_fraud`). Rather than rewriting them all, the loader applies `LEGACY_LOSS_DRIVER_ALIASES` at load time:
+### Insurance Supervisors
 
-```python
-"bec":                "social_engineering"
-"ransomware":         "cyber_extortion"
-"data_breach":        "privacy_liability"
-"ddos":               "business_interruption"
-"insider":            "privacy_liability"
-"third_party":        "privacy_liability"
-"mobile_money_fraud": "computer_fraud"
+| ID | Authority | Country / Scope |
+|----|-----------|-----------------|
+| NAICOM | National Insurance Commission | Nigeria |
+| FSCA | Financial Sector Conduct Authority | South Africa |
+| IRA-KE | Insurance Regulatory Authority | Kenya |
+| NIC-GH | National Insurance Commission | Ghana |
+| CIMA | Conference Interafricaine des Marches d'Assurances | UEMOA/CEMAC (14 countries) |
+| TIRA | Tanzania Insurance Regulatory Authority | Tanzania |
+| IRA-UG | Insurance Regulatory Authority | Uganda |
+| IPEC | Insurance and Pensions Commission | Zimbabwe |
+| NBR-INS | National Bank of Rwanda - Insurance | Rwanda |
+| NAMFISA | Namibia Financial Institutions Supervisory Authority | Namibia |
+| NBFIRA | Non-Bank Financial Institutions Regulatory Authority | Botswana |
+| FSC-MU | Financial Services Commission | Mauritius |
+| FSA-SC | Financial Services Authority | Seychelles |
+| ACAPS | Autorite de Controle des Assurances | Morocco |
+| CGA | Comite General des Assurances | Tunisia |
+| CNA-DZ | Conseil National des Assurances | Algeria |
+| FRA-EG | Financial Regulatory Authority | Egypt |
+| ARSEG | Agence de Regulation et de Supervision des Assurances | Angola |
+| ARCA | Agence de Regulation et de Controle des Assurances | DR Congo |
+| CBL-INS | Central Bank of Libya - Insurance | Libya |
+| NBE-INS | National Bank of Ethiopia - Insurance | Ethiopia |
+| FSRA-SZ | Financial Services Regulatory Authority | Eswatini |
+| ISSM | Instituto de Supervisao de Seguros de Mocambique | Mozambique |
+| PIA-ZM | Pensions and Insurance Authority | Zambia |
+| RBM-INS | Reserve Bank of Malawi - Insurance | Malawi |
+
+### Data Protection Authorities
+
+| ID | Authority | Country |
+|----|-----------|---------|
+| NDPC | Nigeria Data Protection Commission | Nigeria |
+| IR-ZA | Information Regulator (POPIA) | South Africa |
+| ODPC-KE | Office of the Data Protection Commissioner | Kenya |
+| DPC-GH | Data Protection Commission | Ghana |
+
+### Central Banks and Financial Regulators
+
+| ID | Authority | Scope |
+|----|-----------|-------|
+| CBN | Central Bank of Nigeria | Nigeria |
+| SARB | South African Reserve Bank | South Africa |
+| CBK | Central Bank of Kenya | Kenya |
+| BoG | Bank of Ghana | Ghana |
+| BCEAO | Banque Centrale des Etats de l'Afrique de l'Ouest | 8 UEMOA countries |
+| BEAC | Banque des Etats de l'Afrique Centrale | 6 CEMAC countries |
+
+### Sector Regulators
+
+| ID | Authority | Sector | Country |
+|----|-----------|--------|---------|
+| NITDA | National IT Development Agency | Technology / data | Nigeria |
+| NCC | Nigerian Communications Commission | Telecoms | Nigeria |
+| PenCom | National Pension Commission | Pension | Nigeria |
+| SEC-NG | Securities and Exchange Commission | Capital markets | Nigeria |
+
+---
+
+## Supported Countries (54)
+
+| Region | Countries |
+|--------|-----------|
+| West Africa | NG, GH, CI, SN, ML, BF, NE, TG, BJ, GN, SL, LR, GM, GW, CV, MR |
+| East Africa | KE, TZ, UG, RW, ET, BI, DJ, SO, SS, SD, ER, KM, MG, MU, SC |
+| Southern Africa | ZA, ZW, ZM, MW, MZ, BW, NA, LS, SZ |
+| Central Africa | CM, CD, CG, CF, TD, GA, GQ, AO, ST |
+| North Africa | EG, MA, DZ, TN, LY |
+
+Each country carries: base frequency multipliers, disclosure correction factor, mobile money penetration level, currency code, and regulator references. Run `python -m cida.cli list-countries` for the full table.
+
+---
+
+## Supported Assessment Tools
+
+File classification is content-based. Filenames never matter.
+
+**Vulnerability scanners**
+Nessus, Qualys, OpenVAS, Greenbone, Rapid7 InsightVM, Metasploit, Tenable.io
+
+**Web application scanners**
+Burp Suite, OWASP ZAP, Nikto, Acunetix, IBM AppScan, w3af, Arachni
+
+**Network scanners**
+Nmap, Masscan, Zmap
+
+**Cloud CSPM**
+AWS: Prowler v3/v4, Security Hub
+Azure: Defender for Cloud, ScoutSuite
+GCP: Security Command Center, ScoutSuite
+Multi-cloud: Wiz, Orca, Prisma Cloud
+
+**Attack surface management and OSINT**
+Shodan, Censys, Amass, theHarvester, Recon-ng, BBOT, Subfinder, Nuclei
+
+**Dark web and credential intelligence**
+SpyCloud, DeHashed, Hudson Rock, Flare, HaveIBeenPwned, generic breach dumps, stealer log exports (RedLine, Raccoon, Vidar, Lumma)
+
+**Email security**
+checkdmarc, hardenize, dmarcian, mail-tester
+
+**Other formats**
+VAPT narrative PDFs, evidence screenshots (PNG/JPEG/SVG), CIDA narrative Word reports
+
+---
+
+## Report Outputs
+
+| File | For |
+|------|-----|
+| `_yoa_report.html` | Client: risk score, incident costs, findings, compliance posture, remediation roadmap |
+| `_report.html` | Underwriter: actuarial tables, vector scores, premium breakdown, policy conditions |
+| `_yoa_report.pdf` | Client PDF |
+| `_report.pdf` | Underwriter PDF |
+| `_report.json` | Full machine-readable payload |
+| `_scored_block.json` | Compact underwriting summary for SaaS or API integration |
+
+The YOA (Year of Assessment) report is designed for the insured organisation. It explains the risk score, shows what specific cyber incidents would cost, lists findings by severity, maps compliance gaps, and gives a prioritised list of what to fix first. It includes an evidence appendix with screenshots from the assessment.
+
+The underwriting scorecard is for the carrier's team. It includes actuarial detail, vector-to-driver contributions, peer comparison, premium construction, and proposed policy terms.
+
+---
+
+## Technical Architecture
+
+```
+cida/
+  cli.py               Typer CLI: score-project, score, demo, backtest, update-priors
+  models.py            All Pydantic data models - single source of truth
+
+  ingest/              File parsing
+    sniffer.py         Content-based file classifier
+    findings.py        Routes files to the right parser
+    questionnaire.py   Questionnaire CSV parser
+    project.py         Drop-zone loader - discovers all files recursively
+    nessus.py          Nessus / Qualys / OpenVAS / Rapid7 parser
+    vapt_pdf.py        PDF extraction (pdfplumber + optional LLM assist)
+    attack_surface.py  Shodan / Censys / Amass parser
+    cspm_aws.py        Prowler / Security Hub parser
+    cspm_azure.py      Defender for Cloud / ScoutSuite Azure parser
+    cspm_gcp.py        GCP Security Command Center parser
+    darkweb.py         Credential leak / stealer log / forum mention parser
+    dmarc.py           DMARC / SPF / DKIM parser
+    cida_docx.py       CIDA narrative Word report parser
+
+  enrich/              External data enrichment
+    cve.py             CVE / EPSS / KEV enrichment (NVD, FIRST, CISA)
+    cwe.py             CWE and OWASP Top 10 mapping
+    intel/             Public intelligence (Proshare, BusinessDay)
+
+  scoring/
+    engine.py          Control scoring, domain rollup, overall score, tier
+    vectors.py         14 threat vector scores
+    risk_summary.py    Coalition-style risk summary builder
+
+  actuarial/
+    model.py           Bayesian frequency x severity x 10k Monte Carlo
+    premium.py         Premium construction + FX conversion to local currency
+    posterior_update.py  Bayesian update from observed claims
+
+  ml/
+    modifier.py        XGBoost residual on log(EL) - neutral until trained
+
+  posture/
+    compliance.py      Framework posture scoring + remediation roadmap
+
+  catalog/
+    control_catalog.yaml  41 controls with multi-framework crosswalks
+    loader.py
+
+  config/              All calibration in plain YAML - no code changes needed
+    countries/         54 country configs (regulators, currency, multipliers)
+    regulators/        Insurance, data protection, financial, sector
+    sectors/           Sector frequency and severity overlays
+    frameworks/        Compliance framework descriptors
+    priors/            Global Bayesian priors + Africa-specific overlays
+    fx_rates.yaml      Indicative FX rates for local currency output
+    vector_matrix.yaml 14x10 ThreatVector x LossDriver multiplier table
+
+  report/
+    renderer.py        CIDAReport builder + HTML and PDF renderer
+    templates/         Jinja2 templates for both report types
 ```
 
-The translation walks nested dicts recursively, so `loss_driver_modifiers`, `base_frequency_multipliers`, and `severity_multipliers` are all rewritten transparently. New configs should use the canonical names directly.
+### Data Flow
+
+```
+org_profile.yaml + questionnaire.csv + assessment artefacts
+                           |
+                      sniffer.py
+                     (classify files)
+                           |
+                 parsers + CVE enrichment
+                           |
+              +------------+------------+
+              |                         |
+       scoring/engine.py        scoring/vectors.py
+       (domain scores, tier)    (14 vector scores)
+              |                         |
+              +------------+------------+
+                           |
+                  actuarial/model.py
+                  (10,000 Monte Carlo sims)
+                           |
+                  actuarial/premium.py
+                  (premium + FX conversion)
+                           |
+                  posture/compliance.py
+                  (framework posture + roadmap)
+                           |
+                  report/renderer.py
+                  (HTML + PDF + JSON output)
+```
+
+### Extending the model
+
+**New country**: add `{ISO2}.yaml` to `cida/config/countries/`
+
+**New regulator**: add a YAML to the relevant `cida/config/regulators/` subfolder, reference it from the country config
+
+**New assessment tool**: write a parser returning `list[Finding]`, add signals to `sniffer.py`, add a dispatch case in `findings.py`
+
+**New compliance framework**: add a YAML to `cida/config/frameworks/`, add crosswalk entries in the control catalog
+
+**Update priors from real claims**: `python -m cida.cli update-priors --claims claims.yaml --out cida/config/priors/global.yaml`
 
 ---
 
-## 9. Output schema
+## Calibration and Validation
 
-`CIDAReport` (Pydantic) → JSON 1:1, and PDF via [cida/report/templates/report.html.j2](../cida/report/templates/report.html.j2).
+Ten reference cases validate the model across sectors and countries. Run `python -m cida.cli backtest` after any config change.
 
-The PDF structure:
-
-| Section | Content |
-|---------|---------|
-| 1       | Executive summary - overall score, tier, EL, premium |
-| 2.1     | Estimated loss by cyber incident type (per-driver: frequency, severity, EL, VaR, TVaR) |
-| 2.2     | Attack surface analysed (sub-domains, IPs, apps, services) |
-| 2.3     | Findings severity breakdown |
-| 2.4     | Top findings grouped by title |
-| 2.5     | Complete risk posture (DMARC / SPF / Data Leaks / Malware / …) |
-| **2.6** | **Threat Vector Scores (14)** - score, confidence, evidence |
-| **2.7** | **Drivers of Likelihood** - ranked vectors lifting frequency above peer |
-| 3       | Underwriting snapshot (score, tier, EL, premium, multipliers) |
-| 4       | Per-domain detail |
-| 5       | Regulatory & compliance posture |
-| 6       | Methodology + sources + disclaimer |
+| Case | Sector | Country | Primary validation |
+|------|--------|---------|-------------------|
+| 01 | Tier 1 bank | Nigeria | High EL, FTF dominant |
+| 02 | Tier 1 insurer | South Africa | Moderate EL, POPIA flags |
+| 03 | Tier 2 fintech | Kenya | Elevated EL, mobile fraud frequency |
+| 04 | Tier 3 pension | Ghana | Moderate EL |
+| 05 | Tier 3 manufacturing | Egypt | Business interruption dominant |
+| 06 | Tier 4 insurer | Nigeria | Restricted terms output |
+| 07 | Tier 4 telecom | Tanzania | DDoS dominant |
+| 08 | Tier 5 SME | Cote d'Ivoire | Declination threshold |
+| 09 | Tier 5 healthcare | Zimbabwe | HIPAA analogue gaps |
+| 10 | Tier 2 education | South Africa | FSCA regulatory context |
 
 ---
 
-## 10. Calibration & validation
+## Prior Sources
 
-- **Unit tests** - `tests/test_*.py`, 43 passed + 1 skipped (the skipped one requires the ML artefact to be trained).
-- **Backtest** - `tests/backtest/cases/*.yaml`, 10 reference cases spanning Tier 1 banks to Tier 5 SMEs, NG / ZA / KE / GH / EG / TZ / CI / ZW. Each case asserts tier, score band, and EL band. Currently 10 / 10.
-- **Monte Carlo** - N = 10,000 simulations per run (deterministic with `--seed`).
-- **Refreshing priors** - `python -m cida.cli update-priors --claims path/to/claims.csv` runs Gamma + Lognormal posterior updates and writes back to `priors/global.yaml`.
+**Global** (frequency and severity priors): Verizon DBIR, NetDiligence Cyber Claims, Coalition Cyber Claims Report, IBM/Ponemon Cost of a Data Breach, Sophos State of Ransomware, Hiscox Cyber Readiness Report, FBI IC3 Internet Crime Report, ENISA Threat Landscape, Mandiant M-Trends, CrowdStrike Global Threat Report, Cyentia IRIS, Munich Re Cyber, CRO Forum Cyber Risk, Chainalysis Crypto Crime Report, Dragos Year in Review, CBN Annual Report, NDPC Enforcement Actions, POPIA Information Regulator Annual Report, AON Cyber Risk Report.
 
----
-
-## 11. Known limitations & roadmap
-
-1. **PDF render** falls back to HTML when `xhtml2pdf` chokes on the nested `@page { @bottom-center { ... } }` CSS rule. Fix: rewrite footer using `<pdf:pagenumber/>` syntax OR install `weasyprint` as the primary renderer.
-2. **ML residual is neutral** until trained on real African claim data.
-3. **Vector matrix calibration** is best-effort from public 2024 industry reports. As pilot carriers feed back claims, the matrix should be re-fit (left as a `update-priors`-style command).
-4. **Control catalog** is 41 controls; mapping `threat_vectors:` explicitly on each (instead of relying on the domain fallback) would tighten vector scoring.
-5. **Posture / regulatory layer** is parallel to risk scoring; a future build should blend regulatory deficiencies directly into `regulatory_penalties` frequency lift instead of treating them as separate report sections.
+**Africa-specific** (frequency overlays): Interpol Africa Cybercrime Assessment, Serianu Africa Cybersecurity Report, GSMA Mobile Money, Mastercard Africa Fraud Report, Smile ID Digital Identity Report, KE-CIRT Threat Intelligence, ngCERT Annual Report, CSEAN Nigeria Cybersecurity, AON Africa Report, African Development Bank Digital Finance data.
 
 ---
 
-## 12. Glossary
+## Glossary
 
-- **ThreatVector** - one of 14 technical exposure areas an attacker can exploit.
-- **LossDriver** - one of 10 insurance coverage lines (what the carrier actually pays out for).
-- **Tier 1-5** - overall risk grading (Excellent → High Risk) from `score_organization`.
-- **EL** - expected annual loss (USD), aggregate across all drivers.
-- **VaR₉₅** - 95th percentile of aggregate annual loss.
-- **TVaR₉₉** - mean loss conditional on exceeding the 99th percentile (tail-VaR).
-- **Disclosure correction** - multiplier compensating for African under-reporting (continental mean 3.5×, capped at 2.0× in the actuarial path to avoid compounding explosion).
-- **Confidence (HIGH / MEDIUM / LOW)** - telemetry-grounding of a vector score.
-- **Peer baseline** - combined vector multiplier evaluated at vector score = 40, the empirical book average.
+**CVE** - Common Vulnerabilities and Exposures. A public identifier for a known software vulnerability.
+
+**EPSS** - Exploit Prediction Scoring System. A probability score (0 to 1) for how likely a CVE is to be exploited within 30 days.
+
+**Expected Annual Loss (EL)** - The average total loss expected per year across all covered cyber incidents.
+
+**KEV** - CISA Known Exploited Vulnerabilities. CVEs with confirmed active exploitation in the wild.
+
+**Loss Driver** - One of ten insurance coverage lines: what the carrier actually pays out for.
+
+**Monte Carlo simulation** - A technique that runs thousands of random scenarios to estimate a probability distribution. CIDA runs 10,000 simulations per assessment.
+
+**NDPR** - Nigeria Data Protection Regulation (2019), superseded by NDPA 2023.
+
+**POPIA** - Protection of Personal Information Act. South Africa's primary data protection legislation.
+
+**Threat Vector** - One of fourteen technical attack pathways an attacker can exploit.
+
+**Tier** - A 1-5 risk grade assigned by CIDA. Tier 1 is the best risk; Tier 5 is the highest.
+
+**TVaR99** - Tail Value at Risk at the 99th percentile. The Maximum Probable Loss presented to the underwriter.
+
+**VaR95** - Value at Risk at the 95th percentile. The loss level exceeded only 5% of simulated years.
+
+**YOA** - Year of Assessment. The client-facing report format.
