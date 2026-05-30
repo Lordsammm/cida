@@ -1,0 +1,12 @@
+id: IPEC
+name: Insurance and Pensions Commission
+type: insurance
+scope: national
+country: ZW
+website: https://www.ipec.co.zw
+directives:
+  - id: IPEC-Cyber-Directive
+    name: Cyber and Data Protection Directive (per CDPA 2021)
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

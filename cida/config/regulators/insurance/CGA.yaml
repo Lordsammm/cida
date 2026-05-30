@@ -1,0 +1,12 @@
+id: CGA
+name: Comité Général des Assurances (Tunisie)
+type: insurance
+scope: national
+country: TN
+website: http://www.cga.gov.tn
+directives:
+  - id: CGA-Cyber-Circular
+    name: Circulaire sur la cybersécurité
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

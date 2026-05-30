@@ -1,0 +1,18 @@
+id: pci-dss-v4
+name: PCI DSS v4.0
+publisher: PCI Security Standards Council
+year: 2022
+url: https://www.pcisecuritystandards.org
+requirements:
+  - "1": Install and maintain network security controls
+  - "2": Apply secure configurations
+  - "3": Protect stored account data
+  - "4": Protect cardholder data with strong cryptography during transmission
+  - "5": Protect all systems and networks from malicious software
+  - "6": Develop and maintain secure systems and software
+  - "7": Restrict access by business need to know
+  - "8": Identify users and authenticate access
+  - "9": Restrict physical access
+  - "10": Log and monitor all access
+  - "11": Test security of systems and networks regularly
+  - "12": Support information security with organizational policies and programs

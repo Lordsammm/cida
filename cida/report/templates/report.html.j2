@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CIDA Risk Assessment — {{ report.org.name }}</title>
+<style>
+  @page { size: A4; margin: 18mm 15mm; @bottom-center { content: "CIDA — Cyber Intelligence Decision Algorithm  •  Page " counter(page) " of " counter(pages); font-size: 9pt; color: #666; } }
+  body { font-family: "Helvetica", "Arial", sans-serif; color: #1a1a1a; font-size: 10.5pt; line-height: 1.45; }
+  h1 { color: #0b3d91; font-size: 22pt; margin: 0 0 4px 0; }
+  h2 { color: #0b3d91; font-size: 14pt; border-bottom: 2px solid #0b3d91; padding-bottom: 3px; margin-top: 24px; }
+  h3 { color: #333; font-size: 12pt; margin-top: 14px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #0b3d91; padding-bottom: 10px; margin-bottom: 10px; }
+  .brand { font-weight: bold; color: #0b3d91; }
+  .disclaimer { background: #fff8e1; border-left: 4px solid #f9a825; padding: 8px 12px; font-size: 9.5pt; margin: 12px 0 20px; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-top: 6px; }
+  .meta-grid div span { color: #555; }
+  .score-box { display: flex; gap: 18px; margin: 14px 0; align-items: stretch; }
+  .score-card { flex: 1; border: 1px solid #ddd; border-radius: 6px; padding: 12px 14px; background: #fafbff; }
+  .score-card .label { font-size: 9pt; text-transform: uppercase; color: #666; letter-spacing: .5px; }
+  .score-card .value { font-size: 26pt; font-weight: bold; color: #0b3d91; }
+  .tier-1 { color: #1b5e20; } .tier-2 { color: #2e7d32; } .tier-3 { color: #ef6c00; } .tier-4 { color: #d84315; } .tier-5 { color: #b71c1c; }
+  table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 8px 0; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #eef2fb; color: #0b3d91; font-weight: 600; }
+  .bar { height: 14px; background: linear-gradient(90deg, #b71c1c 0%, #f9a825 50%, #2e7d32 100%); position: relative; border-radius: 3px; }
+  .bar .ind { position: absolute; top: -2px; width: 2px; height: 18px; background: #000; }
+  .right { text-align: right; }
+  .small { font-size: 9pt; color: #555; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9pt; font-weight: 600; }
+  .pill-crit { background: #ffebee; color: #b71c1c; }
+  .pill-high { background: #fff3e0; color: #d84315; }
+  .pill-med  { background: #fffde7; color: #f57f17; }
+  .pill-low  { background: #e8f5e9; color: #1b5e20; }
+  /* ---- Risk-summary (Coalition-style) ---- */
+  .rs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin: 10px 0 4px; }
+  .rs-card { border: 1px solid #ddd; border-radius: 6px; padding: 10px 12px; background: #fff; }
+  .rs-card .lbl { font-size: 8.5pt; text-transform: uppercase; color: #666; letter-spacing: .5px; }
+  .rs-card .v   { font-size: 22pt; font-weight: bold; color: #0b3d91; line-height: 1.1; }
+  .rs-card .sub { font-size: 9pt; color: #555; margin-top: 2px; }
+  .rs-band-LOW      { color: #1b5e20; }
+  .rs-band-MODERATE { color: #2e7d32; }
+  .rs-band-ELEVATED { color: #ef6c00; }
+  .rs-band-HIGH     { color: #d84315; }
+  .rs-band-SEVERE   { color: #b71c1c; }
+  .rs-risk-bar { height: 16px; border-radius: 3px;
+                 background: linear-gradient(90deg, #2e7d32 0%, #f9a825 50%, #b71c1c 100%);
+                 position: relative; }
+  .rs-risk-bar .marker { position: absolute; top: -3px; width: 3px; height: 22px; background: #000; }
+  .sev-box { display: inline-block; min-width: 70px; padding: 6px 10px; border-radius: 4px;
+             text-align: center; font-weight: 600; margin-right: 6px; color: #fff; font-size: 10pt; }
+  .sev-critical { background: #b71c1c; }
+  .sev-high     { background: #d84315; }
+  .sev-medium   { background: #f9a825; color: #1a1a1a; }
+  .sev-low      { background: #2e7d32; }
+  .sev-info     { background: #607d8b; }
+  .status-SECURE        { color: #1b5e20; font-weight: 600; }
+  .status-AT_RISK       { color: #b71c1c; font-weight: 600; }
+  .status-NOT_AVAILABLE { color: #999;    font-style: italic; }
+  .status-NOT_ENABLED   { color: #999;    font-style: italic; }
+  /* ---- Incident probability cards ---- */
+  .inc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; }
+  .inc-card { border: 1px solid #ddd; border-radius: 6px; padding: 12px 14px; background: #fff; text-align: center; }
+  .inc-card .inc-label { font-size: 9pt; text-transform: uppercase; color: #555; letter-spacing: .4px; margin-bottom: 4px; }
+  .inc-card .inc-pct { font-size: 28pt; font-weight: bold; line-height: 1.1; }
+  .inc-card .inc-name { font-size: 9.5pt; color: #444; margin-top: 3px; }
+  .inc-low  { color: #1b5e20; } .inc-med  { color: #ef6c00; }
+  .inc-high { color: #d84315; } .inc-sev  { color: #b71c1c; }
+  /* ---- Underwriting conditions / exclusions ---- */
+  .uw-section { margin: 12px 0; }
+  .uw-item { padding: 7px 10px; border-left: 4px solid #0b3d91; margin: 5px 0; font-size: 10pt; background: #f5f8ff; }
+  .uw-item-excl { border-left-color: #d84315; background: #fff3e0; }
+  .uw-item-flag { border-left-color: #b71c1c; background: #ffebee; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>CIDA Risk Assessment</h1>
+    <div class="brand">Cyber Intelligence Decision Algorithm</div>
+  </div>
+  <div class="small right">
+    Generated: {{ report.generated_at.strftime("%Y-%m-%d %H:%M UTC") }}<br/>
+    Report ID: {{ report.org.org_id }}
+  </div>
+</div>
+
+<div class="disclaimer">
+  <strong>Underwriting Decision Support — Not a Quote.</strong> {{ report.disclaimer }}
+</div>
+
+<h2>1. Insured Profile</h2>
+<div class="meta-grid">
+  <div><span>Organization:</span> <strong>{{ report.org.name }}</strong></div>
+  <div><span>Sector:</span> {{ report.org.sector }}</div>
+  <div><span>Country:</span> {{ report.org.country }}</div>
+  <div><span>Employees:</span> {{ report.org.employees }}</div>
+  <div><span>Annual revenue (USD):</span> {{ report.org.annual_revenue_usd | fmt_usd }}</div>
+  <div><span>Data sensitivity:</span> {{ report.org.data_sensitivity }}</div>
+  <div><span>Public-facing assets:</span> {{ report.org.public_facing_assets }}</div>
+  <div><span>Regulated data:</span> {{ report.org.regulated_data_types | join(", ") or "—" }}</div>
+</div>
+
+{% if report.risk_summary %}
+{% set rs = report.risk_summary %}
+<h2>2. Risk Summary</h2>
+
+<div class="rs-grid">
+  <div class="rs-card">
+    <div class="lbl">Security Posture</div>
+    <div class="v rs-band-{{ rs.risk_band }}">{{ "%.0f"|format(rs.risk_score) }}%</div>
+    <div class="sub"><strong>{{ rs.risk_band }} RISK</strong> &nbsp;·&nbsp; Tier {{ report.tier.tier }} — {{ report.tier.label }}</div>
+  </div>
+  <div class="rs-card">
+    <div class="lbl">Likelihood vs Peer</div>
+    <div class="v">{{ "%.1f"|format(rs.likelihood_multiplier_vs_peer) }}×</div>
+    <div class="sub">{% if rs.likelihood_multiplier_vs_peer < 1.0 %}Less likely{% elif rs.likelihood_multiplier_vs_peer > 1.0 %}More likely{% else %}As likely{% endif %} than a typical {{ report.org.sector }} peer to experience a cyber incident.</div>
+  </div>
+  <div class="rs-card">
+    <div class="lbl">Composite Loss (Median)</div>
+    <div class="v">{{ rs.composite_loss_p50_usd | fmt_usd }}</div>
+    <div class="sub">1-in-10-yr: {{ rs.composite_loss_p90_usd | fmt_usd }}<br/>1-in-100-yr: {{ rs.composite_loss_p99_usd | fmt_usd }}</div>
+  </div>
+  <div class="rs-card">
+    <div class="lbl">Expected Annual Loss</div>
+    <div class="v">{{ report.aggregate_expected_loss_usd | fmt_usd }}</div>
+    <div class="sub">Probability-weighted mean across all loss drivers.</div>
+  </div>
+</div>
+
+<div style="margin: 8px 0 4px;">
+  <div class="rs-risk-bar"><div class="marker" style="left: {{ rs.risk_score }}%;"></div></div>
+  <div class="small" style="display:flex; justify-content:space-between; margin-top:2px;">
+    <span>LOW RISK</span><span>MODERATE</span><span>ELEVATED</span><span>HIGH</span><span>SEVERE</span>
+  </div>
+</div>
+
+<h3>2.1 Estimated Loss by Cyber Incident Type</h3>
+<p class="small">Median = expected loss in a typical year. 1-in-10 / 1-in-100 are the 90th and 99th percentiles of the annual aggregate loss distribution from 10 000 Monte Carlo simulations.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Loss Driver</th>
+      <th class="right">Annual freq (λ)</th>
+      <th class="right">Median</th>
+      <th class="right">1-in-10-yr</th>
+      <th class="right">1-in-100-yr</th>
+      <th class="right">Expected loss</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for d in report.loss_estimates %}
+    <tr>
+      <td>{{ d.driver }}</td>
+      <td class="right">{{ "%.3f"|format(d.annual_frequency_mean) }}</td>
+      <td class="right">{{ d.aggregate_loss_p50_usd | fmt_usd }}</td>
+      <td class="right">{{ d.aggregate_loss_p90_usd | fmt_usd }}</td>
+      <td class="right">{{ d.aggregate_loss_p99_usd | fmt_usd }}</td>
+      <td class="right"><strong>{{ d.expected_annual_loss_usd | fmt_usd }}</strong></td>
+    </tr>
+  {% endfor %}
+    <tr style="background:#f3f6ff;">
+      <td><strong>Composite (all drivers)</strong></td>
+      <td class="right">{{ "%.3f"|format(rs.org_total_annual_frequency) }}</td>
+      <td class="right"><strong>{{ rs.composite_loss_p50_usd | fmt_usd }}</strong></td>
+      <td class="right"><strong>{{ rs.composite_loss_p90_usd | fmt_usd }}</strong></td>
+      <td class="right"><strong>{{ rs.composite_loss_p99_usd | fmt_usd }}</strong></td>
+      <td class="right"><strong>{{ report.aggregate_expected_loss_usd | fmt_usd }}</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>2.2 How Much Would a Cyber Incident Cost {{ report.org.name }}?</h3>
+<p>According to IBM's 2024 Cost of a Data Breach Report, the global average cost of a data breach reached $4.88 million, a 10% increase from the previous year. Ransomware attacks accounted for 27% of all cyber incidents, with the financial and healthcare sectors being primary targets.
+Using {{ report.org.name }}'s demographic and technical data, together with the comprehensive CIDA Assessment, we have modelled the probability of various cyber incidents. This analysis considers identified vulnerabilities, current security posture, and industry threat patterns for the <strong>{{ report.org.sector }}</strong> sector in <strong>{{ report.org.country }}</strong>.</p>
+
+{% if rs.incident_probabilities %}
+{% macro inc_class(p) %}{% if p < 30 %}inc-low{% elif p < 55 %}inc-med{% elif p < 75 %}inc-high{% else %}inc-sev{% endif %}{% endmacro %}
+<div class="inc-grid">
+  {% if rs.incident_probabilities.ransomware is defined %}
+  <div class="inc-card">
+    <div class="inc-label">Annual Probability</div>
+    <div class="inc-pct {{ inc_class(rs.incident_probabilities.ransomware) }}">{{ "%.0f"|format(rs.incident_probabilities.ransomware) }}%</div>
+    <div class="inc-name">Ransomware Risk</div>
+  </div>
+  {% endif %}
+  {% if rs.incident_probabilities.ddos is defined %}
+  <div class="inc-card">
+    <div class="inc-label">Annual Probability</div>
+    <div class="inc-pct {{ inc_class(rs.incident_probabilities.ddos) }}">{{ "%.0f"|format(rs.incident_probabilities.ddos) }}%</div>
+    <div class="inc-name">DDoS Risk</div>
+  </div>
+  {% endif %}
+  {% if rs.incident_probabilities.data_breach is defined %}
+  <div class="inc-card">
+    <div class="inc-label">Annual Probability</div>
+    <div class="inc-pct {{ inc_class(rs.incident_probabilities.data_breach) }}">{{ "%.0f"|format(rs.incident_probabilities.data_breach) }}%</div>
+    <div class="inc-name">Data Breach Risk</div>
+  </div>
+  {% endif %}
+  {% if rs.incident_probabilities.insider_threat is defined %}
+  <div class="inc-card">
+    <div class="inc-label">Annual Probability</div>
+    <div class="inc-pct {{ inc_class(rs.incident_probabilities.insider_threat) }}">{{ "%.0f"|format(rs.incident_probabilities.insider_threat) }}%</div>
+    <div class="inc-name">Insider Threat Risk</div>
+  </div>
+  {% endif %}
+  {% if rs.incident_probabilities.phishing is defined %}
+  <div class="inc-card">
+    <div class="inc-label">Annual Probability</div>
+    <div class="inc-pct {{ inc_class(rs.incident_probabilities.phishing) }}">{{ "%.0f"|format(rs.incident_probabilities.phishing) }}%</div>
+    <div class="inc-name">Phishing / BEC Risk</div>
+  </div>
+  {% endif %}
+  {% if rs.incident_probabilities.compliance is defined %}
+  <div class="inc-card">
+    <div class="inc-label">Annual Probability</div>
+    <div class="inc-pct {{ inc_class(rs.incident_probabilities.compliance) }}">{{ "%.0f"|format(rs.incident_probabilities.compliance) }}%</div>
+    <div class="inc-name">Compliance Risk</div>
+  </div>
+  {% endif %}
+</div>
+<p class="small">These percentages reflect a blended view that factors in identified technical vulnerabilities, the effectiveness of existing security controls, the broader threat environment, user behaviour, and the organisation's financial and market context. Each element contributes to modelling the likelihood of various cyber incidents using CIDA's Bayesian actuarial engine with 10,000 Monte Carlo simulations.</p>
+{% endif %}
+
+<h3>2.4 Attack Surface Analyzed</h3>
+<div class="rs-grid">
+  <div class="rs-card"><div class="lbl">Sub Domains</div><div class="v">{{ rs.attack_surface.sub_domains }}</div></div>
+  <div class="rs-card"><div class="lbl">IP Addresses</div><div class="v">{{ rs.attack_surface.ip_addresses }}</div></div>
+  <div class="rs-card"><div class="lbl">Applications</div><div class="v">{{ rs.attack_surface.applications }}</div></div>
+  <div class="rs-card"><div class="lbl">Services</div><div class="v">{{ rs.attack_surface.services }}</div></div>
+</div>
+
+<h3>2.5 Security Findings Severity</h3>
+<p>
+  <span class="sev-box sev-critical">CRITICAL<br/>{{ rs.finding_counts.critical }}</span>
+  <span class="sev-box sev-high">HIGH<br/>{{ rs.finding_counts.high }}</span>
+  <span class="sev-box sev-medium">MEDIUM<br/>{{ rs.finding_counts.medium }}</span>
+  <span class="sev-box sev-low">LOW<br/>{{ rs.finding_counts.low }}</span>
+  {% if rs.finding_counts.info %}<span class="sev-box sev-info">INFO<br/>{{ rs.finding_counts.info }}</span>{% endif %}
+</p>
+
+{% if rs.grouped_findings %}
+<h3>2.6 Top Findings (grouped)</h3>
+<table>
+  <thead><tr><th>Severity</th><th>Finding</th><th>Domain</th><th class="right">Assets affected</th></tr></thead>
+  <tbody>
+  {% for g in rs.grouped_findings %}
+    <tr>
+      <td><span class="pill pill-{{ g.severity[:3] }}">{{ g.severity | upper }}</span></td>
+      <td>{{ g.title }}</td>
+      <td class="small">{{ g.domain }}</td>
+      <td class="right">{{ g.asset_count }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h3>2.7 Complete Risk Posture</h3>
+<table>
+  <thead><tr><th>Indicator</th><th>Status</th><th class="right">Count</th><th>Detail</th></tr></thead>
+  <tbody>
+  {% for s in rs.posture_signals %}
+    <tr>
+      <td>{{ s.name }}</td>
+      <td><span class="status-{{ s.status }}">{{ s.status.replace("_", " ") }}</span></td>
+      <td class="right">{{ s.count if s.count else "—" }}</td>
+      <td class="small">{{ s.detail }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if rs.vector_scores %}
+<h3>2.8 Threat Vector Scores (14)</h3>
+<p class="small">Each vector is scored 0&ndash;100 where 100 = saturated exposure. <strong>Confidence</strong> reflects how much the score is grounded in hard telemetry versus self-attestation.</p>
+<table>
+  <thead><tr><th>Vector</th><th class="right">Score</th><th>Confidence</th><th class="right">Findings</th><th class="right">Controls</th><th>Top evidence</th></tr></thead>
+  <tbody>
+  {% for v in rs.vector_scores %}
+    <tr>
+      <td>{{ v.vector.value.replace("_", " ") | title }}</td>
+      <td class="right"><strong>{{ "%.0f" | format(v.score_0_100) }}</strong></td>
+      <td><span class="status-{{ 'SECURE' if v.confidence.value == 'high' else ('AT_RISK' if v.confidence.value == 'low' else 'NOT_ENABLED') }}">{{ v.confidence.value | upper }}</span></td>
+      <td class="right">{{ v.n_findings }}</td>
+      <td class="right">{{ v.n_controls }}</td>
+      <td class="small">{{ v.top_evidence | join("; ") if v.top_evidence else "—" }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if rs.top_likelihood_drivers %}
+<h3>2.9 Drivers of Likelihood</h3>
+<p class="small">The threat vectors lifting this organization's incident frequency the most above the peer baseline. Ranking weights each vector's matrix contribution by the prior frequency of the loss drivers it affects.</p>
+<table>
+  <thead><tr><th>Rank</th><th>Vector</th><th class="right">Lift (pts)</th><th>Confidence</th><th>Coverage lines lifted</th><th>Why</th></tr></thead>
+  <tbody>
+  {% for d in rs.top_likelihood_drivers %}
+    <tr>
+      <td class="right">{{ loop.index }}</td>
+      <td>{{ d.vector.value.replace("_", " ") | title }}</td>
+      <td class="right"><strong>+{{ "%.1f" | format(d.contribution_pts) }}</strong></td>
+      <td><span class="status-{{ 'SECURE' if d.confidence.value == 'high' else ('AT_RISK' if d.confidence.value == 'low' else 'NOT_ENABLED') }}">{{ d.confidence.value | upper }}</span></td>
+      <td class="small">{{ d.drivers_affected | map(attribute="value") | map("replace", "_", " ") | join(", ") }}</td>
+      <td class="small">{{ d.rationale }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endif %}
+
+{% if rs and rs.public_intel %}
+{% set pi = rs.public_intel %}
+<h3>2.10 Public Intelligence (Per-Assessment)</h3>
+<p class="small">
+  Real-time public-domain intelligence on <strong>{{ report.org.name }}</strong> aggregated from
+  Proshare and BusinessDay Intelligence. Headlines are tagged by category and feed
+  directly into per-driver frequency multipliers (e.g., a confirmed breach mention lifts
+  <em>privacy_liability</em> and <em>network_security_liability</em> frequencies).
+  Fetched at: {{ rs.intel_fetched_at }}.
+</p>
+<p class="small">
+  Headlines: <strong>{{ pi.counts.headlines }}</strong> &middot;
+  Breach/Fraud: <strong>{{ pi.counts.breach_mentions }}</strong> &middot;
+  Regulatory: <strong>{{ pi.counts.regulatory_actions }}</strong> &middot;
+  Executive Changes: <strong>{{ pi.counts.executive_changes }}</strong>
+</p>
+{% if pi.headlines %}
+<table>
+  <thead><tr><th>Date</th><th>Source</th><th>Title</th><th>Tags</th></tr></thead>
+  <tbody>
+  {% for h in pi.headlines %}
+    <tr>
+      <td class="small">{{ h.published or "—" }}</td>
+      <td class="small">{{ h.source }}</td>
+      <td class="small">{% if h.url %}<a href="{{ h.url }}">{{ h.title }}</a>{% else %}{{ h.title }}{% endif %}</td>
+      <td class="small">{{ (h.tags or []) | join(", ") or "—" }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="small"><em>No adverse media or regulator activity detected for {{ report.org.name }} in Proshare or BusinessDay Intelligence at assessment time.</em></p>
+{% endif %}
+{% endif %}
+
+<h2>3. Underwriting Snapshot</h2>
+<div class="score-box">
+  <div class="score-card">
+    <div class="label">Overall CIDA Score</div>
+    <div class="value">{{ report.overall_score }}</div>
+    <div class="small">90% CI: {{ report.overall_score_ci_low }} – {{ report.overall_score_ci_high }}</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Risk Tier</div>
+    <div class="value tier-{{ report.tier.tier }}">T{{ report.tier.tier }} — {{ report.tier.label }}</div>
+    <div class="small">{{ report.tier.description }}</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Expected Annual Loss</div>
+    <div class="value">{{ report.aggregate_expected_loss_usd | fmt_usd }}</div>
+    <div class="small">VaR₉₅: {{ report.aggregate_var_95_usd | fmt_usd }} &nbsp;|&nbsp; TVaR₉₉: {{ report.aggregate_tvar_99_usd | fmt_usd }}</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Technical Premium</div>
+    <div class="value">{{ report.premium.technical_premium_usd | fmt_usd }}</div>
+    <div class="small">vs. base rate {{ report.premium.base_rate_usd | fmt_usd }} &nbsp;|&nbsp; ×{{ report.premium.multiplier }}</div>
+  </div>
+</div>
+
+<h2>4. Control Domain Scores</h2>
+<table>
+  <thead><tr><th>Domain</th><th class="right">Score</th><th>Coverage</th><th class="right">Controls</th><th class="right">Tech penalty</th><th>Top gaps</th></tr></thead>
+  <tbody>
+  {% for d in report.domain_scores %}
+    <tr>
+      <td>{{ d.domain }}</td>
+      <td class="right"><strong>{{ d.score }}</strong></td>
+      <td><div class="bar"><div class="ind" style="left: {{ d.score }}%;"></div></div></td>
+      <td class="right">{{ d.n_passed }}/{{ d.n_controls }}</td>
+      <td class="right">−{{ d.technical_penalty }}</td>
+      <td class="small">{{ d.top_gaps | join(", ") or "—" }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>5. Premium Recommendation</h2>
+<table>
+  <tbody>
+    <tr><th>Technical premium (indicative)</th><td class="right"><strong>{{ report.premium.technical_premium_usd | fmt_usd }}</strong></td></tr>
+    <tr><th>Base sector rate</th><td class="right">{{ report.premium.base_rate_usd | fmt_usd }}</td></tr>
+    <tr><th>Multiplier vs. base</th><td class="right">×{{ report.premium.multiplier }}</td></tr>
+    <tr><th>Risk loading (variance)</th><td class="right">{{ report.premium.risk_loading | fmt_usd }}</td></tr>
+    <tr><th>Expense load (25%)</th><td class="right">{{ report.premium.expense_load | fmt_usd }}</td></tr>
+    <tr><th>Profit margin (10%)</th><td class="right">{{ report.premium.profit_margin | fmt_usd }}</td></tr>
+    <tr><th>Suggested aggregate limit</th><td class="right">{{ report.premium.suggested_aggregate_limit_usd | fmt_usd }}</td></tr>
+    <tr><th>Suggested retention (self-insured)</th><td class="right">{{ report.premium.suggested_retention_usd | fmt_usd }}</td></tr>
+    {% if report.premium.maximum_probable_loss_usd %}
+    <tr><th>Maximum Probable Loss (P99 / 1-in-100-yr)</th><td class="right"><strong>{{ report.premium.maximum_probable_loss_usd | fmt_usd }}</strong></td></tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% if report.premium.sub_limits %}
+<h3>Sub-limits by Coverage Line</h3>
+<table>
+  <thead><tr><th>Coverage Line</th><th class="right">Suggested sub-limit</th></tr></thead>
+  <tbody>
+    {% for k, v in report.premium.sub_limits.items() %}
+    <tr><td>{{ k }}</td><td class="right">{{ v | fmt_usd }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if report.premium.conditions_recommended %}
+<h3>Underwriting Conditions</h3>
+<p class="small">The following time-bound remediation conditions apply to this policy. Failure to comply may trigger a premium surcharge or coverage suspension.</p>
+<div class="uw-section">
+  {% for c in report.premium.conditions_recommended %}
+  <div class="uw-item">{{ c }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if report.premium.exclusions_recommended %}
+<h3>Recommended Exclusions</h3>
+<div class="uw-section">
+  {% for ex in report.premium.exclusions_recommended %}
+  <div class="uw-item uw-item-excl">{{ ex }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if report.premium.regulatory_risk_flags %}
+<h3>Regulatory Risk Flags</h3>
+<div class="uw-section">
+  {% for flag in report.premium.regulatory_risk_flags %}
+  <div class="uw-item uw-item-flag">⚠ {{ flag }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<h2>6. Compliance Posture</h2>
+<table>
+  <thead><tr><th>Framework</th><th class="right">Coverage</th><th class="right">Aligned</th><th>Top gaps</th></tr></thead>
+  <tbody>
+    {% for p in report.posture %}
+    <tr>
+      <td>{{ p.framework }}</td>
+      <td class="right"><strong>{{ p.coverage_pct | fmt_pct }}</strong></td>
+      <td class="right">{{ p.controls_aligned }}/{{ p.controls_total }}</td>
+      <td class="small">{{ p.top_gaps | join(", ") or "—" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>7. Technical Findings Summary</h2>
+<p>
+  {% for sev, n in report.findings_summary.by_severity.items() %}
+    {% if n > 0 %}<span class="pill pill-{{ sev[:3] }}">{{ sev }}: {{ n }}</span>&nbsp;{% endif %}
+  {% endfor %}
+  &nbsp;Total: <strong>{{ report.findings_summary.total }}</strong>
+  &nbsp;Unique CVEs: <strong>{{ report.findings_summary.unique_cves }}</strong>
+  &nbsp;KEV-listed: <strong>{{ report.findings_summary.kev_count }}</strong>
+</p>
+
+<h2>8. Remediation Roadmap</h2>
+<table>
+  <thead><tr><th>#</th><th>Control</th><th>Domain</th><th class="right">Score uplift</th><th class="right">Loss reduction</th><th>Effort</th><th>Citations</th></tr></thead>
+  <tbody>
+  {% for r in report.remediation %}
+    <tr>
+      <td>{{ r.priority_rank }}</td>
+      <td><strong>{{ r.control_id }}</strong> — <span class="small">{{ r.title }}</span></td>
+      <td>{{ r.domain }}</td>
+      <td class="right">+{{ r.score_uplift_potential }}</td>
+      <td class="right">{{ r.annual_loss_reduction_usd | fmt_usd }}</td>
+      <td>{{ r.effort }}</td>
+      <td class="small">{{ r.framework_citations | join(", ") }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>9. Methodology</h2>
+<p class="small">
+CIDA combines questionnaire responses, technical assessment findings (VAPT, vulnerability scans),
+external intelligence, and country/sector-specific actuarial priors to produce a holistic
+underwriting view. Domain scores use weighted-mean rollups; the overall score is a
+weighted geometric mean (penalizing any single weak domain). Loss estimates are produced by
+Bayesian hierarchical models: Poisson(λ) frequency with Gamma(α,β) priors per loss driver,
+multiplied by sector, country, and control-failure modifiers; Lognormal severity scaled by
+revenue<sup>0.45</sup>. {{ report.findings_summary.total }} technical findings were processed.
+Monte Carlo aggregation (10,000 iterations) yields Expected Loss, VaR₉₅, and TVaR₉₉.
+Priors are seeded from globally published loss data (Coalition, Chubb, NetDiligence, IBM,
+Cyentia) and adjusted with an Africa overlay reflecting disclosure-correction factors and
+mobile-money fraud exposure.
+</p>
+
+<p class="small" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 8px;">
+  <strong>{{ report.disclaimer }}</strong><br/>
+  © CIDA / Aajimatics — Proprietary. Distribution restricted to the requesting carrier.
+</p>
+
+</body>
+</html>

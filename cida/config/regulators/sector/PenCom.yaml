@@ -1,0 +1,12 @@
+id: PenCom
+name: National Pension Commission (Nigeria)
+type: sector
+scope: national
+country: NG
+website: https://www.pencom.gov.ng
+directives:
+  - id: PenCom-Cyber-Circular
+    name: Cybersecurity Framework for Licensed Pension Operators
+    cyber_relevant_sections:
+      - section: Cyber baseline for PFAs/PFCs
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16] }

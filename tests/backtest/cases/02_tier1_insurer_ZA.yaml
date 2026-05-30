@@ -1,0 +1,58 @@
+org:
+  org_id: REF-T1-ZA-INS
+  name: "Reference: Tier-1 South African Insurer (FSCA JS1-compliant)"
+  sector: insurance
+  country: ZA
+  employees: 2000
+  annual_revenue_usd: 380000000
+  data_sensitivity: high
+  regulated_data_types: [PII, POPIA]
+  public_facing_assets: 18
+expected:
+  tier_in: [1, 2]
+  overall_score_range: [75, 100]
+  el_range_usd: [100000, 15000000]
+  notes: "Top-quartile SA insurer; full POPIA + FSCA JS1 program."
+responses:
+  - {control_id: GOV-001, answer: yes}
+  - {control_id: GOV-002, answer: yes}
+  - {control_id: GOV-003, answer: 5}
+  - {control_id: GOV-004, answer: yes}
+  - {control_id: GOV-005, answer: 4}
+  - {control_id: IAM-001, answer: yes}
+  - {control_id: IAM-002, answer: yes}
+  - {control_id: IAM-003, answer: yes}
+  - {control_id: IAM-004, answer: 5}
+  - {control_id: IAM-005, answer: yes}
+  - {control_id: AST-001, answer: yes}
+  - {control_id: AST-002, answer: 4}
+  - {control_id: AST-003, answer: yes}
+  - {control_id: AST-004, answer: yes}
+  - {control_id: AST-005, answer: yes}
+  - {control_id: NET-001, answer: yes}
+  - {control_id: NET-002, answer: 5}
+  - {control_id: NET-003, answer: yes}
+  - {control_id: NET-004, answer: yes}
+  - {control_id: END-001, answer: yes}
+  - {control_id: END-002, answer: 4}
+  - {control_id: END-003, answer: yes}
+  - {control_id: END-004, answer: 4}
+  - {control_id: APP-001, answer: yes}
+  - {control_id: APP-002, answer: 4}
+  - {control_id: APP-003, answer: yes}
+  - {control_id: APP-004, answer: yes}
+  - {control_id: CLD-001, answer: yes}
+  - {control_id: CLD-002, answer: 5}
+  - {control_id: CLD-003, answer: yes}
+  - {control_id: TPR-001, answer: 4}
+  - {control_id: TPR-002, answer: yes}
+  - {control_id: TPR-003, answer: yes}
+  - {control_id: DET-001, answer: yes}
+  - {control_id: DET-002, answer: 5}
+  - {control_id: DET-003, answer: yes}
+  - {control_id: DET-004, answer: 5}
+  - {control_id: DET-005, answer: yes}
+  - {control_id: RES-001, answer: yes}
+  - {control_id: RES-002, answer: yes}
+  - {control_id: RES-003, answer: 5}
+findings: []

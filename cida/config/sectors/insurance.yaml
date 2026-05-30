@@ -1,0 +1,20 @@
+name: insurance
+description: Insurance sector overlay (carriers, brokers, MGA, reinsurance)
+base_frequency_multipliers:
+  bec: 1.30
+  ransomware: 1.20
+  data_breach: 1.50      # PII-heavy
+  ddos: 0.90
+  insider: 1.20
+  third_party: 1.30
+  mobile_money_fraud: 0.40
+severity_multipliers:
+  bec: 1.20
+  ransomware: 1.30
+  data_breach: 1.60      # heavy regulatory + class-action exposure
+  ddos: 1.00
+  insider: 1.30
+  third_party: 1.20
+  mobile_money_fraud: 0.50
+required_frameworks: [nist-csf-2.0, iso-27001-2022, malabo-convention]
+additional_controls: []

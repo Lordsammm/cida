@@ -1,0 +1,12 @@
+id: ISSM
+name: Instituto de Supervisão de Seguros de Moçambique
+type: insurance
+scope: national
+country: MZ
+website: https://www.issm.gov.mz
+directives:
+  - id: ISSM-Cyber-Norm
+    name: Norma de Segurança Cibernética
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

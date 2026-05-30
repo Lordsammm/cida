@@ -1,0 +1,20 @@
+name: fintech
+description: Fintech, payment processors, neobanks, mobile money operators
+base_frequency_multipliers:
+  bec: 1.50
+  ransomware: 1.20
+  data_breach: 1.60
+  ddos: 1.40
+  insider: 1.30
+  third_party: 1.40
+  mobile_money_fraud: 3.00    # primary exposure
+severity_multipliers:
+  bec: 1.40
+  ransomware: 1.20
+  data_breach: 1.60
+  ddos: 1.30
+  insider: 1.40
+  third_party: 1.30
+  mobile_money_fraud: 1.50
+required_frameworks: [nist-csf-2.0, iso-27001-2022, pci-dss-v4]
+additional_controls: []

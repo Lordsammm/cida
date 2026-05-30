@@ -1,0 +1,602 @@
+# CIDA Master Control Catalog v1.0
+# Each control:
+#   - is the unit of scoring
+#   - maps to question(s) in the onboarding questionnaire
+#   - crosswalks to every relevant framework
+#   - declares which loss drivers it influences (and by what multiplier when FAILED)
+#
+# Multipliers are applied to base lambda. A multiplier of 2.0 means absence of this
+# control DOUBLES the annual frequency of the named loss driver. Multipliers are
+# sourced from Cyentia IRIS, Coalition claims studies, IBM Cost of a Data Breach,
+# SOA cyber research, and NetDiligence. Refine with proprietary data over time.
+
+version: "1.0.0"
+controls:
+  # =========================================================================
+  # DOMAIN 1: GOVERNANCE & RISK
+  # =========================================================================
+  - control_id: GOV-001
+    domain: governance
+    question_text: "Does the organization have a board-approved cybersecurity strategy reviewed at least annually?"
+    response_type: yes_no
+    weight: 1.5
+    loss_driver_modifiers:
+      ransomware: 1.4
+      data_breach: 1.3
+      bec: 1.2
+    crosswalk:
+      nist_csf_2_0: [GV.OC-01, GV.SF-01, GV.SF-02]
+      iso_27001_2022: [A.5.1, A.5.2]
+      cis_v8: ["14.1"]
+      soc2_tsc: [CC1.2, CC2.1]
+      fsca_js1_2023: ["5.1", "5.2"]
+    guidance: "Look for a written, dated, board-minuted strategy. Verbal commitment is insufficient."
+
+  - control_id: GOV-002
+    domain: governance
+    question_text: "Is there a designated CISO or equivalent with direct reporting line to executive leadership/board?"
+    response_type: yes_no
+    weight: 1.2
+    loss_driver_modifiers:
+      ransomware: 1.3
+      data_breach: 1.2
+    crosswalk:
+      nist_csf_2_0: [GV.RR-01, GV.RR-02]
+      iso_27001_2022: [A.5.3, A.6.2]
+      cis_v8: ["14.1"]
+      fsca_js1_2023: ["5.3"]
+
+  - control_id: GOV-003
+    domain: governance
+    question_text: "Has the organization conducted a formal cyber risk assessment in the past 12 months?"
+    response_type: yes_no
+    weight: 1.3
+    loss_driver_modifiers:
+      ransomware: 1.4
+      data_breach: 1.3
+      third_party: 1.5
+    crosswalk:
+      nist_csf_2_0: [ID.RA-01, ID.RA-04, ID.RA-05]
+      iso_27001_2022: [A.5.7, A.5.8]
+      cis_v8: ["17.1"]
+      pci_dss_v4: ["12.3"]
+
+  - control_id: GOV-004
+    domain: governance
+    question_text: "Are cybersecurity policies documented, communicated, and reviewed at least annually?"
+    response_type: scale_1_5
+    weight: 1.0
+    loss_driver_modifiers:
+      insider: 1.3
+      data_breach: 1.2
+    crosswalk:
+      nist_csf_2_0: [GV.PO-01, GV.PO-02]
+      iso_27001_2022: [A.5.1]
+      cis_v8: ["14.4"]
+
+  - control_id: GOV-005
+    domain: governance
+    question_text: "Does the organization carry cyber insurance, and is its cyber program reviewed by the insurer?"
+    response_type: yes_no
+    weight: 0.5
+    crosswalk:
+      nist_csf_2_0: [GV.RM-04]
+      iso_27001_2022: [A.5.5]
+
+  # =========================================================================
+  # DOMAIN 2: IDENTITY & ACCESS
+  # =========================================================================
+  - control_id: IAM-001
+    domain: identity
+    question_text: "Is MFA enforced on all internet-exposed systems (email, VPN, admin consoles, cloud)?"
+    response_type: yes_no
+    weight: 2.0
+    loss_driver_modifiers:
+      bec: 3.0           # MFA is the single strongest BEC control
+      ransomware: 2.0
+      data_breach: 2.0
+    crosswalk:
+      nist_csf_2_0: [PR.AA-01, PR.AA-03, PR.AA-04]
+      iso_27001_2022: [A.5.16, A.8.5]
+      cis_v8: ["6.3", "6.4", "6.5"]
+      soc2_tsc: [CC6.1]
+      pci_dss_v4: ["8.4", "8.5"]
+      hipaa_security: ["164.312(a)(2)(i)"]
+      fsca_js1_2023: ["6.4"]
+
+  - control_id: IAM-002
+    domain: identity
+    question_text: "Is MFA enforced for all privileged/administrative accounts (including local admin)?"
+    response_type: yes_no
+    weight: 1.8
+    loss_driver_modifiers:
+      ransomware: 2.5
+      data_breach: 2.0
+      insider: 1.6
+    crosswalk:
+      nist_csf_2_0: [PR.AA-05]
+      iso_27001_2022: [A.8.2]
+      cis_v8: ["6.5"]
+      pci_dss_v4: ["8.4.2"]
+
+  - control_id: IAM-003
+    domain: identity
+    question_text: "Is a Privileged Access Management (PAM) solution deployed with credential vaulting and session recording?"
+    response_type: yes_no
+    weight: 1.3
+    loss_driver_modifiers:
+      ransomware: 1.6
+      insider: 2.0
+    crosswalk:
+      nist_csf_2_0: [PR.AA-05]
+      iso_27001_2022: [A.8.2]
+      cis_v8: ["6.7", "6.8"]
+      fsca_js1_2023: ["6.5"]
+
+  - control_id: IAM-004
+    domain: identity
+    question_text: "Are user access rights reviewed at least quarterly with attestation by managers?"
+    response_type: scale_1_5
+    weight: 1.0
+    loss_driver_modifiers:
+      insider: 1.7
+      data_breach: 1.3
+    crosswalk:
+      nist_csf_2_0: [PR.AA-04]
+      iso_27001_2022: [A.5.18, A.8.18]
+      cis_v8: ["6.2"]
+
+  - control_id: IAM-005
+    domain: identity
+    question_text: "Is SSO (Single Sign-On) implemented across major SaaS applications?"
+    response_type: yes_no
+    weight: 0.8
+    loss_driver_modifiers:
+      bec: 1.3
+    crosswalk:
+      nist_csf_2_0: [PR.AA-01]
+      iso_27001_2022: [A.5.16]
+      cis_v8: ["6.7"]
+
+  # =========================================================================
+  # DOMAIN 3: ASSET & DATA
+  # =========================================================================
+  - control_id: AST-001
+    domain: asset_data
+    question_text: "Does the organization maintain a current, complete inventory of hardware and software assets?"
+    response_type: scale_1_5
+    weight: 1.3
+    loss_driver_modifiers:
+      ransomware: 1.5
+      data_breach: 1.3
+    crosswalk:
+      nist_csf_2_0: [ID.AM-01, ID.AM-02]
+      iso_27001_2022: [A.5.9, A.5.10]
+      cis_v8: ["1.1", "1.2", "2.1", "2.2"]
+
+  - control_id: AST-002
+    domain: asset_data
+    question_text: "Is data classified by sensitivity with documented handling requirements per class?"
+    response_type: scale_1_5
+    weight: 1.2
+    loss_driver_modifiers:
+      data_breach: 1.5
+      insider: 1.4
+    crosswalk:
+      nist_csf_2_0: [ID.AM-07, PR.DS-01]
+      iso_27001_2022: [A.5.12, A.5.13]
+      cis_v8: ["3.1", "3.2"]
+      gdpr: [Art.5, Art.30]
+      ndpr_ndpa: [§24]
+      popia: ["§19"]
+
+  - control_id: AST-003
+    domain: asset_data
+    question_text: "Is sensitive data encrypted at rest using strong, current standards (AES-256+)?"
+    response_type: yes_no
+    weight: 1.5
+    loss_driver_modifiers:
+      data_breach: 2.0
+    crosswalk:
+      nist_csf_2_0: [PR.DS-01, PR.DS-02]
+      iso_27001_2022: [A.8.24]
+      cis_v8: ["3.11"]
+      pci_dss_v4: ["3.5"]
+      hipaa_security: ["164.312(a)(2)(iv)"]
+      gdpr: [Art.32]
+
+  - control_id: AST-004
+    domain: asset_data
+    question_text: "Is data encrypted in transit (TLS 1.2+, no insecure protocols)?"
+    response_type: yes_no
+    weight: 1.3
+    loss_driver_modifiers:
+      data_breach: 1.7
+      bec: 1.2
+    crosswalk:
+      nist_csf_2_0: [PR.DS-02]
+      iso_27001_2022: [A.8.24, A.8.20]
+      cis_v8: ["3.10"]
+      pci_dss_v4: ["4.2"]
+
+  - control_id: AST-005
+    domain: asset_data
+    question_text: "Is a DLP (Data Loss Prevention) solution deployed for email and endpoint?"
+    response_type: yes_no
+    weight: 1.0
+    loss_driver_modifiers:
+      data_breach: 1.4
+      insider: 1.5
+    crosswalk:
+      nist_csf_2_0: [PR.DS-05]
+      iso_27001_2022: [A.8.12]
+      cis_v8: ["3.13"]
+
+  # =========================================================================
+  # DOMAIN 4: NETWORK
+  # =========================================================================
+  - control_id: NET-001
+    domain: network
+    question_text: "Is the network segmented (separate zones for prod/dev/admin/OT) with enforced access controls between zones?"
+    response_type: scale_1_5
+    weight: 1.5
+    loss_driver_modifiers:
+      ransomware: 2.0      # segmentation strongly limits ransomware blast radius
+      insider: 1.4
+    crosswalk:
+      nist_csf_2_0: [PR.AA-06, PR.IR-01]
+      iso_27001_2022: [A.8.22]
+      cis_v8: ["12.1", "12.2"]
+      pci_dss_v4: ["1.4"]
+
+  - control_id: NET-002
+    domain: network
+    question_text: "Are firewalls deployed with documented rulesets reviewed at least quarterly?"
+    response_type: scale_1_5
+    weight: 1.0
+    loss_driver_modifiers:
+      ransomware: 1.3
+      ddos: 1.3
+    crosswalk:
+      nist_csf_2_0: [PR.IR-01]
+      iso_27001_2022: [A.8.20, A.8.21]
+      cis_v8: ["12.1", "12.4"]
+      pci_dss_v4: ["1.2"]
+
+  - control_id: NET-003
+    domain: network
+    question_text: "Is remote access protected by VPN with MFA, or a Zero Trust Network Access (ZTNA) solution?"
+    response_type: yes_no
+    weight: 1.4
+    loss_driver_modifiers:
+      ransomware: 1.7
+      data_breach: 1.5
+    crosswalk:
+      nist_csf_2_0: [PR.AA-03, PR.IR-01]
+      iso_27001_2022: [A.6.7, A.8.1]
+      cis_v8: ["12.7"]
+
+  - control_id: NET-004
+    domain: network
+    question_text: "Is DDoS protection deployed for internet-facing services (CDN, scrubbing, on-prem appliances)?"
+    response_type: yes_no
+    weight: 0.8
+    loss_driver_modifiers:
+      ddos: 2.5
+    crosswalk:
+      nist_csf_2_0: [PR.IR-04]
+      iso_27001_2022: [A.8.6]
+
+  # =========================================================================
+  # DOMAIN 5: ENDPOINT
+  # =========================================================================
+  - control_id: END-001
+    domain: endpoint
+    question_text: "Is a modern EDR/XDR (Endpoint Detection & Response) deployed on >95% of endpoints with active monitoring?"
+    response_type: scale_1_5
+    weight: 2.0
+    loss_driver_modifiers:
+      ransomware: 2.5
+      data_breach: 1.6
+      insider: 1.4
+    crosswalk:
+      nist_csf_2_0: [DE.CM-01, DE.CM-09]
+      iso_27001_2022: [A.8.7, A.8.16]
+      cis_v8: ["10.6", "10.7", "13.7"]
+      fsca_js1_2023: ["7.2"]
+
+  - control_id: END-002
+    domain: endpoint
+    question_text: "Are operating systems and applications patched within 30 days of critical patches for production, 7 days for KEV?"
+    response_type: scale_1_5
+    weight: 1.8
+    loss_driver_modifiers:
+      ransomware: 2.2
+      data_breach: 1.8
+    crosswalk:
+      nist_csf_2_0: [PR.PS-02, ID.RA-01]
+      iso_27001_2022: [A.8.8, A.8.9]
+      cis_v8: ["7.3", "7.4"]
+      pci_dss_v4: ["6.3.3"]
+
+  - control_id: END-003
+    domain: endpoint
+    question_text: "Are local administrator privileges removed from standard user accounts?"
+    response_type: yes_no
+    weight: 1.3
+    loss_driver_modifiers:
+      ransomware: 1.8
+      insider: 1.4
+    crosswalk:
+      nist_csf_2_0: [PR.AA-05]
+      iso_27001_2022: [A.8.2]
+      cis_v8: ["5.4"]
+
+  - control_id: END-004
+    domain: endpoint
+    question_text: "Is application allowlisting deployed on high-value endpoints (servers, finance workstations)?"
+    response_type: yes_no
+    weight: 0.9
+    loss_driver_modifiers:
+      ransomware: 1.6
+    crosswalk:
+      nist_csf_2_0: [PR.PS-01]
+      iso_27001_2022: [A.8.19]
+      cis_v8: ["2.5", "2.7"]
+
+  # =========================================================================
+  # DOMAIN 6: APPSEC
+  # =========================================================================
+  - control_id: APP-001
+    domain: appsec
+    question_text: "Does the SDLC require security review (SAST/SCA) before production deployment?"
+    response_type: scale_1_5
+    weight: 1.4
+    loss_driver_modifiers:
+      data_breach: 1.7
+    crosswalk:
+      nist_csf_2_0: [PR.PS-06, ID.RA-08]
+      iso_27001_2022: [A.8.25, A.8.28]
+      cis_v8: ["16.1", "16.11"]
+      pci_dss_v4: ["6.2"]
+
+  - control_id: APP-002
+    domain: appsec
+    question_text: "Are web applications subjected to annual penetration testing by a qualified third party?"
+    response_type: yes_no
+    weight: 1.2
+    loss_driver_modifiers:
+      data_breach: 1.5
+      ddos: 1.2
+    crosswalk:
+      nist_csf_2_0: [ID.RA-01]
+      iso_27001_2022: [A.8.29]
+      cis_v8: ["18.1", "18.2"]
+      pci_dss_v4: ["11.4"]
+
+  - control_id: APP-003
+    domain: appsec
+    question_text: "Is a Web Application Firewall (WAF) deployed for internet-facing applications?"
+    response_type: yes_no
+    weight: 1.0
+    loss_driver_modifiers:
+      data_breach: 1.4
+      ddos: 1.5
+    crosswalk:
+      nist_csf_2_0: [PR.IR-01]
+      iso_27001_2022: [A.8.26]
+      cis_v8: ["16.10"]
+
+  - control_id: APP-004
+    domain: appsec
+    question_text: "Are API security controls (rate limiting, auth, schema validation, OWASP API Top 10 review) implemented?"
+    response_type: scale_1_5
+    weight: 1.1
+    loss_driver_modifiers:
+      data_breach: 1.6
+      mobile_money_fraud: 1.8
+    crosswalk:
+      nist_csf_2_0: [PR.IR-01, PR.PS-06]
+      iso_27001_2022: [A.8.26, A.8.28]
+      cis_v8: ["16.10"]
+
+  # =========================================================================
+  # DOMAIN 7: CLOUD
+  # =========================================================================
+  - control_id: CLD-001
+    domain: cloud
+    question_text: "Is a CSPM tool (Prowler, ScoutSuite, native cloud security) continuously scanning cloud configurations?"
+    response_type: yes_no
+    weight: 1.2
+    loss_driver_modifiers:
+      data_breach: 1.7
+      ransomware: 1.3
+    crosswalk:
+      nist_csf_2_0: [DE.CM-01, ID.AM-08]
+      iso_27001_2022: [A.5.23, A.8.16]
+      cis_v8: ["12.4", "13.6"]
+
+  - control_id: CLD-002
+    domain: cloud
+    question_text: "Are cloud admin/root accounts MFA-protected with break-glass procedures documented?"
+    response_type: yes_no
+    weight: 1.5
+    loss_driver_modifiers:
+      data_breach: 2.2
+      ransomware: 1.8
+    crosswalk:
+      nist_csf_2_0: [PR.AA-05]
+      iso_27001_2022: [A.5.16, A.8.5]
+      cis_v8: ["6.5"]
+
+  - control_id: CLD-003
+    domain: cloud
+    question_text: "Are cloud storage buckets/blobs scanned for public exposure with auto-remediation on critical findings?"
+    response_type: yes_no
+    weight: 1.3
+    loss_driver_modifiers:
+      data_breach: 2.0
+    crosswalk:
+      nist_csf_2_0: [DE.CM-01, PR.DS-01]
+      iso_27001_2022: [A.5.23, A.8.3]
+      cis_v8: ["3.3", "13.6"]
+
+  # =========================================================================
+  # DOMAIN 8: THIRD-PARTY RISK
+  # =========================================================================
+  - control_id: TPR-001
+    domain: third_party
+    question_text: "Are vendors classified by risk tier with security assessments required before onboarding?"
+    response_type: scale_1_5
+    weight: 1.4
+    loss_driver_modifiers:
+      third_party: 2.0
+      data_breach: 1.4
+    crosswalk:
+      nist_csf_2_0: [GV.SC-01, GV.SC-04, GV.SC-06]
+      iso_27001_2022: [A.5.19, A.5.20, A.5.21]
+      cis_v8: ["15.1", "15.2"]
+      soc2_tsc: [CC9.2]
+      fsca_js1_2023: ["6.7"]
+
+  - control_id: TPR-002
+    domain: third_party
+    question_text: "Are critical-vendor contracts required to include security obligations, breach notification SLAs, and right-to-audit?"
+    response_type: yes_no
+    weight: 1.2
+    loss_driver_modifiers:
+      third_party: 1.7
+    crosswalk:
+      nist_csf_2_0: [GV.SC-05]
+      iso_27001_2022: [A.5.20]
+      cis_v8: ["15.4"]
+
+  - control_id: TPR-003
+    domain: third_party
+    question_text: "Is software supply chain risk managed (SBOM, dependency scanning, vendor SBOM requirements)?"
+    response_type: scale_1_5
+    weight: 1.0
+    loss_driver_modifiers:
+      third_party: 1.5
+      ransomware: 1.3
+    crosswalk:
+      nist_csf_2_0: [GV.SC-07, ID.RA-09]
+      iso_27001_2022: [A.5.23, A.8.30]
+      cis_v8: ["16.4"]
+
+  # =========================================================================
+  # DOMAIN 9: DETECT & RESPOND
+  # =========================================================================
+  - control_id: DET-001
+    domain: detect_respond
+    question_text: "Is centralized log collection and a SIEM in place with 24x7 monitoring (internal SOC or MSSP)?"
+    response_type: scale_1_5
+    weight: 1.6
+    loss_driver_modifiers:
+      ransomware: 1.8
+      data_breach: 2.0
+      insider: 1.6
+    crosswalk:
+      nist_csf_2_0: [DE.CM-01, DE.AE-02, DE.AE-03]
+      iso_27001_2022: [A.8.15, A.8.16]
+      cis_v8: ["8.2", "8.5", "8.11", "13.1"]
+      pci_dss_v4: ["10.4", "10.7"]
+      fsca_js1_2023: ["7.1", "7.3"]
+
+  - control_id: DET-002
+    domain: detect_respond
+    question_text: "Is there a documented Incident Response Plan, tested by tabletop or live exercise within the past 12 months?"
+    response_type: scale_1_5
+    weight: 1.5
+    loss_driver_modifiers:
+      ransomware: 1.6
+      data_breach: 1.5
+    crosswalk:
+      nist_csf_2_0: [RS.MA-01, RS.MA-02]
+      iso_27001_2022: [A.5.24, A.5.26]
+      cis_v8: ["17.1", "17.2", "17.7"]
+      hipaa_security: ["164.308(a)(6)"]
+      fsca_js1_2023: ["8.1", "8.3"]
+
+  - control_id: DET-003
+    domain: detect_respond
+    question_text: "Are threat intelligence feeds integrated into security operations (commercial, ISAC, open-source)?"
+    response_type: yes_no
+    weight: 0.8
+    loss_driver_modifiers:
+      ransomware: 1.3
+      bec: 1.2
+    crosswalk:
+      nist_csf_2_0: [ID.RA-02, ID.RA-03, DE.AE-07]
+      iso_27001_2022: [A.5.7]
+      cis_v8: ["13.1"]
+
+  - control_id: DET-004
+    domain: detect_respond
+    question_text: "Is email security hardened with SPF, DKIM, DMARC (enforced policy=reject/quarantine), and anti-phishing?"
+    response_type: scale_1_5
+    weight: 1.5
+    loss_driver_modifiers:
+      bec: 2.8        # huge BEC driver, especially in Africa where DMARC adoption is low
+      ransomware: 1.4
+    crosswalk:
+      nist_csf_2_0: [PR.DS-02, DE.CM-01]
+      iso_27001_2022: [A.8.23]
+      cis_v8: ["9.5", "9.6"]
+
+  - control_id: DET-005
+    domain: detect_respond
+    question_text: "Are security awareness training and simulated phishing conducted at least quarterly?"
+    response_type: scale_1_5
+    weight: 1.0
+    loss_driver_modifiers:
+      bec: 1.8
+      ransomware: 1.4
+    crosswalk:
+      nist_csf_2_0: [PR.AT-01, PR.AT-02]
+      iso_27001_2022: [A.6.3]
+      cis_v8: ["14.1", "14.2", "14.6"]
+      pci_dss_v4: ["12.6"]
+
+  # =========================================================================
+  # DOMAIN 10: RESILIENCE & RECOVERY
+  # =========================================================================
+  - control_id: RES-001
+    domain: resilience
+    question_text: "Are backups taken at least daily for critical systems and tested via restore at least quarterly?"
+    response_type: scale_1_5
+    weight: 1.8
+    loss_driver_modifiers:
+      ransomware: 2.5
+    crosswalk:
+      nist_csf_2_0: [PR.DS-11, RC.RP-01]
+      iso_27001_2022: [A.8.13]
+      cis_v8: ["11.1", "11.4", "11.5"]
+      pci_dss_v4: ["12.10.1"]
+      fsca_js1_2023: ["7.4"]
+
+  - control_id: RES-002
+    domain: resilience
+    question_text: "Are backups immutable (air-gapped, WORM, or object-lock) and stored offline/segregated from production credentials?"
+    response_type: yes_no
+    weight: 2.0
+    loss_driver_modifiers:
+      ransomware: 3.0   # single most impactful ransomware-severity control
+    crosswalk:
+      nist_csf_2_0: [PR.DS-11]
+      iso_27001_2022: [A.8.13]
+      cis_v8: ["11.3"]
+
+  - control_id: RES-003
+    domain: resilience
+    question_text: "Is a Business Continuity / Disaster Recovery Plan documented with defined RTO/RPO and tested annually?"
+    response_type: scale_1_5
+    weight: 1.4
+    loss_driver_modifiers:
+      ransomware: 1.6
+      ddos: 1.5
+    crosswalk:
+      nist_csf_2_0: [RC.RP-01, RC.RP-02, RC.CO-04]
+      iso_27001_2022: [A.5.29, A.5.30]
+      cis_v8: ["11.1"]
+      fsca_js1_2023: ["7.5"]

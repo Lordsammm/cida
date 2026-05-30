@@ -1,0 +1,18 @@
+id: IR-ZA
+name: Information Regulator (South Africa)
+type: data_protection
+scope: national
+country: ZA
+website: https://inforegulator.org.za
+directives:
+  - id: POPIA
+    name: Protection of Personal Information Act, 2013
+    enacted: 2013-11-26
+    effective: 2021-07-01
+    cyber_relevant_sections:
+      - section: § 19 Security safeguards
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02], iso_27001_2022: [A.5.34, A.8.24], popia: ["§19"] }
+      - section: § 22 Notification of security compromises
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24], popia: ["§22"] }
+reporting_requirements:
+  incident_notification_window_hours: 72

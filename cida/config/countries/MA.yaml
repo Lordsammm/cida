@@ -1,0 +1,33 @@
+iso_a2: MA
+iso_a3: MAR
+name: Morocco
+region: North Africa
+sub_region: North Africa
+currency: MAD
+official_languages:
+- ar
+- fr
+ccTLDs:
+- .ma
+disclosure_correction_factor: 2.8
+mobile_money_penetration: medium
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 1.75
+regulators:
+  insurance: ACAPS
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: CERT-MA
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.843
+  tier: T2

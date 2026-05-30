@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Cyber Risk Assessment — {{ report.org.name }}</title>
+<style>
+/* ===== PAGE SETUP ===== */
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm 18mm;
+  @bottom-left  { content: "CONFIDENTIAL — Prepared by Aajimatics for {{ report.org.name }}"; font-size: 8pt; color: #888; }
+  @bottom-right { content: "Page " counter(page) " of " counter(pages); font-size: 8pt; color: #888; }
+}
+@page cover { margin: 0; }
+@page section { margin: 20mm 18mm 22mm 18mm; }
+
+/* ===== BASE ===== */
+* { box-sizing: border-box; }
+body { font-family: "Helvetica Neue", "Arial", sans-serif; color: #1a1a1a; font-size: 10.5pt; line-height: 1.5; }
+
+/* ===== COVER PAGE ===== */
+.cover {
+  page: cover;
+  width: 100%; min-height: 297mm;
+  background: #0b3d91;
+  color: #fff;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center;
+  padding: 30mm 20mm;
+  page-break-after: always;
+}
+.cover .cover-logo { font-size: 11pt; letter-spacing: 3px; text-transform: uppercase; opacity: .7; margin-bottom: 14mm; }
+.cover .cover-title { font-size: 32pt; font-weight: 800; line-height: 1.1; margin-bottom: 8mm; }
+.cover .cover-sub   { font-size: 13pt; opacity: .85; margin-bottom: 20mm; }
+.cover .cover-for   { font-size: 9pt; letter-spacing: 2px; text-transform: uppercase; opacity: .6; }
+.cover .cover-org   { font-size: 22pt; font-weight: 700; margin-top: 3mm; }
+.cover .cover-date  { font-size: 9pt; opacity: .6; margin-top: 12mm; }
+.cover .cover-confid { font-size: 8pt; opacity: .5; margin-top: 4mm; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ===== TYPOGRAPHY ===== */
+h1 { color: #0b3d91; font-size: 20pt; margin: 0 0 6px 0; }
+h2 { color: #0b3d91; font-size: 14pt; border-bottom: 2.5px solid #0b3d91;
+     padding-bottom: 4px; margin-top: 28px; margin-bottom: 10px; page-break-after: avoid; }
+h3 { color: #0b3d91; font-size: 11pt; margin-top: 16px; margin-bottom: 6px; page-break-after: avoid; }
+p  { margin: 6px 0 10px; }
+
+/* ===== UTILITY ===== */
+.page-break { page-break-before: always; }
+.avoid-break { page-break-inside: avoid; }
+.small { font-size: 9pt; color: #666; }
+.right { text-align: right; }
+.bold  { font-weight: 600; }
+.muted { color: #888; }
+
+/* ===== BOXES ===== */
+.info-box {
+  background: #f0f4ff; border-left: 4px solid #0b3d91;
+  padding: 10px 14px; margin: 10px 0; border-radius: 0 4px 4px 0;
+}
+.warn-box {
+  background: #fff8e1; border-left: 4px solid #f9a825;
+  padding: 8px 12px; margin: 10px 0; font-size: 9.5pt;
+}
+.critical-box {
+  background: #ffebee; border-left: 4px solid #b71c1c;
+  padding: 8px 12px; margin: 10px 0;
+}
+
+/* ===== DISCLAIMER ===== */
+.disclaimer-section { font-size: 9pt; color: #555; line-height: 1.55; margin: 10px 0 20px; }
+.disclaimer-section p { margin: 6px 0; }
+
+/* ===== SECTION NUMBERS ===== */
+.sec-num { display: inline-block; background: #0b3d91; color: #fff;
+           border-radius: 50%; width: 22px; height: 22px; line-height: 22px;
+           text-align: center; font-size: 9pt; font-weight: 700;
+           margin-right: 6px; vertical-align: middle; }
+
+/* ===== RISK SUMMARY GRID ===== */
+.rs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+.rs-card { border: 1.5px solid #dde3f5; border-radius: 8px; padding: 12px 14px;
+           background: #fafbff; }
+.rs-card .lbl { font-size: 8pt; text-transform: uppercase; color: #888; letter-spacing: .5px; }
+.rs-card .val { font-size: 24pt; font-weight: 800; color: #0b3d91; line-height: 1.15; }
+.rs-card .sub { font-size: 9pt; color: #555; margin-top: 2px; }
+
+/* severity count boxes */
+.sev-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+.sev-box  { border-radius: 6px; padding: 10px 12px; color: #fff; text-align: center; }
+.sev-box .n  { font-size: 28pt; font-weight: 800; line-height: 1; }
+.sev-box .lbl { font-size: 8pt; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+.sev-critical { background: #b71c1c; }
+.sev-high     { background: #d84315; }
+.sev-medium   { background: #f9a825; }
+.sev-low      { background: #2e7d32; }
+
+/* assets covered */
+.assets-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+.asset-box { border: 1.5px solid #dde3f5; border-radius: 6px; padding: 10px 12px; text-align: center; background: #fafbff; }
+.asset-box .n   { font-size: 22pt; font-weight: 700; color: #0b3d91; }
+.asset-box .lbl { font-size: 8pt; text-transform: uppercase; color: #888; letter-spacing: .5px; margin-top: 2px; }
+
+/* risk bar */
+.risk-bar { height: 14px; border-radius: 4px;
+            background: linear-gradient(90deg, #2e7d32 0%, #f9a825 50%, #b71c1c 100%);
+            position: relative; margin: 8px 0; }
+.risk-bar .marker { position: absolute; top: -4px; width: 3px; height: 22px; background: #000; border-radius: 1px; }
+.rs-band-LOW      { color: #1b5e20; font-weight: 700; }
+.rs-band-MODERATE { color: #2e7d32; font-weight: 700; }
+.rs-band-ELEVATED { color: #ef6c00; font-weight: 700; }
+.rs-band-HIGH     { color: #d84315; font-weight: 700; }
+.rs-band-SEVERE   { color: #b71c1c; font-weight: 700; }
+
+/* ===== INCIDENT PROBABILITY CARDS ===== */
+.inc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+.inc-card { border: 1.5px solid #dde3f5; border-radius: 8px; padding: 14px 10px;
+            text-align: center; background: #fafbff; page-break-inside: avoid; }
+.inc-card .pct  { font-size: 30pt; font-weight: 800; line-height: 1.1; }
+.inc-card .name { font-size: 9pt; color: #555; margin-top: 4px; line-height: 1.3; }
+.pct-low  { color: #1b5e20; } /* < 30% */
+.pct-med  { color: #ef6c00; } /* 30-55% */
+.pct-high { color: #d84315; } /* 55-75% */
+.pct-sev  { color: #b71c1c; } /* > 75% */
+
+/* ===== EMAIL SECURITY ===== */
+.email-status-row { display: flex; gap: 10px; margin: 10px 0; }
+.email-badge { flex: 1; border-radius: 6px; padding: 10px 14px; text-align: center; color: #fff; font-weight: 700; font-size: 12pt; }
+.badge-pass { background: #1b5e20; }
+.badge-fail { background: #b71c1c; }
+.badge-na   { background: #888; }
+
+/* ===== FINDING CARDS ===== */
+.finding-card {
+  border: 1px solid #dde3f5; border-radius: 6px;
+  padding: 12px 16px; margin: 10px 0;
+  page-break-inside: avoid;
+}
+.finding-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+.finding-title  { font-weight: 600; font-size: 10.5pt; flex: 1; }
+.sev-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 8.5pt;
+             font-weight: 700; white-space: nowrap; color: #fff; }
+.sev-badge-critical { background: #b71c1c; }
+.sev-badge-high     { background: #d84315; }
+.sev-badge-medium   { background: #f9a825; color: #1a1a1a; }
+.sev-badge-low      { background: #2e7d32; }
+.sev-badge-info     { background: #607d8b; }
+.finding-desc       { font-size: 10pt; color: #333; margin: 6px 0; }
+.finding-assets     { font-size: 9.5pt; margin: 6px 0; }
+.finding-assets ul  { margin: 4px 0; padding-left: 18px; }
+.finding-rec        { font-size: 9.5pt; background: #f5f8ff; border-left: 3px solid #0b3d91;
+                      padding: 6px 10px; margin: 6px 0; }
+.finding-ref        { font-size: 9pt; color: #666; margin-top: 6px; }
+.finding-ref .ref-tag { display: inline-block; background: #eef2fb; border-radius: 3px;
+                         padding: 1px 6px; margin-right: 4px; font-size: 8.5pt; color: #0b3d91; }
+
+/* ===== TABLES ===== */
+table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 8px 0; }
+th, td { border: 1px solid #dde3f5; padding: 7px 9px; text-align: left; vertical-align: top; }
+th { background: #eef2fb; color: #0b3d91; font-weight: 600; }
+tr:nth-child(even) td { background: #f9faff; }
+
+/* ===== STATUS PILLS ===== */
+.pill { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 9pt; font-weight: 600; }
+.pill-pass { background: #e8f5e9; color: #1b5e20; }
+.pill-fail { background: #ffebee; color: #b71c1c; }
+.pill-na   { background: #f5f5f5; color: #888; }
+
+/* ===== POSTURE / COMPLIANCE ===== */
+.posture-row { display: flex; align-items: center; gap: 12px; padding: 8px 0;
+               border-bottom: 1px solid #f0f0f0; }
+.posture-name { flex: 1; font-weight: 600; }
+.posture-status-SECURE        { color: #1b5e20; font-weight: 700; }
+.posture-status-AT_RISK       { color: #b71c1c; font-weight: 700; }
+.posture-status-NOT_AVAILABLE { color: #999; font-style: italic; }
+.posture-status-NOT_ENABLED   { color: #999; font-style: italic; }
+.posture-detail { font-size: 9.5pt; color: #555; flex: 2; }
+
+/* ===== PASSWORD QUALITY ===== */
+.pw-bars { display: flex; gap: 0; height: 22px; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+.pw-bar-strong { background: #1b5e20; }
+.pw-bar-weak   { background: #f9a825; }
+.pw-bar-tooweak { background: #b71c1c; }
+
+/* ===== EVIDENCE APPENDIX ===== */
+.evidence-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0; }
+.evidence-card { border: 1px solid #dde3f5; border-radius: 6px; overflow: hidden; page-break-inside: avoid; }
+.evidence-card img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.evidence-card .ev-cap { padding: 6px 8px; font-size: 8.5pt; color: #555; background: #fafbff; }
+.evidence-card.svg-card { padding: 10px; text-align: center; background: #fafbff; }
+.evidence-card.svg-card img { height: 100px; object-fit: contain; }
+
+/* ===== FAQs / GLOSSARY ===== */
+.faq-item { margin: 10px 0; page-break-inside: avoid; }
+.faq-q { font-weight: 600; color: #0b3d91; }
+.faq-a { color: #333; margin-top: 3px; font-size: 10pt; }
+.gloss-term { font-weight: 600; color: #0b3d91; margin-top: 8px; }
+.gloss-def  { font-size: 10pt; color: #333; margin-left: 12px; }
+
+/* ===== EDUCATIONAL COVERAGE ===== */
+.coverage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+.coverage-card { border: 1.5px solid #dde3f5; border-radius: 8px; padding: 12px 14px; background: #fafbff; }
+.coverage-card h4 { color: #0b3d91; margin: 0 0 6px 0; font-size: 10.5pt; }
+.coverage-card ul { margin: 0; padding-left: 18px; font-size: 10pt; }
+</style>
+</head>
+<body>
+
+{# ================================================================
+   COVER PAGE
+   ================================================================ #}
+<div class="cover">
+  <div class="cover-logo">Aajimatics &nbsp;|&nbsp; CIDA Intelligence Platform</div>
+  <div class="cover-title">Cyber Risk<br>Assessment</div>
+  <div class="cover-sub">Technical Security Assessment Report</div>
+  <div class="cover-for">Developed for</div>
+  <div class="cover-org">{{ report.org.name }}</div>
+  <div class="cover-date">{{ report.generated_at.strftime('%B %Y') }}</div>
+  <div class="cover-confid">Confidential &nbsp;·&nbsp; Not for Distribution</div>
+</div>
+
+<div class="page-break"></div>
+
+{# ================================================================
+   DISCLAIMER
+   ================================================================ #}
+<h2>Disclaimer &amp; Confidentiality</h2>
+<div class="disclaimer-section">
+<p>This Cyber Risk Assessment Report has been prepared by <strong>Aajimatics</strong> exclusively for <strong>{{ report.org.name }}</strong> using the CIDA (Cyber Intelligence Decision Algorithm) platform. It is based on information provided during the assessment process, including questionnaire responses, technical scan outputs, and publicly available data at the time of assessment.</p>
+<p>This report is confidential and is intended solely for the use of the named organisation and its authorised representatives. It must not be reproduced, distributed, or disclosed to any third party without the prior written consent of Aajimatics.</p>
+<p><strong>Uberrimae Fidei (Utmost Good Faith):</strong> This assessment is conducted under the principle of utmost good faith. Aajimatics relies on the accuracy and completeness of information provided by the assessed organisation. Any material inaccuracy or omission may affect the findings and conclusions contained herein.</p>
+<p>The risk probabilities and cost estimates contained in this report are derived from actuarial models, industry benchmarks, and statistical analysis. They represent probabilistic estimates and not guarantees of future events. Actual cyber incident costs may vary materially from those estimated.</p>
+{% if report.assessment_limitations %}
+<div class="warn-box">
+  <strong>Assessment Limitations:</strong>
+  <ul>{% for lim in report.assessment_limitations %}<li>{{ lim }}</li>{% endfor %}</ul>
+  Findings may be incomplete where the above scope limitations applied.
+</div>
+{% endif %}
+</div>
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §1 INTRODUCTION
+   ================================================================ #}
+<h2><span class="sec-num">1</span> Introduction</h2>
+<p>The CIDA Cyber Risk Assessment is a comprehensive, data-driven evaluation of an organisation's cyber security posture. It is designed to provide decision-makers with a clear, quantified understanding of their exposure to cyber threats and the potential financial impact of a cyber incident.</p>
+<div class="info-box">
+  <strong>The Three-Phase Assessment Journey</strong>
+  <ol style="margin: 6px 0; padding-left: 18px;">
+    <li><strong>Questionnaire &amp; Discovery</strong> — Structured questionnaires covering IT Operations, Security Controls, Organisational Governance, and Previous Cyber Incident history.</li>
+    <li><strong>Technical Security Assessment</strong> — Hands-on evaluation across Cloud Infrastructure, Network Security, Web Applications, Endpoint Security, Compliance, and OSINT / Attack Surface.</li>
+    <li><strong>Scoring &amp; Reporting</strong> — CIDA synthesises all findings into a risk score, actuarial loss estimates, and this report — providing both technical recommendations and underwriting intelligence.</li>
+  </ol>
+</div>
+<p>This report covers <strong>{{ report.org.name }}</strong>, a {{ report.org.sector.value | title }} organisation operating in {{ report.org.country }}. The assessment was completed on {{ report.generated_at.strftime('%d %B %Y') }}.</p>
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §2 RISK SUMMARY
+   ================================================================ #}
+<h2><span class="sec-num">2</span> Risk Summary</h2>
+
+{% set rs = report.risk_summary %}
+{% if rs %}
+{% set posture_pct = (100 - rs.risk_score) | round(0) | int %}
+<div class="rs-grid">
+  <div class="rs-card avoid-break">
+    <div class="lbl">Security Posture</div>
+    <div class="val">{{ posture_pct }}%</div>
+    <div class="sub rs-band-{{ rs.risk_band }}">{{ rs.risk_band }} RISK</div>
+  </div>
+  <div class="rs-card avoid-break">
+    <div class="lbl">Risk Score</div>
+    <div class="val">{{ rs.risk_score | round(0) | int }}/100</div>
+    <div class="sub">Tier {{ report.tier.tier }} — {{ report.tier.label }}</div>
+  </div>
+  <div class="rs-card avoid-break">
+    <div class="lbl">Expected Annual Loss</div>
+    <div class="val">${{ "{:,.0f}".format(report.aggregate_expected_loss_usd) }}</div>
+    <div class="sub">Blended across all loss drivers</div>
+  </div>
+  <div class="rs-card avoid-break">
+    <div class="lbl">Max Probable Loss (P99)</div>
+    <div class="val">${{ "{:,.0f}".format(report.premium.maximum_probable_loss_usd) }}</div>
+    <div class="sub">1-in-100 year scenario</div>
+  </div>
+</div>
+
+<div class="risk-bar">
+  <div class="marker" style="left: {{ rs.risk_score }}%;"></div>
+</div>
+<p class="small">Risk score: <strong>{{ rs.risk_score | round(1) }}/100</strong> &nbsp;·&nbsp;
+  <span class="rs-band-{{ rs.risk_band }}">{{ rs.risk_band }} RISK</span>
+  (0 = minimal risk · 100 = critical risk)</p>
+
+<h3>§2.1 Finding Severity Summary</h3>
+<div class="sev-grid">
+  <div class="sev-box sev-critical avoid-break">
+    <div class="n">{{ rs.finding_counts.get('critical', 0) }}</div>
+    <div class="lbl">Critical</div>
+  </div>
+  <div class="sev-box sev-high avoid-break">
+    <div class="n">{{ rs.finding_counts.get('high', 0) }}</div>
+    <div class="lbl">High</div>
+  </div>
+  <div class="sev-box sev-medium avoid-break">
+    <div class="n">{{ rs.finding_counts.get('medium', 0) }}</div>
+    <div class="lbl">Medium</div>
+  </div>
+  <div class="sev-box sev-low avoid-break">
+    <div class="n">{{ rs.finding_counts.get('low', 0) }}</div>
+    <div class="lbl">Low</div>
+  </div>
+</div>
+
+<h3>§2.2 Assets Covered</h3>
+<div class="assets-grid">
+  <div class="asset-box"><div class="n">{{ rs.attack_surface.get('sub_domains', 0) }}</div><div class="lbl">Domains</div></div>
+  <div class="asset-box"><div class="n">{{ rs.attack_surface.get('applications', 0) }}</div><div class="lbl">Applications</div></div>
+  <div class="asset-box"><div class="n">{{ rs.attack_surface.get('services', 0) }}</div><div class="lbl">Services</div></div>
+  <div class="asset-box"><div class="n">{{ rs.attack_surface.get('ip_addresses', 0) }}</div><div class="lbl">IP Addresses</div></div>
+</div>
+{% else %}
+<div class="warn-box">Risk summary not available — scoring pipeline did not complete.</div>
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §3 HOW MUCH WOULD A CYBER INCIDENT COST?
+   ================================================================ #}
+<h2><span class="sec-num">3</span> How Much Would a Cyber Incident Cost {{ report.org.name }}?</h2>
+<p>According to IBM's Cost of a Data Breach Report 2023, the global average cost of a cyber incident is <strong>USD 4.45 million</strong>. However, costs vary significantly by sector, geography, and the nature of the breach. The figures below are CIDA's probabilistic estimates for {{ report.org.name }}, computed from the organisation's specific risk profile, sector benchmarks, and technical findings.</p>
+
+{% if rs and rs.incident_probabilities %}
+<div class="inc-grid">
+  {% for inc in rs.incident_probabilities %}
+  {% set pct = inc.probability_pct | round(0) | int %}
+  {% if pct < 30 %}{% set cls = "pct-low" %}
+  {% elif pct < 55 %}{% set cls = "pct-med" %}
+  {% elif pct < 75 %}{% set cls = "pct-high" %}
+  {% else %}{% set cls = "pct-sev" %}{% endif %}
+  <div class="inc-card avoid-break">
+    <div class="pct {{ cls }}">{{ pct }}%</div>
+    <div class="name">{{ inc.label }}</div>
+  </div>
+  {% endfor %}
+</div>
+<p class="small">Figures represent the estimated annual probability of an incident of the stated type occurring at {{ report.org.name }}. Computed via Bayesian actuarial model using sector benchmarks and technical evidence gathered during this assessment.</p>
+{% else %}
+<div class="warn-box">Incident probability data not available.</div>
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §4 EMAIL SECURITY
+   ================================================================ #}
+<h2><span class="sec-num">4</span> Email Security</h2>
+<p>Email remains the primary attack vector for phishing, business email compromise (BEC), and ransomware delivery. Strong email authentication controls (DMARC, SPF, DKIM) significantly reduce the risk of email spoofing and impersonation attacks.</p>
+
+{% set dmarc_signal = rs.posture_signals | selectattr("name", "equalto", "DMARC") | first if rs else none %}
+{% set spf_signal   = rs.posture_signals | selectattr("name", "equalto", "SPF") | first if rs else none %}
+
+<h3>§4.1 DMARC Policy</h3>
+{% if dmarc_signal %}
+<div class="email-status-row">
+  <div class="email-badge {% if dmarc_signal.status == 'SECURE' %}badge-pass{% elif dmarc_signal.status == 'AT_RISK' %}badge-fail{% else %}badge-na{% endif %}">
+    {% if dmarc_signal.status == 'SECURE' %}PASS{% elif dmarc_signal.status == 'AT_RISK' %}FAIL{% else %}N/A{% endif %}
+  </div>
+</div>
+<p>{{ dmarc_signal.detail }}</p>
+{% else %}
+<div class="warn-box">DMARC data was not collected during this assessment.</div>
+{% endif %}
+
+<h3>§4.2 SPF Policy</h3>
+{% if spf_signal %}
+<div class="email-status-row">
+  <div class="email-badge {% if spf_signal.status == 'SECURE' %}badge-pass{% elif spf_signal.status == 'AT_RISK' %}badge-fail{% else %}badge-na{% endif %}">
+    {% if spf_signal.status == 'SECURE' %}PASS{% elif spf_signal.status == 'AT_RISK' %}FAIL{% else %}N/A{% endif %}
+  </div>
+</div>
+<p>{{ spf_signal.detail }}</p>
+{% else %}
+<div class="warn-box">SPF data was not collected during this assessment.</div>
+{% endif %}
+
+{% if report.compromised_emails %}
+<h3>§4.3 Compromised Email Addresses</h3>
+<div class="critical-box">
+  <strong>CRITICAL — {{ report.compromised_emails | length }} corporate email address(es) found in dark-web credential databases:</strong>
+  <ul style="margin: 6px 0; padding-left: 18px;">
+    {% for email in report.compromised_emails[:20] %}<li>{{ email }}</li>{% endfor %}
+    {% if report.compromised_emails | length > 20 %}<li class="muted">… and {{ report.compromised_emails | length - 20 }} more</li>{% endif %}
+  </ul>
+  <p style="margin-top: 8px; font-size: 9.5pt;">Immediate action required: all named accounts should have passwords reset and MFA enforced. Investigate for infostealer malware on associated endpoints.</p>
+</div>
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §5 VULNERABILITIES
+   ================================================================ #}
+<h2><span class="sec-num">5</span> Vulnerabilities</h2>
+
+{# Macro: render a single finding card #}
+{% macro finding_card(f) %}
+{% set sev = f.severity.value if f.severity.value is defined else f.severity | string %}
+<div class="finding-card avoid-break">
+  <div class="finding-header">
+    <div class="finding-title">{{ f.title }}</div>
+    <span class="sev-badge sev-badge-{{ sev }}">{{ sev | upper }}</span>
+  </div>
+  {% if f.description %}
+  <div class="finding-desc">{{ f.description }}</div>
+  {% endif %}
+  {% set assets = f.affected_assets if f.affected_assets else ([f.asset] if f.asset else []) %}
+  {% if assets %}
+  <div class="finding-assets">
+    <strong>Impacted Assets:</strong>
+    <ul>{% for a in assets[:8] %}<li>{{ a }}</li>{% endfor %}
+    {% if assets | length > 8 %}<li class="muted">… and {{ assets | length - 8 }} more</li>{% endif %}
+    </ul>
+  </div>
+  {% endif %}
+  {% if f.recommendation %}
+  <div class="finding-rec"><strong>Recommendation:</strong> {{ f.recommendation }}</div>
+  {% endif %}
+  {% set refs = [] %}
+  {% if f.cve_id %}{% set _ = refs.append(f.cve_id) %}{% endif %}
+  {% for cid in f.cwe_ids[:2] %}{% set _ = refs.append(cid) %}{% endfor %}
+  {% if not f.cwe_ids and f.cwe_id %}{% set _ = refs.append(f.cwe_id) %}{% endif %}
+  {% if f.owasp_category %}{% set _ = refs.append(f.owasp_category) %}{% endif %}
+  {% if refs %}
+  <div class="finding-ref">
+    <strong>Reference:</strong>
+    {% for r in refs %}<span class="ref-tag">{{ r }}</span>{% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{# Split findings by category #}
+{% set web_findings    = findings | selectattr("source", "in", ["web_app_scan", "burp", "zap", "nikto", "acunetix"]) | list %}
+{% set cloud_findings  = findings | selectattr("source", "in", ["cspm_aws", "cspm_azure", "cspm_gcp"]) | list %}
+{% set net_findings    = findings | selectattr("source", "in", ["vuln_scan", "nessus", "qualys", "openvas", "network_scan"]) | list %}
+{% set other_findings  = findings | rejectattr("source", "in",
+    ["web_app_scan","burp","zap","nikto","acunetix","cspm_aws","cspm_azure","cspm_gcp",
+     "vuln_scan","nessus","qualys","openvas","network_scan",
+     "darkweb_credentials","darkweb_stealer","dmarc"]) | list %}
+
+<h3>§5.1 Web Application Security</h3>
+{% if web_findings %}
+{% for f in web_findings | sort(attribute='severity', reverse=True) %}
+{{ finding_card(f) }}
+{% endfor %}
+{% else %}
+<p class="muted">No web application findings were recorded in this assessment.</p>
+{% endif %}
+
+<h3>§5.2 Cloud Services Security</h3>
+{% if cloud_findings %}
+{% for f in cloud_findings | sort(attribute='severity', reverse=True) %}
+{{ finding_card(f) }}
+{% endfor %}
+{% else %}
+<p class="muted">No cloud security findings were recorded in this assessment.</p>
+{% endif %}
+
+<h3>§5.3 Network &amp; Infrastructure Security</h3>
+{% if net_findings %}
+{% for f in net_findings | sort(attribute='severity', reverse=True) %}
+{{ finding_card(f) }}
+{% endfor %}
+{% else %}
+<p class="muted">No network security findings were recorded in this assessment.</p>
+{% endif %}
+
+{% if other_findings %}
+<h3>§5.4 Other Findings</h3>
+{% for f in other_findings | sort(attribute='severity', reverse=True) %}
+{{ finding_card(f) }}
+{% endfor %}
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §6 BLACKLISTED DOMAINS & IPs
+   ================================================================ #}
+<h2><span class="sec-num">6</span> Blacklisted Domains &amp; IPs</h2>
+{% set blocklist_signal = rs.posture_signals | selectattr("name", "equalto", "Blocklisted Domains") | first if rs else none %}
+{% set honeypot_signal  = rs.posture_signals | selectattr("name", "equalto", "Honeypot Events")    | first if rs else none %}
+
+<h3>§6.1 Domain &amp; IP Blacklist Status</h3>
+{% if blocklist_signal and blocklist_signal.status != 'NOT_ENABLED' %}
+<div class="posture-row">
+  <div class="posture-name">Blacklist Status</div>
+  <div class="posture-status-{{ blocklist_signal.status }}">{{ blocklist_signal.status | replace('_', ' ') }}</div>
+  <div class="posture-detail">{{ blocklist_signal.detail }}</div>
+</div>
+{% else %}
+<div class="warn-box">Blacklist feed not configured for this assessment. Consider enabling Spamhaus / AbuseIPDB integration.</div>
+{% endif %}
+
+<h3>§6.2 Honeypot Events</h3>
+{% if honeypot_signal and honeypot_signal.status != 'NOT_ENABLED' %}
+<div class="posture-row">
+  <div class="posture-name">Honeypot Events</div>
+  <div class="posture-status-{{ honeypot_signal.status }}">{{ honeypot_signal.status | replace('_', ' ') }}</div>
+  <div class="posture-detail">{{ honeypot_signal.detail }}</div>
+</div>
+{% else %}
+<p class="muted">Honeypot event telemetry was not collected during this assessment.</p>
+{% endif %}
+
+{# ================================================================
+   §7 MALWARE
+   ================================================================ #}
+<h2><span class="sec-num">7</span> Malware</h2>
+{% set malware_signal = rs.posture_signals | selectattr("name", "equalto", "Malware") | first if rs else none %}
+{% if malware_signal %}
+<div class="posture-row">
+  <div class="posture-name">Malware / Infostealer</div>
+  <div class="posture-status-{{ malware_signal.status }}">{{ malware_signal.status | replace('_', ' ') }}</div>
+  <div class="posture-detail">{{ malware_signal.detail }}</div>
+</div>
+{% if malware_signal.status == 'AT_RISK' %}
+<div class="critical-box">
+  Assets associated with malware or infostealer activity have been detected. Immediate endpoint investigation, credential rotation, and EDR deployment are recommended.
+</div>
+{% endif %}
+{% else %}
+<p class="muted">No malware telemetry was collected during this assessment.</p>
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §8 DNS RECORDS
+   ================================================================ #}
+<h2><span class="sec-num">8</span> DNS Security</h2>
+{% if report.dns_records %}
+{% for record_type, records in report.dns_records.items() %}
+<h3>§8.{{ loop.index }} {{ record_type }} Records</h3>
+<table>
+  <thead><tr><th>Record</th></tr></thead>
+  <tbody>
+    {% for r in records %}<tr><td>{{ r }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endfor %}
+{% else %}
+<p class="muted">DNS records were not collected during this assessment. DNS data is typically sourced from Attack Surface scan outputs.</p>
+{% endif %}
+
+{# ================================================================
+   §9 COMPLIANCE
+   ================================================================ #}
+<h2><span class="sec-num">9</span> Compliance Posture</h2>
+{% if report.posture %}
+{% for fw in report.posture %}
+<div class="avoid-break" style="margin: 10px 0; border: 1px solid #dde3f5; border-radius: 6px; padding: 12px 14px;">
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+    <strong>{{ fw.framework | upper }}</strong>
+    <span class="pill {% if fw.coverage_pct >= 70 %}pill-pass{% elif fw.coverage_pct >= 40 %}pill-na{% else %}pill-fail{% endif %}">
+      {{ fw.coverage_pct | round(0) | int }}% aligned
+    </span>
+    <span class="small">{{ fw.controls_aligned }} / {{ fw.controls_total }} controls</span>
+  </div>
+  {% if fw.top_gaps %}
+  <div class="small"><strong>Key gaps:</strong> {{ fw.top_gaps | join(', ') }}</div>
+  {% endif %}
+</div>
+{% endfor %}
+{% else %}
+<p class="muted">Compliance posture data not available.</p>
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §10 OSINT / USER BEHAVIOUR
+   ================================================================ #}
+<h2><span class="sec-num">10</span> OSINT &amp; User Behaviour</h2>
+
+<h3>§10.1 Password Quality &amp; Credential Exposure</h3>
+{% set leak_signal = rs.posture_signals | selectattr("name", "equalto", "Data Leaks") | first if rs else none %}
+{% if leak_signal %}
+<div class="posture-row">
+  <div class="posture-name">Credential Leaks</div>
+  <div class="posture-status-{{ leak_signal.status }}">{{ leak_signal.status | replace('_', ' ') }}</div>
+  <div class="posture-detail">{{ leak_signal.detail }}</div>
+</div>
+{% endif %}
+{% if report.compromised_emails %}
+<p>{{ report.compromised_emails | length }} corporate email address(es) were found in dark-web credential databases. See §4.3 for the full list.</p>
+{% else %}
+<p class="muted">No corporate credentials were found in dark-web databases during this assessment.</p>
+{% endif %}
+
+<h3>§10.2 Public Intelligence</h3>
+{% if rs and rs.public_intel and rs.public_intel.counts %}
+{% set intel = rs.public_intel %}
+<p>Aajimatics OSINT search across Proshare, BusinessDay, and public databases surfaced the following intelligence about {{ report.org.name }}:</p>
+<table>
+  <thead><tr><th>Signal</th><th>Count</th></tr></thead>
+  <tbody>
+    <tr><td>Public news articles</td><td>{{ intel.counts.headlines }}</td></tr>
+    <tr><td>Breach / fraud mentions</td><td>{{ intel.counts.breach_mentions }}</td></tr>
+    <tr><td>Regulatory actions</td><td>{{ intel.counts.regulatory_actions }}</td></tr>
+    <tr><td>Executive changes</td><td>{{ intel.counts.executive_changes }}</td></tr>
+  </tbody>
+</table>
+{% if intel.breach_mentions %}
+<div class="critical-box">
+  <strong>Adverse Media Findings:</strong>
+  <ul>{% for item in intel.breach_mentions[:5] %}<li>{{ item.title }} <span class="muted">({{ item.source }})</span></li>{% endfor %}</ul>
+</div>
+{% endif %}
+{% else %}
+<p class="muted">Public intelligence data was not collected or no relevant signals were found.</p>
+{% endif %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §11 CYBER INCIDENT DETECTION & RESPONSE READINESS
+   ================================================================ #}
+<h2><span class="sec-num">11</span> Cyber Incident Detection &amp; Response Readiness</h2>
+{% set tier = report.tier %}
+<div class="info-box">
+  <strong>Overall Readiness: Tier {{ tier.tier }} — {{ tier.label }}</strong><br>
+  {{ tier.description }}
+</div>
+
+{% if rs and rs.vector_scores %}
+<h3>§11.1 Detection &amp; Response Capability</h3>
+{% for vs in rs.vector_scores %}
+{% set vname = vs.vector.value if vs.vector.value is defined else vs.vector | string %}
+{% if vname in ["detection_and_response", "endpoint_security", "identity_and_access"] %}
+<div class="posture-row avoid-break">
+  <div class="posture-name">{{ vname | replace('_', ' ') | title }}</div>
+  <div class="posture-status-{% if vs.score_0_100 < 40 %}SECURE{% elif vs.score_0_100 < 70 %}AT_RISK{% else %}AT_RISK{% endif %}">
+    {% if vs.score_0_100 < 40 %}Good{% elif vs.score_0_100 < 70 %}Needs Improvement{% else %}Critical Gap{% endif %}
+  </div>
+  <div class="posture-detail">Score {{ vs.score_0_100 | round(0) | int }}/100 &nbsp;·&nbsp; {{ vs.confidence.value | title if vs.confidence.value is defined else vs.confidence | string | title }} confidence</div>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{# ================================================================
+   §12 CYBER INCIDENT DECISION TOOL (CIDT)
+   ================================================================ #}
+<h2><span class="sec-num">12</span> Cyber Incident Decision Tool (CIDT)</h2>
+<div class="info-box">
+<p>The <strong>Cyber Incident Decision Tool (CIDT)</strong> is Aajimatics' proprietary decision-support framework that helps organisations respond effectively when a cyber incident occurs. It provides a structured, step-by-step response playbook tailored to your organisation's sector, regulatory environment, and the type of incident detected.</p>
+<p>CIDT integrates directly with this CIDA assessment, using your risk profile and findings to pre-configure response priorities. Access the CIDT through the Aajimatics SaaS platform.</p>
+</div>
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §13 WHAT IS CYBER INSURANCE?
+   ================================================================ #}
+<h2><span class="sec-num">13</span> What is Cyber Insurance?</h2>
+<p>Cyber insurance is a specialist insurance product that provides financial protection against the costs arising from cyber incidents, including data breaches, ransomware attacks, business interruption, and regulatory penalties. It complements — but does not replace — an organisation's own cyber security controls.</p>
+
+<div class="coverage-grid">
+  <div class="coverage-card">
+    <h4>First-Party Coverage</h4>
+    <p class="small">Costs incurred directly by the insured organisation:</p>
+    <ul>
+      <li>Ransomware extortion payments and negotiation</li>
+      <li>Business interruption and revenue loss</li>
+      <li>Forensic investigation and incident response</li>
+      <li>Data recovery and system restoration</li>
+      <li>PR and crisis communications</li>
+      <li>Funds transfer fraud (system-based)</li>
+    </ul>
+  </div>
+  <div class="coverage-card">
+    <h4>Third-Party Coverage</h4>
+    <p class="small">Costs arising from claims by third parties:</p>
+    <ul>
+      <li>Privacy liability — data breach notification costs</li>
+      <li>Civil claims from affected individuals or partners</li>
+      <li>Regulatory fines (NDPR, GDPR, PCI-DSS)</li>
+      <li>Network security liability — passing malware to others</li>
+      <li>Media liability — defamation via digital channels</li>
+    </ul>
+  </div>
+</div>
+
+{# ================================================================
+   §14 FAQs
+   ================================================================ #}
+<h2><span class="sec-num">14</span> Frequently Asked Questions</h2>
+
+<div class="faq-item avoid-break">
+  <div class="faq-q">How are the risk scores calculated?</div>
+  <div class="faq-a">CIDA uses a blended model combining questionnaire responses (weighted by control importance), technical findings (severity-weighted with CVE enrichment), and actuarial priors derived from 20+ industry sources including IBM, DBIR, Coalition, and ENISA. The model is calibrated for African market conditions.</div>
+</div>
+
+<div class="faq-item avoid-break">
+  <div class="faq-q">What does "Annual Probability" mean in §3?</div>
+  <div class="faq-a">This is the estimated probability that an incident of the stated type will occur at least once within the next 12 months, given your organisation's current risk profile. It is derived from a Poisson frequency model blended with your specific threat vector scores.</div>
+</div>
+
+<div class="faq-item avoid-break">
+  <div class="faq-q">How should we prioritise the remediation items?</div>
+  <div class="faq-a">Prioritise by the combination of risk score uplift (higher = more impact on your overall posture) and implementation effort. Items marked Critical should be addressed within 30 days; High within 90 days; Medium within 6 months.</div>
+</div>
+
+<div class="faq-item avoid-break">
+  <div class="faq-q">Will fixing these issues automatically lower our insurance premium?</div>
+  <div class="faq-a">Demonstrating remediation of the Conditions listed in the underwriting recommendation can lead to a re-assessment and potential premium reduction. Contact Aajimatics to schedule a re-assessment after significant remediation work is completed.</div>
+</div>
+
+<div class="faq-item avoid-break">
+  <div class="faq-q">Is this report shared with insurance underwriters?</div>
+  <div class="faq-a">With your consent, a summarised technical scorecard (not the full report) is shared with the issuing underwriter to support policy issuance. The full report remains confidential to your organisation.</div>
+</div>
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §15 GLOSSARY
+   ================================================================ #}
+<h2><span class="sec-num">15</span> Glossary</h2>
+{% set glossary = [
+  ("CIDA", "Cyber Intelligence Decision Algorithm — Aajimatics' AI-powered cyber risk scoring engine."),
+  ("CVE", "Common Vulnerabilities and Exposures — a standardised identifier for publicly known security vulnerabilities."),
+  ("CVSS", "Common Vulnerability Scoring System — a numeric score (0-10) indicating a vulnerability's severity."),
+  ("CWE", "Common Weakness Enumeration — a categorisation of software security weaknesses."),
+  ("DMARC", "Domain-based Message Authentication, Reporting and Conformance — an email authentication protocol that prevents domain spoofing."),
+  ("EPSS", "Exploit Prediction Scoring System — a probability score estimating the likelihood a CVE will be exploited in the wild."),
+  ("KEV", "Known Exploited Vulnerabilities — CISA's catalogue of CVEs actively exploited by threat actors."),
+  ("NDPR / NDPA", "Nigeria Data Protection Regulation / Act — Nigeria's primary data protection legislation."),
+  ("OWASP", "Open Web Application Security Project — a non-profit producing free, open resources on web application security."),
+  ("Penetration Test", "An authorised simulated cyber attack against a computer system, conducted to identify security weaknesses."),
+  ("Ransomware", "Malware that encrypts a victim's data and demands payment (ransom) for the decryption key."),
+  ("SPF", "Sender Policy Framework — an email authentication method that prevents email spoofing by verifying the sender's IP address."),
+  ("Threat Vector", "A pathway or means by which an attacker can gain access to a computer or network in order to deliver a payload."),
+  ("Zero-Day", "A vulnerability that is unknown to those responsible for patching it — often exploited before a fix is available."),
+] %}
+{% for term, defn in glossary %}
+<div class="avoid-break">
+  <div class="gloss-term">{{ term }}</div>
+  <div class="gloss-def">{{ defn }}</div>
+</div>
+{% endfor %}
+
+<div class="page-break"></div>
+
+{# ================================================================
+   §16 EVIDENCE APPENDIX
+   ================================================================ #}
+<h2><span class="sec-num">16</span> Evidence Appendix</h2>
+
+{% if report.evidence_images %}
+<p>The following screenshots and diagrams were submitted as part of this assessment:</p>
+<div class="evidence-grid">
+  {% for img in report.evidence_images %}
+  <div class="evidence-card {% if img.filename.endswith('.svg') %}svg-card{% endif %} avoid-break">
+    {% if img.b64_thumb %}
+    <img src="data:image/{{ img.ext | default('png') }};base64,{{ img.b64_thumb }}" alt="{{ img.caption }}" />
+    {% else %}
+    <div style="height: 120px; background: #eef2fb; display: flex; align-items: center; justify-content: center; color: #888; font-size: 9pt;">{{ img.filename }}</div>
+    {% endif %}
+    <div class="ev-cap">{{ img.caption }} <span class="muted">({{ img.filename }})</span></div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="muted">No evidence images were submitted for this assessment.</p>
+{% endif %}
+
+{% if report.unclassified_files %}
+<h3>Unclassified Files</h3>
+<div class="warn-box">
+  The following files were submitted but could not be automatically classified by the CIDA sniffer.
+  They have not been analysed. Contact Aajimatics support if these files should have been included in the assessment.
+</div>
+<table>
+  <thead><tr><th>Filename</th><th>Near-Miss Categories</th></tr></thead>
+  <tbody>
+    {% for uf in report.unclassified_files %}
+    <tr>
+      <td>{{ uf.filename }}</td>
+      <td class="small">{{ uf.scores | dictsort(by='value', reverse=True) | map(attribute=0) | list | join(', ') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<hr style="margin-top: 20px; border-color: #dde3f5;" />
+<p class="small" style="text-align:center; margin-top: 12px;">
+  Generated by CIDA &nbsp;·&nbsp; Aajimatics &nbsp;·&nbsp; {{ report.generated_at.strftime('%d %B %Y %H:%M UTC') }}<br>
+  For queries contact: <strong>hello@aajimatics.com</strong>
+</p>
+
+</body>
+</html>

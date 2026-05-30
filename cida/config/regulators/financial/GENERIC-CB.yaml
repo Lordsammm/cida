@@ -1,0 +1,11 @@
+id: GENERIC-CB
+name: Generic Central Bank (placeholder)
+type: financial
+scope: national
+note: Fallback central bank reference.
+directives:
+  - id: CB-Cyber-Baseline
+    name: Central Bank Cyber Baseline (placeholder)
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16] }

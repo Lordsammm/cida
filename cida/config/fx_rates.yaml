@@ -1,0 +1,59 @@
+# Indicative FX rates - 1 USD = X local. Mid-2026 mid-market estimates.
+# Source: IMF / Bloomberg / African central bank reference rates Q2 2026.
+# Update periodically. These only affect display output, not the actuarial model.
+#
+# XOF (BCEAO): BJ, BF, CI, GW, ML, NE, SN, TG
+# XAF (BEAC):  CF, TD, CG, GQ, GA, CM
+
+rates:
+  # West Africa
+  NGN: 1610.0      # Nigerian Naira
+  GHS: 15.5        # Ghanaian Cedi (post-2022 devaluation)
+  XOF: 620.0       # CFA Franc BCEAO (Benin, Burkina Faso, Côte d'Ivoire, Guinea-Bissau, Mali, Niger, Senegal, Togo)
+  GMD: 72.0        # Gambian Dalasi
+  GNF: 8700.0      # Guinean Franc
+  SLE: 22.5        # Sierra Leonean Leone (redenominated 2022)
+  LRD: 195.0       # Liberian Dollar
+  CVE: 110.0       # Cape Verdean Escudo
+  MRU: 40.0        # Mauritanian Ouguiya
+
+  # Central Africa
+  XAF: 620.0       # CFA Franc BEAC (Cameroon, CAR, Chad, Republic of Congo, Equatorial Guinea, Gabon)
+  CDF: 2800.0      # Congolese Franc (DRC)
+  AOA: 900.0       # Angolan Kwanza
+  STN: 24.5        # São Tomé and Príncipe Dobra
+
+  # East Africa
+  KES: 130.0       # Kenyan Shilling
+  TZS: 2700.0      # Tanzanian Shilling
+  UGX: 3750.0      # Ugandan Shilling
+  RWF: 1350.0      # Rwandan Franc
+  ETB: 130.0       # Ethiopian Birr
+  BIF: 2950.0      # Burundian Franc
+  DJF: 178.0       # Djiboutian Franc
+  SOS: 571.0       # Somali Shilling
+  SSP: 2800.0      # South Sudanese Pound
+  SDG: 600.0       # Sudanese Pound
+  ERN: 15.0        # Eritrean Nakfa
+  KMF: 465.0       # Comorian Franc
+  MGA: 4550.0      # Malagasy Ariary
+  MUR: 46.0        # Mauritian Rupee
+  SCR: 14.5        # Seychellois Rupee
+
+  # Southern Africa
+  ZAR: 18.8        # South African Rand
+  ZWL: 13.8        # Zimbabwean ZiG (Zimbabwe Gold, introduced 2024)
+  ZMW: 27.0        # Zambian Kwacha
+  MWK: 1750.0      # Malawian Kwacha
+  MZN: 64.0        # Mozambican Metical
+  BWP: 13.5        # Botswana Pula
+  NAD: 18.8        # Namibian Dollar (pegged to ZAR)
+  LSL: 18.8        # Lesotho Loti (pegged to ZAR)
+  SZL: 18.8        # Swazi Lilangeni (pegged to ZAR)
+
+  # North Africa
+  MAD: 10.2        # Moroccan Dirham
+  DZD: 135.0       # Algerian Dinar
+  TND: 3.15        # Tunisian Dinar
+  EGP: 50.0        # Egyptian Pound (post-2024 devaluation)
+  LYD: 4.85        # Libyan Dinar

@@ -1,0 +1,19 @@
+name: pension
+description: Pension fund administrators, custodians, regulators
+base_frequency_multipliers:
+  bec: 1.40
+  ransomware: 1.10
+  data_breach: 1.40
+  ddos: 0.80
+  insider: 1.30
+  third_party: 1.20
+  mobile_money_fraud: 0.30
+severity_multipliers:
+  bec: 1.30
+  ransomware: 1.20
+  data_breach: 1.40
+  ddos: 0.90
+  insider: 1.30
+  third_party: 1.10
+  mobile_money_fraud: 0.30
+required_frameworks: [nist-csf-2.0, iso-27001-2022]

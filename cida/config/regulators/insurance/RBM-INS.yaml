@@ -1,0 +1,12 @@
+id: RBM-INS
+name: Reserve Bank of Malawi - Insurance & Capital Markets Supervision
+type: insurance
+scope: national
+country: MW
+website: https://www.rbm.mw
+directives:
+  - id: RBM-Cyber-Directive
+    name: Cybersecurity Directive
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

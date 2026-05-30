@@ -1,0 +1,67 @@
+org:
+  org_id: REF-T4-NG-INS
+  name: "Reference: Tier-4 Nigerian Insurer (similar to demo)"
+  sector: insurance
+  country: NG
+  employees: 850
+  annual_revenue_usd: 65000000
+  data_sensitivity: high
+  regulated_data_types: [PII, NDPR]
+  public_facing_assets: 12
+expected:
+  tier_in: [3, 4]
+  overall_score_range: [35, 72]
+  el_range_usd: [300000, 25000000]
+  notes: "Material gaps in customer MFA, immutable backups, TPRM, SDLC."
+responses:
+  - {control_id: GOV-001, answer: yes}
+  - {control_id: GOV-002, answer: yes}
+  - {control_id: GOV-003, answer: 4}
+  - {control_id: GOV-004, answer: yes}
+  - {control_id: GOV-005, answer: 3}
+  - {control_id: IAM-001, answer: yes}
+  - {control_id: IAM-002, answer: no}
+  - {control_id: IAM-003, answer: yes}
+  - {control_id: IAM-004, answer: 4}
+  - {control_id: IAM-005, answer: yes}
+  - {control_id: AST-001, answer: yes}
+  - {control_id: AST-002, answer: 3}
+  - {control_id: AST-003, answer: yes}
+  - {control_id: AST-004, answer: no}
+  - {control_id: AST-005, answer: yes}
+  - {control_id: NET-001, answer: yes}
+  - {control_id: NET-002, answer: 4}
+  - {control_id: NET-003, answer: yes}
+  - {control_id: NET-004, answer: no}
+  - {control_id: END-001, answer: yes}
+  - {control_id: END-002, answer: 4}
+  - {control_id: END-003, answer: yes}
+  - {control_id: END-004, answer: 3}
+  - {control_id: APP-001, answer: no}
+  - {control_id: APP-002, answer: 3}
+  - {control_id: APP-003, answer: no}
+  - {control_id: APP-004, answer: yes}
+  - {control_id: CLD-001, answer: yes}
+  - {control_id: CLD-002, answer: 4}
+  - {control_id: CLD-003, answer: no}
+  - {control_id: TPR-001, answer: 3}
+  - {control_id: TPR-002, answer: no}
+  - {control_id: TPR-003, answer: yes}
+  - {control_id: DET-001, answer: yes}
+  - {control_id: DET-002, answer: 3}
+  - {control_id: DET-003, answer: yes}
+  - {control_id: DET-004, answer: 4}
+  - {control_id: DET-005, answer: no}
+  - {control_id: RES-001, answer: yes}
+  - {control_id: RES-002, answer: no}
+  - {control_id: RES-003, answer: 3}
+findings:
+  - source: nessus
+    asset: portal.example-ins.ng:443
+    title: "Apache 2.4.49 Path Traversal"
+    severity: critical
+    domain: appsec
+    cve_id: "CVE-2021-41773"
+    cvss_v3: 9.8
+    exposure: internet
+    asset_criticality: crown_jewel

@@ -1,0 +1,21 @@
+id: CIMA
+name: Conférence Interafricaine des Marchés d'Assurances
+type: insurance
+scope: supranational
+member_countries: [BJ, BF, CM, CF, TD, KM, CG, CI, GQ, GA, GW, ML, NE, SN, TG]
+website: https://cima-afrique.org
+established: 1995
+note: "Single supranational insurance regulator for 14 West/Central African francophone states. A single accession aligns CIDA with 14 country markets."
+
+directives:
+  - id: CIMA-Code-2024
+    name: Code des Assurances CIMA (révisé 2024)
+    cyber_relevant_sections:
+      - section: Gouvernance et gestion des risques (incl. cyber)
+        crosswalk:
+          nist_csf_2_0: [GV.OC-01, GV.RM-01]
+          iso_27001_2022: [A.5.1, A.5.7]
+      - section: Continuité d'activité
+        crosswalk:
+          nist_csf_2_0: [RC.RP-01]
+          iso_27001_2022: [A.5.29, A.5.30]

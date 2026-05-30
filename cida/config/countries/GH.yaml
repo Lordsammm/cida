@@ -1,0 +1,35 @@
+iso_a2: GH
+iso_a3: GHA
+name: Ghana
+region: West Africa
+sub_region: Sub-Saharan Africa
+currency: GHS
+official_languages: [en]
+ccTLDs: [.gh, .com.gh, .gov.gh, .edu.gh]
+
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.711
+  tier: T2
+
+disclosure_correction_factor: 3.5
+mobile_money_penetration: very_high
+
+base_frequency_multipliers:
+  bec: 1.20
+  ransomware: 0.80
+  data_breach: 1.00
+  ddos: 0.80
+  insider: 1.20
+  third_party: 1.00
+  mobile_money_fraud: 3.00
+
+regulators:
+  insurance: NIC-GH
+  data_protection: DPC-GH
+  central_bank: BoG
+  sector: {}
+
+cert: GH-CERT
+intel_sources: []

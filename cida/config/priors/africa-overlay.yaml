@@ -1,0 +1,57 @@
+# ============================================================================
+# Africa overlay applied on top of `global.yaml` priors at load time.
+# Adjusts the global frequency alphas based on African threat-landscape evidence.
+# Country-level YAMLs apply further multipliers on top of this overlay.
+#
+# SOURCES:
+#   - Interpol African Cyberthreat Assessment Report 2024
+#   - Serianu Africa Cybersecurity Report 2024 (multi-country survey)
+#   - IBM Cost of a Data Breach 2024 (MEA cohort)
+#   - Sophos State of Ransomware 2024 (South Africa breakout)
+#   - GSMA Mobile Money State of the Industry 2024
+#   - Mastercard Cybersecurity in Africa 2024
+#   - Smile ID State of KYC in Africa 2024
+#   - NITDA / NDPC enforcement bulletins (Nigeria) 2023-2024
+#   - South Africa Info Regulator POPIA enforcement bulletins 2024
+#   - Kenya KE-CIRT quarterly threat reports 2024
+#   - Nigeria ngCERT incident bulletins 2024
+#   - CSEAN Cyber Threat Report (Nigeria) 2024
+#   - AON Africa Cyber Survey 2024 (broker view)
+#
+# Interpretation: a multiplier of 1.6 on `social_engineering` means that
+# for an African org (before country-level adjustment) the prior alpha is
+# 1.6x the global value -> ~60% higher expected annual frequency.
+# ============================================================================
+
+frequency_adjustments:
+  # ---- First-party ----
+  cyber_extortion:        { multiplier: 0.85 }   # Sophos'24 SA: lower than US/EU but rising fast
+  business_interruption:  { multiplier: 1.10 }   # Power/connectivity fragility + DDoS uplift
+  data_recovery:          { multiplier: 1.10 }   # Slower MTTR + sparser IR talent -> more events trigger paid recovery
+  funds_transfer_fraud:   { multiplier: 1.80 }   # Serianu'24 + CSEAN'24 - FTF dominates African FSI claims
+  social_engineering:     { multiplier: 1.60 }   # Interpol'24 - BEC + impersonation widespread; weak DMARC adoption
+  computer_fraud:         { multiplier: 3.50 }   # GSMA'24 + Mastercard'24 - direct USSD/switch/MMO fraud is the African signature
+  # ---- Third-party ----
+  privacy_liability:      { multiplier: 1.20 }   # NDPR/POPIA enforcement maturing; under-reporting still high
+  network_sec_liability:  { multiplier: 1.10 }
+  regulatory_penalties:   { multiplier: 1.30 }   # NDPC'24 issued first 9-figure (NGN) fines; POPIA enforcement intensifying
+  pci_fines:              { multiplier: 0.80 }   # Card penetration lower outside SA/KE/NG
+
+# Continental mean under-reporting correction (Interpol'24 + Serianu'24 cross-check).
+# Observed incidents are ~1 / 3.5 of true incidents; per-country YAMLs refine.
+disclosure_correction_factor_continental_mean: 3.5
+
+source_notes:
+  - "Interpol African Cyberthreat Assessment Report 2024"
+  - "Serianu Africa Cybersecurity Report 2024"
+  - "IBM Cost of a Data Breach 2024 - MEA cohort"
+  - "Sophos State of Ransomware 2024 (South Africa)"
+  - "GSMA Mobile Money State of the Industry 2024"
+  - "Mastercard Cybersecurity in Africa 2024"
+  - "Smile ID State of KYC in Africa 2024"
+  - "NITDA / NDPC Nigeria enforcement bulletins 2023-2024"
+  - "POPIA Information Regulator (South Africa) enforcement 2024"
+  - "KE-CIRT (Kenya) quarterly threat reports 2024"
+  - "ngCERT (Nigeria) incident bulletins 2024"
+  - "CSEAN Cyber Threat Report Nigeria 2024"
+  - "AON Africa Cyber Survey 2024"

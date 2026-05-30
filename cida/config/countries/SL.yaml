@@ -1,0 +1,32 @@
+iso_a2: SL
+iso_a3: SLE
+name: Sierra Leone
+region: West Africa
+sub_region: Sub-Saharan Africa
+currency: SLE
+official_languages:
+- en
+ccTLDs:
+- .sl
+disclosure_correction_factor: 4.5
+mobile_money_penetration: medium
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 1.75
+regulators:
+  insurance: GENERIC-INS
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: null
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.515
+  tier: T3

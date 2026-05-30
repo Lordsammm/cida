@@ -1,0 +1,40 @@
+id: NAICOM
+name: National Insurance Commission
+type: insurance
+scope: national
+country: NG
+website: https://naicom.gov.ng
+established: 1997
+
+directives:
+  - id: NIIRA-2025
+    name: Nigerian Insurance Industry Reform Act 2025
+    enacted: "2025"
+    cyber_relevant_sections:
+      - section: "Operational Resilience & Cyber Risk Governance"
+        topic: cyber_resilience
+        crosswalk:
+          nist_csf_2_0: [GV.OC-01, GV.RM-01, GV.RM-02, ID.RA-01]
+          iso_27001_2022: [A.5.1, A.5.7, A.5.30]
+          cis_v8: ["14.1", "17.1"]
+
+  - id: NAICOM-IT-Standards
+    name: NAICOM Information Technology Standards & Guidelines
+    cyber_relevant_sections:
+      - section: "IT Governance"
+        crosswalk:
+          nist_csf_2_0: [GV.RR-01, GV.PO-01]
+          iso_27001_2022: [A.5.2, A.5.3]
+      - section: "Data Protection"
+        crosswalk:
+          nist_csf_2_0: [PR.DS-01, PR.DS-02]
+          iso_27001_2022: [A.8.24]
+          ndpr_ndpa: [§24, §25]
+      - section: "Business Continuity"
+        crosswalk:
+          nist_csf_2_0: [RC.RP-01, RC.RP-02]
+          iso_27001_2022: [A.5.29, A.5.30]
+
+reporting_requirements:
+  incident_notification_window_hours: 48
+  annual_cyber_attestation: false

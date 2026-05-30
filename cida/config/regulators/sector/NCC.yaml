@@ -1,0 +1,12 @@
+id: NCC
+name: Nigerian Communications Commission
+type: sector
+scope: national
+country: NG
+website: https://www.ncc.gov.ng
+directives:
+  - id: NCC-Cybersecurity-Directive
+    name: Cybersecurity Directive for Licensees
+    cyber_relevant_sections:
+      - section: Cyber baseline for telecoms
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01, PR.IR-04], iso_27001_2022: [A.5.7, A.5.16, A.8.16] }

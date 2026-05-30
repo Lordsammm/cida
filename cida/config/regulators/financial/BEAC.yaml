@@ -1,0 +1,13 @@
+id: BEAC
+name: Banque des États de l'Afrique Centrale (CEMAC)
+type: financial
+scope: supranational
+member_countries: [CM, CF, TD, CG, GQ, GA]
+website: https://www.beac.int
+note: "Single central bank for the 6-country CEMAC monetary union (Central Africa)."
+directives:
+  - id: BEAC-Cyber-Directive
+    name: Règlement relatif à la cybersécurité bancaire CEMAC
+    cyber_relevant_sections:
+      - section: Cyber baseline for CEMAC banks
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16] }

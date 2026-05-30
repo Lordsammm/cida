@@ -1,0 +1,13 @@
+id: BoG
+name: Bank of Ghana
+type: financial
+scope: national
+country: GH
+website: https://www.bog.gov.gh
+directives:
+  - id: BoG-Cyber-Information-Security-Directive
+    name: Cyber and Information Security Directive
+    enacted: "2018"
+    cyber_relevant_sections:
+      - section: Cyber and information security baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01, RC.RP-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16, A.5.29] }

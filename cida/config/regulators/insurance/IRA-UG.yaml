@@ -1,0 +1,14 @@
+id: IRA-UG
+name: Insurance Regulatory Authority of Uganda
+type: insurance
+scope: national
+country: UG
+website: https://ira.go.ug
+directives:
+  - id: IRA-UG-Cyber-Guideline
+    name: Cybersecurity and ICT Risk Management Guideline
+    cyber_relevant_sections:
+      - section: Cyber and ICT risk baseline
+        crosswalk:
+          nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01]
+          iso_27001_2022: [A.5.7, A.5.16, A.8.16]

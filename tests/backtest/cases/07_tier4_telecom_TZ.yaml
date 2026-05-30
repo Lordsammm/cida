@@ -1,0 +1,58 @@
+org:
+  org_id: REF-T4-TZ-TELECOM
+  name: "Reference: Tier-4 Tanzanian Telecom (mobile money exposure)"
+  sector: telecom
+  country: TZ
+  employees: 950
+  annual_revenue_usd: 120000000
+  data_sensitivity: high
+  regulated_data_types: [PII]
+  public_facing_assets: 22
+expected:
+  tier_in: [3, 4]
+  overall_score_range: [38, 62]
+  el_range_usd: [500000, 50000000]
+  notes: "High mobile-money fraud exposure; weak appsec + TPRM."
+responses:
+  - {control_id: GOV-001, answer: yes}
+  - {control_id: GOV-002, answer: no}
+  - {control_id: GOV-003, answer: 3}
+  - {control_id: GOV-004, answer: yes}
+  - {control_id: GOV-005, answer: 3}
+  - {control_id: IAM-001, answer: yes}
+  - {control_id: IAM-002, answer: no}
+  - {control_id: IAM-003, answer: yes}
+  - {control_id: IAM-004, answer: 3}
+  - {control_id: IAM-005, answer: yes}
+  - {control_id: AST-001, answer: yes}
+  - {control_id: AST-002, answer: 3}
+  - {control_id: AST-003, answer: no}
+  - {control_id: AST-004, answer: no}
+  - {control_id: AST-005, answer: yes}
+  - {control_id: NET-001, answer: yes}
+  - {control_id: NET-002, answer: 3}
+  - {control_id: NET-003, answer: yes}
+  - {control_id: NET-004, answer: no}
+  - {control_id: END-001, answer: yes}
+  - {control_id: END-002, answer: 3}
+  - {control_id: END-003, answer: yes}
+  - {control_id: END-004, answer: 2}
+  - {control_id: APP-001, answer: no}
+  - {control_id: APP-002, answer: 2}
+  - {control_id: APP-003, answer: no}
+  - {control_id: APP-004, answer: no}
+  - {control_id: CLD-001, answer: yes}
+  - {control_id: CLD-002, answer: 3}
+  - {control_id: CLD-003, answer: no}
+  - {control_id: TPR-001, answer: 2}
+  - {control_id: TPR-002, answer: no}
+  - {control_id: TPR-003, answer: yes}
+  - {control_id: DET-001, answer: yes}
+  - {control_id: DET-002, answer: 3}
+  - {control_id: DET-003, answer: yes}
+  - {control_id: DET-004, answer: 3}
+  - {control_id: DET-005, answer: no}
+  - {control_id: RES-001, answer: yes}
+  - {control_id: RES-002, answer: no}
+  - {control_id: RES-003, answer: 3}
+findings: []

@@ -1,0 +1,12 @@
+id: NBE-INS
+name: National Bank of Ethiopia - Insurance Supervision Directorate
+type: insurance
+scope: national
+country: ET
+website: https://nbe.gov.et
+directives:
+  - id: NBE-Cyber-Directive
+    name: Cybersecurity Directive for FSIs
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

@@ -1,0 +1,23 @@
+id: CBN
+name: Central Bank of Nigeria
+type: financial
+scope: national
+country: NG
+website: https://www.cbn.gov.ng
+directives:
+  - id: CBN-Risk-Based-Cybersecurity-Framework
+    name: Risk-Based Cybersecurity Framework and Guidelines for Deposit Money Banks and Payment Service Providers
+    enacted: "2018 (revised 2022)"
+    cyber_relevant_sections:
+      - section: Cybersecurity Governance and Oversight
+        crosswalk: { nist_csf_2_0: [GV.OC-01, GV.RM-01, GV.SF-01, GV.RR-01], iso_27001_2022: [A.5.1, A.5.2, A.5.3] }
+      - section: Cyber Risk Management System
+        crosswalk: { nist_csf_2_0: [ID.RA-01, ID.RA-04, ID.RA-05], iso_27001_2022: [A.5.7], cis_v8: ["17.1"] }
+      - section: Cyber Resilience
+        crosswalk: { nist_csf_2_0: [PR.AA-01, PR.AA-05, DE.CM-01, RC.RP-01], iso_27001_2022: [A.8.5, A.8.16, A.5.29], cis_v8: ["6.3", "6.5", "13.1"] }
+      - section: Cyber Threat Intelligence and Metrics
+        crosswalk: { nist_csf_2_0: [ID.RA-02, DE.AE-07], iso_27001_2022: [A.5.7] }
+      - section: Incident Management
+        crosswalk: { nist_csf_2_0: [RS.MA-01, RS.MA-02, RS.CO-02], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 24

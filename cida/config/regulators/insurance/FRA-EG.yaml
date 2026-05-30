@@ -1,0 +1,23 @@
+id: FRA-EG
+name: Financial Regulatory Authority (Egypt)
+type: insurance
+scope: national
+country: EG
+website: https://fra.gov.eg
+directives:
+  - id: FRA-Decree-140-2020
+    name: FRA Decree 140/2020 - Electronic Insurance
+    enacted: "2020"
+    cyber_relevant_sections:
+      - section: Electronic transactions security
+        crosswalk:
+          nist_csf_2_0: [PR.AA-01, PR.DS-02]
+          iso_27001_2022: [A.5.16, A.8.24]
+  - id: PDPL-151-2020
+    name: Personal Data Protection Law 151/2020 (Egypt)
+    cyber_relevant_sections:
+      - section: Data security & breach notification
+        crosswalk:
+          nist_csf_2_0: [PR.DS-01, RS.CO-02]
+          iso_27001_2022: [A.5.34, A.5.24]
+          gdpr: [Art.32, Art.33]

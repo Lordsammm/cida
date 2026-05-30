@@ -1,0 +1,49 @@
+id: fsca-js1-2023
+name: "FSCA Joint Standard 1 of 2023 - Cybersecurity and Cyber Resilience Requirements for Financial Institutions"
+publisher: "Financial Sector Conduct Authority (FSCA) + Prudential Authority (SARB)"
+country: ZA
+year: 2023
+effective: 2024-06-01
+url: https://www.fsca.co.za
+note: "The most directly applicable cyber-specific directive for African FSIs. CIDA crosswalks every relevant control to its sections."
+sections:
+  - id: "5"
+    name: Cyber strategy and framework
+    subsections:
+      - id: "5.1"
+        topic: Cyber strategy
+      - id: "5.2"
+        topic: Cyber framework
+      - id: "5.3"
+        topic: Roles and responsibilities (board/senior management)
+  - id: "6"
+    name: Cyber risk management
+    subsections:
+      - id: "6.4"
+        topic: Identity and access management (MFA)
+      - id: "6.5"
+        topic: Privileged access
+      - id: "6.7"
+        topic: Third-party risk
+  - id: "7"
+    name: Cyber resilience
+    subsections:
+      - id: "7.1"
+        topic: Continuous monitoring
+      - id: "7.2"
+        topic: Endpoint detection
+      - id: "7.3"
+        topic: Logging and SIEM
+      - id: "7.4"
+        topic: Backup and recovery
+      - id: "7.5"
+        topic: Business continuity and disaster recovery
+  - id: "8"
+    name: Incident management and notification
+    subsections:
+      - id: "8.1"
+        topic: Incident response plan
+      - id: "8.3"
+        topic: Exercise and testing
+      - id: "8.4"
+        topic: Notification (material incidents within 24h)

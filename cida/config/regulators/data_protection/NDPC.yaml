@@ -1,0 +1,18 @@
+# Data protection regulators
+id: NDPC
+name: Nigeria Data Protection Commission
+type: data_protection
+scope: national
+country: NG
+website: https://ndpc.gov.ng
+directives:
+  - id: NDPA-2023
+    name: Nigeria Data Protection Act 2023
+    enacted: 2023-06-12
+    cyber_relevant_sections:
+      - section: § Security of Personal Data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02], iso_27001_2022: [A.5.34, A.8.24], gdpr: [Art.32] }
+      - section: § Breach Notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26], gdpr: [Art.33, Art.34] }
+reporting_requirements:
+  incident_notification_window_hours: 72

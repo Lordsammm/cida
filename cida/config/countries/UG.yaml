@@ -1,0 +1,33 @@
+iso_a2: UG
+iso_a3: UGA
+name: Uganda
+region: East Africa
+sub_region: Sub-Saharan Africa
+currency: UGX
+official_languages:
+- en
+- sw
+ccTLDs:
+- .ug
+disclosure_correction_factor: 3.5
+mobile_money_penetration: very_high
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 4.9
+regulators:
+  insurance: IRA-UG
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: UG-CERT
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.69
+  tier: T2

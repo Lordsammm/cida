@@ -1,0 +1,12 @@
+id: CNA-DZ
+name: Conseil National des Assurances (Algérie)
+type: insurance
+scope: national
+country: DZ
+website: https://www.cna.dz
+directives:
+  - id: CNA-Cyber-Directive
+    name: Directive sur la cybersécurité
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

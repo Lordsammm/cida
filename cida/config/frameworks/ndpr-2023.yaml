@@ -1,0 +1,72 @@
+id: ndpr-2023
+name: Nigeria Data Protection Regulation / Act 2023 (NDPR/NDPA)
+publisher: Nigeria Data Protection Commission (NDPC)
+year: 2023
+jurisdiction: Nigeria
+url: https://ndpc.gov.ng/NDPA2023.pdf
+applies_to:
+  - All organisations that process personal data of Nigerian residents
+  - Organisations with Nigerian nexus regardless of physical location
+
+# Primary obligations mapped to CIDA control domains.
+# Compliance score is computed from catalog controls crosswalked to "ndpr_ndpa".
+obligations:
+  - id: NDPA-S24
+    name: Lawful basis for processing
+    domain: governance
+    summary: Processing must have a documented lawful basis (consent, contract, legal obligation, etc.)
+    penalty_ngn_max: 10000000   # NGN 10M or 2% of annual gross revenue, whichever is higher
+    penalty_note: "Higher of NGN 10,000,000 or 2% of annual gross revenue"
+
+  - id: NDPA-S26
+    name: Data subject rights
+    domain: governance
+    summary: Must honour rights to access, rectification, erasure, portability, and objection.
+
+  - id: NDPA-S38
+    name: Data Protection Officer (DPO)
+    domain: governance
+    summary: Entities processing large volumes of personal data must appoint a DPO and register with NDPC.
+
+  - id: NDPA-S40
+    name: Data Protection Impact Assessment (DPIA)
+    domain: governance
+    summary: DPIA required for high-risk processing activities.
+
+  - id: NDPA-S48
+    name: Security of processing
+    domain: governance
+    summary: >
+      Implement appropriate technical and organisational measures:
+      encryption, pseudonymisation, access controls, incident response,
+      regular security testing.
+
+  - id: NDPA-S50
+    name: Breach notification
+    domain: detect_respond
+    summary: >
+      Notify NDPC within 72 hours of becoming aware of a personal data breach.
+      Notify affected data subjects without undue delay when high risk to rights.
+
+  - id: NDPA-S55
+    name: Data retention and disposal
+    domain: asset_data
+    summary: Personal data must not be retained longer than necessary; secure disposal required.
+
+  - id: NDPA-S60
+    name: Cross-border data transfer
+    domain: governance
+    summary: Transfers outside Nigeria require adequate protection (adequacy decision, SCCs, or binding rules).
+
+# CIDA scoring notes:
+# - Controls crosswalked to ndpr_ndpa in control_catalog.yaml drive the posture score.
+# - Regulatory_penalties LossDriver is directly tied to NDPR/NDPA non-compliance findings.
+# - A posture score below 50% flags REGULATORY_PENALTIES as a high-likelihood driver.
+# - Required for: all Nigerian-domiciled organisations regardless of sector.
+risk_to_loss_drivers:
+  - regulatory_penalties
+  - privacy_liability
+
+sector_applicability: all
+country_codes: [NG]
+cida_framework_key: ndpr_ndpa

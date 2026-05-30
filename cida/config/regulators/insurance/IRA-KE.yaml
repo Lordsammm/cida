@@ -1,0 +1,31 @@
+id: IRA-KE
+name: Insurance Regulatory Authority (Kenya)
+type: insurance
+scope: national
+country: KE
+website: https://www.ira.go.ke
+established: 2007
+
+directives:
+  - id: IRA-ICT-Risk-Guideline
+    name: Guideline on ICT Risk Management
+    cyber_relevant_sections:
+      - section: "ICT Governance"
+        crosswalk:
+          nist_csf_2_0: [GV.OC-01, GV.RR-01]
+          iso_27001_2022: [A.5.1, A.5.2]
+      - section: "Information Security"
+        crosswalk:
+          nist_csf_2_0: [PR.AA-01, PR.DS-01, DE.CM-01]
+          iso_27001_2022: [A.5.16, A.8.5, A.8.16]
+      - section: "Business Continuity & DR"
+        crosswalk:
+          nist_csf_2_0: [RC.RP-01, RC.RP-02]
+          iso_27001_2022: [A.5.29, A.5.30]
+
+  - id: IRA-Claims-Statistics-Publication
+    name: Quarterly Claims Settlement Statistics (public dataset)
+    note: Public dataset useful as actuarial baseline for Kenya cohort
+
+reporting_requirements:
+  incident_notification_window_hours: 24

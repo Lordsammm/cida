@@ -1,0 +1,24 @@
+id: cis-v8
+name: CIS Critical Security Controls v8
+publisher: Center for Internet Security
+year: 2021
+url: https://www.cisecurity.org/controls
+controls:
+  - { id: "1",  name: "Inventory and Control of Enterprise Assets" }
+  - { id: "2",  name: "Inventory and Control of Software Assets" }
+  - { id: "3",  name: "Data Protection" }
+  - { id: "4",  name: "Secure Configuration of Enterprise Assets and Software" }
+  - { id: "5",  name: "Account Management" }
+  - { id: "6",  name: "Access Control Management" }
+  - { id: "7",  name: "Continuous Vulnerability Management" }
+  - { id: "8",  name: "Audit Log Management" }
+  - { id: "9",  name: "Email and Web Browser Protections" }
+  - { id: "10", name: "Malware Defenses" }
+  - { id: "11", name: "Data Recovery" }
+  - { id: "12", name: "Network Infrastructure Management" }
+  - { id: "13", name: "Network Monitoring and Defense" }
+  - { id: "14", name: "Security Awareness and Skills Training" }
+  - { id: "15", name: "Service Provider Management" }
+  - { id: "16", name: "Application Software Security" }
+  - { id: "17", name: "Incident Response Management" }
+  - { id: "18", name: "Penetration Testing" }

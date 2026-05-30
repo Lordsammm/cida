@@ -1,0 +1,32 @@
+iso_a2: BF
+iso_a3: BFA
+name: Burkina Faso
+region: West Africa
+sub_region: Sub-Saharan Africa
+currency: XOF
+official_languages:
+- fr
+ccTLDs:
+- .bf
+disclosure_correction_factor: 4.5
+mobile_money_penetration: high
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 3.0
+regulators:
+  insurance: CIMA
+  data_protection: GENERIC-DP
+  central_bank: BCEAO
+  sector: {}
+cert: null
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.587
+  tier: T3

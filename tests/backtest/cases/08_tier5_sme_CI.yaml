@@ -1,0 +1,58 @@
+org:
+  org_id: REF-T5-SME-CI
+  name: "Reference: Tier-5 SME in Côte d'Ivoire (minimal cyber program)"
+  sector: other
+  country: CI
+  employees: 75
+  annual_revenue_usd: 6500000
+  data_sensitivity: medium
+  regulated_data_types: [PII]
+  public_facing_assets: 3
+expected:
+  tier_in: [4, 5]
+  overall_score_range: [0, 45]
+  el_range_usd: [50000, 8000000]
+  notes: "Small SME; mostly missing controls; expect Tier 5 (decline candidate)."
+responses:
+  - {control_id: GOV-001, answer: no}
+  - {control_id: GOV-002, answer: no}
+  - {control_id: GOV-003, answer: 1}
+  - {control_id: GOV-004, answer: no}
+  - {control_id: GOV-005, answer: 1}
+  - {control_id: IAM-001, answer: no}
+  - {control_id: IAM-002, answer: no}
+  - {control_id: IAM-003, answer: no}
+  - {control_id: IAM-004, answer: 1}
+  - {control_id: IAM-005, answer: no}
+  - {control_id: AST-001, answer: no}
+  - {control_id: AST-002, answer: 1}
+  - {control_id: AST-003, answer: no}
+  - {control_id: AST-004, answer: no}
+  - {control_id: AST-005, answer: no}
+  - {control_id: NET-001, answer: yes}
+  - {control_id: NET-002, answer: 1}
+  - {control_id: NET-003, answer: no}
+  - {control_id: NET-004, answer: no}
+  - {control_id: END-001, answer: no}
+  - {control_id: END-002, answer: 2}
+  - {control_id: END-003, answer: no}
+  - {control_id: END-004, answer: 1}
+  - {control_id: APP-001, answer: no}
+  - {control_id: APP-002, answer: 1}
+  - {control_id: APP-003, answer: no}
+  - {control_id: APP-004, answer: no}
+  - {control_id: CLD-001, answer: no}
+  - {control_id: CLD-002, answer: 1}
+  - {control_id: CLD-003, answer: no}
+  - {control_id: TPR-001, answer: 1}
+  - {control_id: TPR-002, answer: no}
+  - {control_id: TPR-003, answer: no}
+  - {control_id: DET-001, answer: no}
+  - {control_id: DET-002, answer: 1}
+  - {control_id: DET-003, answer: no}
+  - {control_id: DET-004, answer: 1}
+  - {control_id: DET-005, answer: no}
+  - {control_id: RES-001, answer: no}
+  - {control_id: RES-002, answer: no}
+  - {control_id: RES-003, answer: 1}
+findings: []

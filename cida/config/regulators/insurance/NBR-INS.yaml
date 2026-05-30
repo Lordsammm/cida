@@ -1,0 +1,14 @@
+id: NBR-INS
+name: National Bank of Rwanda - Insurance Supervision Department
+type: insurance
+scope: national
+country: RW
+website: https://www.bnr.rw
+directives:
+  - id: NBR-Cyber-Regulation-2018
+    name: Regulation N° 008/2018 - Cyber Security
+    cyber_relevant_sections:
+      - section: Cyber security baseline for FSIs
+        crosswalk:
+          nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01, RC.RP-01]
+          iso_27001_2022: [A.5.7, A.5.16, A.8.16, A.5.29]

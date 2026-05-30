@@ -1,0 +1,290 @@
+# ============================================================================
+# CIDA - Threat Vector x Loss Driver Matrix
+#
+# Each vector is scored 0..100 (0 = best, 100 = worst exposure) from a blend
+# of findings + control responses. For each (vector, driver) cell below, the
+# value is the FREQUENCY MULTIPLIER applied to the loss-driver's lambda when
+# the vector is fully saturated (score = 100). At score = 0 the multiplier is
+# 1.0 (neutral). Linear interpolation in between:
+#
+#     mult = 1.0 + (vector_score / 100) * (matrix_value - 1.0)
+#
+# Combined multiplier on a driver = product of (vector -> driver) multipliers
+# across all 14 vectors. Capped per-driver at 6.0x in the actuarial model.
+#
+# SOURCES (mapping logic & per-cell calibration):
+#   - Verizon DBIR 2024 - breach pattern x action mapping (Tables 3-4)
+#   - Coalition 2024 Cyber Claims Report - initial access vector breakdown
+#   - IBM Cost of a Data Breach 2024 - initial-attack-vector cost analysis
+#   - Mandiant M-Trends 2024 - initial-compromise vector frequencies
+#   - CrowdStrike Global Threat Report 2024 - TTP frequency tables
+#   - MITRE ATT&CK technique catalog (mapping) v15
+#   - FIRST EPSS model documentation
+#   - CISA KEV catalog (exploit prevalence)
+#   - FBI IC3 BEC investigations 2024 - DMARC/SPF correlation
+#   - ENISA Threat Landscape 2024
+#   - Sophos State of Ransomware 2024 - entry-point analysis
+#   - Cyentia IRIS 2022 - multi-driver event correlation
+#   - GSMA / Mastercard Africa fraud reports - mobile_agent_network -> computer_fraud
+#   - Dragos Year in Review 2024 - OT exposure to BI
+#
+# CONFIDENCE TIERS:
+#   high   = scored mostly from hard telemetry (CVE scans, CSPM, dark-web)
+#   medium = telemetry + self-attestation blend
+#   low    = questionnaire / self-attestation only
+# ============================================================================
+
+# Vector metadata - UI labels, confidence tier (telemetry availability),
+# and which loss drivers they primarily influence.
+vector_metadata:
+  external_network_exposure:
+    label: "External Network Exposure"
+    confidence: high
+    description: "Internet-exposed services (RDP/SMB/Telnet/databases), open admin panels, expired TLS, weak ciphers."
+    primary_telemetry: ["shodan", "censys", "amass", "attack_surface"]
+  unpatched_vulnerabilities:
+    label: "Unpatched Vulnerabilities"
+    confidence: high
+    description: "Open CVEs on internet-facing assets weighted by CVSS, KEV listing, EPSS, and age."
+    primary_telemetry: ["nessus", "burp", "qualys", "vapt_pdf"]
+  web_application_weaknesses:
+    label: "Web Application Weaknesses"
+    confidence: high
+    description: "OWASP Top 10: SQLi, XSS, SSRF, IDOR, broken auth, missing security headers."
+    primary_telemetry: ["burp", "zap", "vapt_pdf", "appsec"]
+  email_hygiene:
+    label: "Email & Phishing Hygiene"
+    confidence: high
+    description: "SPF, DKIM, DMARC enforcement; lookalike domains; staff phishing failure rate."
+    primary_telemetry: ["dmarc", "spf", "dns"]
+  identity_and_access:
+    label: "Identity & Access"
+    confidence: medium
+    description: "MFA coverage, SSO, dormant/privileged accounts, password policy, conditional access."
+    primary_telemetry: ["questionnaire", "idp_export"]
+  endpoint_security:
+    label: "Endpoint Security"
+    confidence: medium
+    description: "EDR coverage, OS patching SLA, removable-media policy."
+    primary_telemetry: ["questionnaire", "edr_export"]
+  cloud_misconfiguration:
+    label: "Cloud Misconfiguration"
+    confidence: high
+    description: "Public buckets, over-permissive IAM, root MFA off, logging gaps, unencrypted volumes."
+    primary_telemetry: ["prowler", "securityhub", "defender", "scc", "cspm_aws", "cspm_azure", "cspm_gcp"]
+  data_protection:
+    label: "Data Protection"
+    confidence: medium
+    description: "Encryption at rest/in transit, DLP, backup completeness, immutable/air-gapped backups."
+    primary_telemetry: ["questionnaire", "cspm"]
+  third_party_supply_chain:
+    label: "Third-Party / Supply Chain"
+    confidence: medium
+    description: "Vendor MFA, SBOM hygiene, dependency CVEs (Log4j-class), API-key leakage."
+    primary_telemetry: ["questionnaire", "sbom"]
+  detection_and_response:
+    label: "Detection & Response"
+    confidence: low
+    description: "SIEM coverage, MTTD/MTTR, IR playbook, IR retainer, tabletop frequency."
+    primary_telemetry: ["questionnaire"]
+  credential_secrets_exposure:
+    label: "Credential & Secrets Exposure"
+    confidence: high
+    description: "Leaked credentials, stealer-log infections, secrets in public repos."
+    primary_telemetry: ["darkweb_credentials", "darkweb_stealer"]
+  ddos_resilience:
+    label: "DDoS Resilience"
+    confidence: low
+    description: "CDN / WAF coverage, BGP hygiene, anti-DDoS provider."
+    primary_telemetry: ["questionnaire", "dns"]
+  insider_risk:
+    label: "Insider Risk"
+    confidence: low
+    description: "JML controls, UEBA, separation of duties, privileged-user monitoring."
+    primary_telemetry: ["questionnaire"]
+  mobile_agent_network:
+    label: "Mobile / Agent Network"
+    confidence: low
+    description: "SIM-swap controls, agent fraud monitoring, USSD encryption (Africa-specific)."
+    primary_telemetry: ["questionnaire"]
+
+# Per-cell multipliers applied to the loss-driver frequency lambda when the
+# vector is saturated (score = 100). Values calibrated as described above.
+matrix:
+  external_network_exposure:
+    # DBIR'24 - exploit-public-facing-app is top initial-access for ransomware
+    cyber_extortion: 1.80
+    business_interruption: 1.50
+    data_recovery: 1.60
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.20
+    privacy_liability: 1.70
+    network_sec_liability: 1.20
+    regulatory_penalties: 1.00
+    pci_fines: 1.00
+  unpatched_vulnerabilities:
+    # CISA KEV + EPSS - primary precursor to ransomware (Mandiant'24)
+    cyber_extortion: 2.00
+    business_interruption: 1.60
+    data_recovery: 1.80
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.20
+    privacy_liability: 1.70
+    network_sec_liability: 1.40
+    regulatory_penalties: 1.00
+    pci_fines: 1.10
+  web_application_weaknesses:
+    # OWASP'21 + DBIR'24 - SQLi/SSRF -> breach; broken auth -> ATO
+    cyber_extortion: 1.20
+    business_interruption: 1.30
+    data_recovery: 1.30
+    funds_transfer_fraud: 1.50
+    social_engineering: 1.00
+    computer_fraud: 1.80
+    privacy_liability: 2.00
+    network_sec_liability: 1.20
+    regulatory_penalties: 1.00
+    pci_fines: 1.70
+  email_hygiene:
+    # IC3'24 - DMARC absence correlates strongly with BEC
+    cyber_extortion: 1.30
+    business_interruption: 1.00
+    data_recovery: 1.00
+    funds_transfer_fraud: 2.20
+    social_engineering: 3.00
+    computer_fraud: 1.00
+    privacy_liability: 1.20
+    network_sec_liability: 1.00
+    regulatory_penalties: 1.00
+    pci_fines: 1.00
+  identity_and_access:
+    # Coalition'24 - no-MFA is #1 root cause across all FTF/extortion claims
+    cyber_extortion: 2.00
+    business_interruption: 1.40
+    data_recovery: 1.60
+    funds_transfer_fraud: 2.50
+    social_engineering: 1.80
+    computer_fraud: 2.20
+    privacy_liability: 2.00
+    network_sec_liability: 1.10
+    regulatory_penalties: 1.00
+    pci_fines: 1.30
+  endpoint_security:
+    # Sophos'24 - endpoint without EDR coverage doubles ransomware payout rate
+    cyber_extortion: 2.20
+    business_interruption: 1.70
+    data_recovery: 1.90
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.20
+    privacy_liability: 1.40
+    network_sec_liability: 1.30
+    regulatory_penalties: 1.00
+    pci_fines: 1.00
+  cloud_misconfiguration:
+    # IBM'24 - cloud misconfig was #2 attack vector for breaches in 2024
+    cyber_extortion: 1.30
+    business_interruption: 1.20
+    data_recovery: 1.30
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.20
+    privacy_liability: 2.50
+    network_sec_liability: 1.20
+    regulatory_penalties: 1.50
+    pci_fines: 1.40
+  data_protection:
+    # Sophos'24 - backup integrity & encryption directly drive recovery cost
+    cyber_extortion: 1.80
+    business_interruption: 1.50
+    data_recovery: 2.50
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.00
+    privacy_liability: 2.00
+    network_sec_liability: 1.00
+    regulatory_penalties: 1.30
+    pci_fines: 1.40
+  third_party_supply_chain:
+    # SolarWinds/Kaseya/3CX class events (Mandiant'24)
+    cyber_extortion: 1.40
+    business_interruption: 1.50
+    data_recovery: 1.40
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.10
+    privacy_liability: 1.60
+    network_sec_liability: 1.80
+    regulatory_penalties: 1.20
+    pci_fines: 1.20
+  detection_and_response:
+    # IBM'24 - orgs without IR plan have $1.49M higher avg breach cost
+    cyber_extortion: 1.40
+    business_interruption: 1.50
+    data_recovery: 1.60
+    funds_transfer_fraud: 1.30
+    social_engineering: 1.30
+    computer_fraud: 1.40
+    privacy_liability: 1.50
+    network_sec_liability: 1.20
+    regulatory_penalties: 1.20
+    pci_fines: 1.20
+  credential_secrets_exposure:
+    # IBM'24 - stolen/compromised creds was #1 initial attack vector
+    cyber_extortion: 1.80
+    business_interruption: 1.30
+    data_recovery: 1.50
+    funds_transfer_fraud: 2.00
+    social_engineering: 2.00
+    computer_fraud: 2.00
+    privacy_liability: 1.70
+    network_sec_liability: 1.10
+    regulatory_penalties: 1.10
+    pci_fines: 1.20
+  ddos_resilience:
+    # ENISA'24 + Cloudflare DDoS'24 - Q3'24 record 4.2 Tbps attacks
+    cyber_extortion: 1.00
+    business_interruption: 3.00
+    data_recovery: 1.10
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.20
+    privacy_liability: 1.00
+    network_sec_liability: 1.40
+    regulatory_penalties: 1.00
+    pci_fines: 1.00
+  insider_risk:
+    # DBIR'24 - internal actors account for ~22% of breaches; Serianu'24 higher in Africa
+    cyber_extortion: 1.10
+    business_interruption: 1.20
+    data_recovery: 1.30
+    funds_transfer_fraud: 1.50
+    social_engineering: 1.10
+    computer_fraud: 1.80
+    privacy_liability: 2.00
+    network_sec_liability: 1.00
+    regulatory_penalties: 1.20
+    pci_fines: 1.10
+  mobile_agent_network:
+    # GSMA'24 + Mastercard'24 - agent/USSD fraud dominates African computer-fraud claims
+    cyber_extortion: 1.00
+    business_interruption: 1.10
+    data_recovery: 1.00
+    funds_transfer_fraud: 2.50
+    social_engineering: 1.00
+    computer_fraud: 3.00
+    privacy_liability: 1.30
+    network_sec_liability: 1.00
+    regulatory_penalties: 1.20
+    pci_fines: 1.00
+
+# Maximum combined product across all 14 vectors per driver. Prevents
+# multiplicative explosion when many vectors are partially deficient.
+per_driver_cap: 6.0
+
+# Peer baseline: average vector score across the underwriter's book.
+# A typical org with moderate gaps lands ~40 out of 100 across vectors.
+# Used to compute likelihood multiplier vs peer.
+peer_baseline_vector_score: 40.0

@@ -1,0 +1,13 @@
+id: BCEAO
+name: Banque Centrale des États de l'Afrique de l'Ouest (WAEMU)
+type: financial
+scope: supranational
+member_countries: [BJ, BF, CI, GW, ML, NE, SN, TG]
+website: https://www.bceao.int
+note: "Single central bank for the 8-country WAEMU monetary union (Francophone West Africa)."
+directives:
+  - id: BCEAO-Cyber-Directive
+    name: Directive relative à la cybersécurité dans le secteur bancaire
+    cyber_relevant_sections:
+      - section: Cyber baseline for WAEMU banks
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16] }

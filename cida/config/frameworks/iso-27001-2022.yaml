@@ -1,0 +1,21 @@
+id: iso-27001-2022
+name: ISO/IEC 27001:2022 - Information Security Management Systems
+publisher: ISO/IEC
+year: 2022
+url: https://www.iso.org/standard/27001
+annex_a_themes:
+  - id: A.5
+    name: Organizational controls
+    count: 37
+    examples: [A.5.1, A.5.2, A.5.3, A.5.7, A.5.8, A.5.9, A.5.10, A.5.12, A.5.13, A.5.16, A.5.18, A.5.19, A.5.20, A.5.21, A.5.23, A.5.24, A.5.26, A.5.29, A.5.30]
+  - id: A.6
+    name: People controls
+    count: 8
+    examples: [A.6.2, A.6.3, A.6.7]
+  - id: A.7
+    name: Physical controls
+    count: 14
+  - id: A.8
+    name: Technological controls
+    count: 34
+    examples: [A.8.1, A.8.2, A.8.3, A.8.5, A.8.6, A.8.7, A.8.8, A.8.9, A.8.12, A.8.13, A.8.15, A.8.16, A.8.18, A.8.19, A.8.20, A.8.21, A.8.22, A.8.23, A.8.24, A.8.25, A.8.26, A.8.28, A.8.29, A.8.30]

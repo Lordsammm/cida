@@ -1,0 +1,19 @@
+name: manufacturing
+description: Manufacturing, FMCG, agriculture, industrial
+base_frequency_multipliers:
+  bec: 1.30
+  ransomware: 1.50
+  data_breach: 0.90
+  ddos: 0.70
+  insider: 1.10
+  third_party: 1.30
+  mobile_money_fraud: 0.50
+severity_multipliers:
+  bec: 1.40
+  ransomware: 1.60      # operational disruption
+  data_breach: 0.80
+  ddos: 0.70
+  insider: 1.20
+  third_party: 1.30
+  mobile_money_fraud: 0.50
+required_frameworks: [nist-csf-2.0, iso-27001-2022]

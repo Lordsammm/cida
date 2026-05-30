@@ -1,0 +1,32 @@
+iso_a2: MZ
+iso_a3: MOZ
+name: Mozambique
+region: Southern Africa
+sub_region: Sub-Saharan Africa
+currency: MZN
+official_languages:
+- pt
+ccTLDs:
+- .mz
+disclosure_correction_factor: 4.0
+mobile_money_penetration: high
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 2.5
+regulators:
+  insurance: ISSM
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: null
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.49
+  tier: T3

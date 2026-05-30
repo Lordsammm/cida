@@ -1,0 +1,11 @@
+id: GENERIC-INS
+name: Generic Insurance Regulator (placeholder)
+type: insurance
+scope: national
+note: "Fallback used by countries whose specific insurance regulator config is not yet detailed in CIDA. References Malabo Convention as continental baseline."
+directives:
+  - id: Malabo-Cyber-Baseline
+    name: Malabo Convention Cybersecurity Baseline
+    cyber_relevant_sections:
+      - section: Cyber baseline (continental)
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01, RC.RP-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16, A.5.29], malabo: [Ch.III] }

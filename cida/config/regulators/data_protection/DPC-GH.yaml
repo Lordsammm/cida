@@ -1,0 +1,13 @@
+id: DPC-GH
+name: Data Protection Commission (Ghana)
+type: data_protection
+scope: national
+country: GH
+website: https://www.dataprotection.org.gh
+directives:
+  - id: DPA-GH-2012
+    name: Data Protection Act, 2012 (Act 843)
+    enacted: 2012-10-16
+    cyber_relevant_sections:
+      - section: Security measures
+        crosswalk: { nist_csf_2_0: [PR.DS-01], iso_27001_2022: [A.5.34, A.8.24] }

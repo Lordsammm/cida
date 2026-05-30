@@ -1,0 +1,42 @@
+control_id,answer,evidence_ref,notes
+GOV-001,yes,policy-v3.2.pdf,Board-approved
+GOV-002,yes,risk-committee-charter.pdf,
+GOV-003,4,training-records-2024.xlsx,Quarterly phishing simulations
+GOV-004,yes,roles-matrix.pdf,
+GOV-005,3,budget-spreadsheet.xlsx,Adequate but not best-in-class
+IAM-001,yes,okta-mfa-report.pdf,Workforce + admin MFA enforced
+IAM-002,no,,Customer-facing portal MFA in roadmap Q3
+IAM-003,yes,sso-saml.pdf,Okta SSO across SaaS
+IAM-004,4,pam-cyberark.pdf,Privileged access managed via CyberArk
+IAM-005,yes,joiner-leaver-process.docx,
+AST-001,yes,asset-inventory-cmdb.csv,
+AST-002,3,classification-policy.pdf,PII/PCI classified; tagging partial
+AST-003,yes,dlp-symantec.pdf,
+AST-004,no,,No automated data discovery scanning
+AST-005,yes,encryption-at-rest.pdf,AES-256
+NET-001,yes,fw-config.pdf,
+NET-002,4,segmentation-diagram.pdf,Card-data segment isolated
+NET-003,yes,vpn-zerotrust.pdf,
+NET-004,no,,No WAF on customer portal
+END-001,yes,crowdstrike-deployment.pdf,EDR on 96% of endpoints
+END-002,4,patch-mgmt-monthly.xlsx,Critical patches within SLA
+END-003,yes,bitlocker-encryption.pdf,
+END-004,3,usb-control.pdf,
+APP-001,no,,SDLC security gates inconsistent
+APP-002,3,sast-snyk.pdf,SAST in CI but not blocking
+APP-003,no,,No DAST in production pipeline
+APP-004,yes,api-gateway-auth.pdf,
+CLD-001,yes,aws-cspm-prowler.pdf,
+CLD-002,4,iam-least-privilege.pdf,
+CLD-003,no,,Public S3 buckets quarterly scan only
+TPR-001,3,vendor-due-diligence.xlsx,Tiered DD process
+TPR-002,no,,No continuous vendor monitoring
+TPR-003,yes,contract-cyber-clauses.pdf,
+DET-001,yes,siem-splunk.pdf,
+DET-002,3,soc-msp.pdf,8x5 MSSP coverage; 24/7 in roadmap
+DET-003,yes,ir-playbooks.pdf,
+DET-004,4,tabletop-2024.pdf,Annual IR exercise
+DET-005,no,,No threat intel feed integration
+RES-001,yes,backup-policy.pdf,Daily incrementals
+RES-002,no,,Backups not immutable / not air-gapped
+RES-003,3,bcp-dr-plan.pdf,DR tested annually

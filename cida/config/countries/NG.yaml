@@ -1,0 +1,39 @@
+iso_a2: NG
+iso_a3: NGA
+name: Nigeria
+region: West Africa
+sub_region: Sub-Saharan Africa
+currency: NGN
+official_languages: [en]
+ccTLDs: [.ng, .com.ng, .gov.ng, .edu.ng, .org.ng]
+
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.751
+  tier: T2
+
+disclosure_correction_factor: 3.5
+mobile_money_penetration: high
+
+base_frequency_multipliers:
+  bec: 1.40
+  ransomware: 0.90
+  data_breach: 1.10
+  ddos: 0.80
+  insider: 1.20
+  third_party: 1.00
+  mobile_money_fraud: 2.80
+
+regulators:
+  insurance: NAICOM
+  data_protection: NDPC
+  central_bank: CBN
+  capital_markets: SEC-NG
+  telecoms: NCC
+  sector:
+    pensions: PenCom
+    it: NITDA
+
+cert: ngCERT
+intel_sources: [proshare, businessday_intelligence]

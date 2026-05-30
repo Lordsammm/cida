@@ -1,0 +1,17 @@
+id: CBK
+name: Central Bank of Kenya
+type: financial
+scope: national
+country: KE
+website: https://www.centralbank.go.ke
+directives:
+  - id: CBK-Cybersecurity-Guidance
+    name: Guidance Note on Cybersecurity for the Banking Sector
+    enacted: "2017"
+    cyber_relevant_sections:
+      - section: Cyber risk governance and management
+        crosswalk: { nist_csf_2_0: [GV.OC-01, GV.RM-01, ID.RA-01], iso_27001_2022: [A.5.1, A.5.7] }
+      - section: Cyber resilience and recovery
+        crosswalk: { nist_csf_2_0: [PR.AA-01, DE.CM-01, RC.RP-01], iso_27001_2022: [A.5.16, A.8.16, A.5.29] }
+reporting_requirements:
+  incident_notification_window_hours: 24

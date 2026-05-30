@@ -1,0 +1,33 @@
+iso_a2: TN
+iso_a3: TUN
+name: Tunisia
+region: North Africa
+sub_region: North Africa
+currency: TND
+official_languages:
+- ar
+- fr
+ccTLDs:
+- .tn
+disclosure_correction_factor: 2.8
+mobile_money_penetration: medium
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 1.75
+regulators:
+  insurance: CGA
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: TN-CERT
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.825
+  tier: T2

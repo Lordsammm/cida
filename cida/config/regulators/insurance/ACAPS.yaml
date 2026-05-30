@@ -1,0 +1,14 @@
+id: ACAPS
+name: Autorité de Contrôle des Assurances et de la Prévoyance Sociale
+type: insurance
+scope: national
+country: MA
+website: https://www.acaps.ma
+directives:
+  - id: ACAPS-ICT-Circular
+    name: Circulaire sur la gestion des risques liés aux systèmes d'information
+    cyber_relevant_sections:
+      - section: Gestion des risques SI
+        crosswalk:
+          nist_csf_2_0: [GV.RM-01, ID.RA-01]
+          iso_27001_2022: [A.5.7]

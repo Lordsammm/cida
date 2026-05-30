@@ -1,0 +1,12 @@
+id: SEC-NG
+name: Securities and Exchange Commission (Nigeria)
+type: sector
+scope: national
+country: NG
+website: https://sec.gov.ng
+directives:
+  - id: SEC-NG-Cybersecurity-Framework
+    name: Cybersecurity Framework for Capital Market Operators
+    cyber_relevant_sections:
+      - section: Cyber baseline for CMOs
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16] }

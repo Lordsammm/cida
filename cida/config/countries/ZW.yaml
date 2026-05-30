@@ -1,0 +1,34 @@
+iso_a2: ZW
+iso_a3: ZWE
+name: Zimbabwe
+region: Southern Africa
+sub_region: Sub-Saharan Africa
+currency: ZWL
+official_languages:
+- en
+- sn
+- nd
+ccTLDs:
+- .zw
+disclosure_correction_factor: 4.0
+mobile_money_penetration: medium
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 1.75
+regulators:
+  insurance: IPEC
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: null
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.598
+  tier: T3

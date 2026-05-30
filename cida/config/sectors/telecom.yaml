@@ -1,0 +1,19 @@
+name: telecom
+description: Telecommunications operators, ISPs, MNOs
+base_frequency_multipliers:
+  bec: 1.10
+  ransomware: 1.10
+  data_breach: 1.40
+  ddos: 1.80
+  insider: 1.40
+  third_party: 1.20
+  mobile_money_fraud: 2.50    # MNO-led mobile money operators
+severity_multipliers:
+  bec: 1.10
+  ransomware: 1.30
+  data_breach: 1.50
+  ddos: 1.30
+  insider: 1.30
+  third_party: 1.20
+  mobile_money_fraud: 1.40
+required_frameworks: [nist-csf-2.0, iso-27001-2022]

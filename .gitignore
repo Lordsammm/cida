@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+*.pdf
+!examples/expected_report.pdf
+data/cache/
+.DS_Store
+# Generated report output
+out/
+# Client assessment folders (contain sensitive data — never commit)
+clients/
+# Source reference documents
+foundation/

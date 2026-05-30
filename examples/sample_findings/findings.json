@@ -1,0 +1,74 @@
+{
+  "findings": [
+    {
+      "source": "nessus",
+      "asset": "portal.sample-insurance.ng:443",
+      "title": "Apache HTTP Server 2.4.49 Path Traversal (CVE-2021-41773)",
+      "severity": "critical",
+      "domain": "appsec",
+      "cve_id": "CVE-2021-41773",
+      "cvss_v3": 9.8,
+      "exposure": "internet",
+      "asset_criticality": "crown_jewel",
+      "evidence": "Externally exploitable path traversal in web tier"
+    },
+    {
+      "source": "nessus",
+      "asset": "10.20.5.14:445",
+      "title": "SMBv1 enabled on legacy file server",
+      "severity": "high",
+      "domain": "network",
+      "cve_id": "CVE-2017-0144",
+      "cvss_v3": 8.1,
+      "exposure": "internal",
+      "asset_criticality": "high"
+    },
+    {
+      "source": "burp",
+      "asset": "https://portal.sample-insurance.ng/api/v1/quotes",
+      "title": "Reflected XSS in quote search endpoint",
+      "severity": "high",
+      "domain": "appsec",
+      "cwe_id": "CWE-79",
+      "exposure": "internet",
+      "asset_criticality": "high"
+    },
+    {
+      "source": "prowler",
+      "asset": "arn:aws:s3:::sample-insurance-claims-uploads",
+      "title": "S3 bucket has public list permission",
+      "severity": "medium",
+      "domain": "cloud",
+      "exposure": "internet",
+      "asset_criticality": "medium"
+    },
+    {
+      "source": "dmarc_check",
+      "asset": "sample-insurance.ng",
+      "title": "DMARC policy = none (monitoring only)",
+      "severity": "medium",
+      "domain": "detect_respond",
+      "exposure": "internet"
+    },
+    {
+      "source": "nessus",
+      "asset": "vpn.sample-insurance.ng:443",
+      "title": "Fortinet FortiOS SSL VPN heap overflow (CVE-2023-27997)",
+      "severity": "critical",
+      "domain": "network",
+      "cve_id": "CVE-2023-27997",
+      "cvss_v3": 9.8,
+      "exposure": "internet",
+      "asset_criticality": "crown_jewel"
+    },
+    {
+      "source": "shodan",
+      "asset": "203.0.113.45:3389",
+      "title": "RDP exposed to internet",
+      "severity": "high",
+      "domain": "network",
+      "exposure": "internet",
+      "asset_criticality": "high"
+    }
+  ]
+}

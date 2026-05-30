@@ -1,0 +1,12 @@
+id: FSA-SC
+name: Financial Services Authority (Seychelles)
+type: insurance
+scope: national
+country: SC
+website: https://fsaseychelles.sc
+directives:
+  - id: FSA-Cyber-Standard
+    name: Cybersecurity and Resilience Standard
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

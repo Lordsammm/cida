@@ -1,0 +1,12 @@
+id: ARSEG
+name: Agência Angolana de Regulação e Supervisão de Seguros
+type: insurance
+scope: national
+country: AO
+website: https://www.arseg.ao
+directives:
+  - id: ARSEG-Cyber-Reg
+    name: Regulamento de Segurança Cibernética
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

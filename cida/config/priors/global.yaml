@@ -1,0 +1,187 @@
+# ============================================================================
+# CIDA - Global actuarial priors
+# Loss-driver taxonomy aligned with industry-standard cyber-insurance coverage
+# lines (10 drivers). Threat vectors (DDoS, Insider, etc.) are a separate layer
+# in `vector_matrix.yaml` that LIFT these driver frequencies.
+#
+# CALIBRATION SOURCES (blended; cited inline per value):
+#   Frequency:
+#     - Verizon DBIR 2024 - 30k+ incidents, breach pattern x action mapping
+#     - NetDiligence 2024 Cyber Claims Study - ~9k carrier claims
+#     - Coalition 2024 Cyber Claims Report - SMB skew, FTF/BEC granularity
+#     - IBM Cost of a Data Breach 2024 (Ponemon) - global + MEA cohort
+#     - Sophos State of Ransomware 2024 - ransomware frequency by sector
+#     - Hiscox Cyber Readiness 2024 - mid-market attack rates
+#     - FBI IC3 Internet Crime Report 2024 - BEC + FTF report counts
+#     - ENISA Threat Landscape 2024 - EU cross-check
+#     - Mandiant M-Trends 2024 - dwell time, initial-access vectors
+#     - CrowdStrike Global Threat Report 2024 - adversary TTPs
+#     - Cyentia IRIS 2022 - multi-event distributions
+#   Severity:
+#     - NetDiligence 2024 - claim payouts by coverage line & company size band
+#     - IBM Cost of a Data Breach 2024 - per-record + total cost
+#     - Munich Re Cyber Insurance Report 2024 - reinsurer large-loss tails
+#     - CRO Forum Cyber 2024 - catastrophic tail distribution
+#     - Sophos 2024 - ransom payment medians by org size
+#     - Chainalysis 2024 - ransomware payment series
+#
+# Frequency: Gamma(alpha, beta) prior for the Poisson rate lambda.
+#   prior mean = alpha / beta = expected events per year for a baseline org
+#   ($50M revenue, "average" sector, no Africa overlay, no control modifier).
+# Severity: Lognormal(mu, sigma). mu = ln(median USD), sigma = log-scale stdev.
+# ============================================================================
+
+frequency_priors:
+  # ---- First-party coverage lines ----
+  cyber_extortion:        { alpha: 0.08, beta: 1.0 }   # Sophos'24 + Coalition'24 + NetDiligence'24 -> ~8% paid-ransom events/yr
+  business_interruption:  { alpha: 0.22, beta: 1.0 }   # Coalition'24 + NetDiligence'24 -> ransomware-BI + DDoS-BI + dependent-system
+  data_recovery:          { alpha: 0.25, beta: 1.0 }   # NetDiligence'24 + Mandiant M-Trends'24 -> triggered by ~any material incident
+  funds_transfer_fraud:   { alpha: 0.18, beta: 1.0 }   # Coalition'24 (28% of claims) + IC3'24 ($2.95B/yr)
+  social_engineering:     { alpha: 0.40, beta: 1.0 }   # IC3'24 BEC reports + Hiscox'24 + Coalition'24 (BEC ~10% of claims)
+  computer_fraud:         { alpha: 0.04, beta: 1.0 }   # Rare globally; Africa overlay lifts via FSI/telco
+  # ---- Third-party coverage lines ----
+  privacy_liability:      { alpha: 0.12, beta: 1.0 }   # DBIR'24 (10k confirmed breaches) + IBM'24
+  network_sec_liability:  { alpha: 0.02, beta: 1.0 }   # Rare (SolarWinds-class); Munich Re'24
+  regulatory_penalties:   { alpha: 0.06, beta: 1.0 }   # NDPR/POPIA/GDPR enforcement (NITDA + Info Reg + EDPB rulings'24)
+  pci_fines:              { alpha: 0.03, beta: 1.0 }   # Card-brand penalties; conditional on PCI scope
+
+severity_priors:
+  # mu = ln(median USD). All medians blended from NetDiligence'24 + Coalition'24 + IBM'24 + Sophos'24.
+  cyber_extortion:        { mu: 12.13, sigma: 1.60 }   # median ~$185k (Coalition'24); p99 multi-$M (Sophos + Chainalysis)
+  business_interruption:  { mu: 11.45, sigma: 1.55 }   # median ~$94k (NetDiligence'24); p99 reaches $5M+ for cat
+  data_recovery:          { mu: 11.70, sigma: 1.50 }   # median ~$120k (NetDiligence'24 forensics + rebuild)
+  funds_transfer_fraud:   { mu: 10.97, sigma: 1.45 }   # median ~$58k (Coalition'24); IC3'24 avg $145k
+  social_engineering:     { mu: 10.82, sigma: 1.40 }   # median ~$50k BEC (Coalition'24); IC3'24 avg $137k
+  computer_fraud:         { mu: 11.40, sigma: 1.50 }   # median ~$90k (banking/fintech direct system theft)
+  privacy_liability:      { mu: 12.01, sigma: 1.65 }   # median ~$165k (NetDiligence'24); IBM'24 mean $4.45M
+  network_sec_liability:  { mu: 11.80, sigma: 1.70 }   # median ~$135k; high variance (Munich Re'24)
+  regulatory_penalties:   { mu: 11.40, sigma: 1.60 }   # median ~$90k; GDPR fines lift tail; NDPR median lower
+  pci_fines:              { mu: 10.20, sigma: 1.40 }   # median ~$27k; range $5k-$500k card-brand assessments
+
+# Sector frequency multipliers - applied AFTER country & before control modifiers.
+# Calibrated from DBIR'24 sector breakouts + Coalition'24 + Sophos'24 + Hiscox'24
+# + sector-specific overlays (CBN circulars for banking, NDPC enforcement for FSI).
+sector_frequency_multipliers:
+  banking:
+    cyber_extortion: 1.20
+    business_interruption: 1.20
+    data_recovery: 1.30
+    funds_transfer_fraud: 2.20    # primary loss vector in banking
+    social_engineering: 1.80
+    computer_fraud: 2.50          # USSD/switch/API direct compromise
+    privacy_liability: 1.60
+    network_sec_liability: 1.20
+    regulatory_penalties: 2.00    # CBN + NDPR + Basel III ops-risk
+    pci_fines: 1.80
+  insurance:
+    cyber_extortion: 1.10
+    business_interruption: 0.90
+    data_recovery: 1.20
+    funds_transfer_fraud: 1.30
+    social_engineering: 1.30
+    computer_fraud: 0.80
+    privacy_liability: 1.50
+    network_sec_liability: 1.10
+    regulatory_penalties: 1.70
+    pci_fines: 0.30
+  fintech:
+    cyber_extortion: 1.10
+    business_interruption: 1.40
+    data_recovery: 1.30
+    funds_transfer_fraud: 2.80
+    social_engineering: 1.60
+    computer_fraud: 2.80
+    privacy_liability: 1.60
+    network_sec_liability: 1.30
+    regulatory_penalties: 1.90
+    pci_fines: 1.40
+  pension:
+    cyber_extortion: 1.00
+    business_interruption: 0.80
+    data_recovery: 1.20
+    funds_transfer_fraud: 1.40
+    social_engineering: 1.40
+    computer_fraud: 0.90
+    privacy_liability: 1.40
+    network_sec_liability: 0.90
+    regulatory_penalties: 1.60
+    pci_fines: 0.20
+  education:
+    cyber_extortion: 1.80           # Sophos'24: education #1 sector (66% hit)
+    business_interruption: 1.60
+    data_recovery: 1.70
+    funds_transfer_fraud: 0.80
+    social_engineering: 1.20
+    computer_fraud: 0.50
+    privacy_liability: 1.30
+    network_sec_liability: 1.10
+    regulatory_penalties: 0.90
+    pci_fines: 0.40
+  healthcare:
+    cyber_extortion: 2.00
+    business_interruption: 1.80
+    data_recovery: 1.90
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.10
+    computer_fraud: 0.70
+    privacy_liability: 2.00         # PHI is high-value (IBM'24)
+    network_sec_liability: 1.10
+    regulatory_penalties: 2.20      # HIPAA / NDPR / POPIA aggressive
+    pci_fines: 0.40
+  telecom:
+    cyber_extortion: 1.10
+    business_interruption: 1.80     # DDoS-heavy (ENISA'24)
+    data_recovery: 1.20
+    funds_transfer_fraud: 1.60
+    social_engineering: 1.10
+    computer_fraud: 2.60            # USSD / MNO switch fraud
+    privacy_liability: 1.40
+    network_sec_liability: 1.50     # carriers can pass malware
+    regulatory_penalties: 1.50
+    pci_fines: 0.30
+  manufacturing:
+    cyber_extortion: 1.50
+    business_interruption: 1.70     # OT outage = production halt (Dragos'24)
+    data_recovery: 1.50
+    funds_transfer_fraud: 1.30
+    social_engineering: 1.30
+    computer_fraud: 0.60
+    privacy_liability: 0.90
+    network_sec_liability: 1.00
+    regulatory_penalties: 0.80
+    pci_fines: 0.20
+  other:
+    cyber_extortion: 1.00
+    business_interruption: 1.00
+    data_recovery: 1.00
+    funds_transfer_fraud: 1.00
+    social_engineering: 1.00
+    computer_fraud: 1.00
+    privacy_liability: 1.00
+    network_sec_liability: 1.00
+    regulatory_penalties: 1.00
+    pci_fines: 0.50
+
+# Severity scales with revenue^elasticity.
+# 0.45 fits NetDiligence'24 size-band breakdown well (small/mid/large medians).
+size_severity_elasticity: 0.45
+
+source_notes:
+  - "Verizon Data Breach Investigations Report (DBIR) 2024"
+  - "NetDiligence 2024 Cyber Claims Study (multi-carrier)"
+  - "Coalition 2024 Cyber Claims Report (SMB book)"
+  - "IBM / Ponemon 2024 Cost of a Data Breach (global + MEA cohort)"
+  - "Sophos State of Ransomware 2024 (sector + geo breakouts)"
+  - "Hiscox Cyber Readiness Report 2024"
+  - "FBI IC3 Internet Crime Report 2024"
+  - "ENISA Threat Landscape 2024"
+  - "Mandiant M-Trends 2024"
+  - "CrowdStrike Global Threat Report 2024"
+  - "Cyentia IRIS 2022 - Information Risk Insights Study"
+  - "Munich Re Cyber Insurance Report 2024"
+  - "CRO Forum Cyber Report 2024"
+  - "Chainalysis 2024 Crypto Crime Report"
+  - "CBN (Nigeria) cyber circulars 2023-2024"
+  - "NDPC enforcement actions log (Nigeria, 2023-2024)"
+  - "POPIA Information Regulator (South Africa) enforcement 2024"
+  - "Dragos OT/ICS Year in Review 2024"

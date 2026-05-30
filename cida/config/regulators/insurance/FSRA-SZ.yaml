@@ -1,0 +1,12 @@
+id: FSRA-SZ
+name: Financial Services Regulatory Authority (Eswatini)
+type: insurance
+scope: national
+country: SZ
+website: https://www.fsra.co.sz
+directives:
+  - id: FSRA-Cyber-Standard
+    name: Cybersecurity Standard
+    cyber_relevant_sections:
+      - section: Cyber baseline
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01], iso_27001_2022: [A.5.7, A.5.16] }

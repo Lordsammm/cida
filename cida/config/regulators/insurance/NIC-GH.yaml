@@ -1,0 +1,23 @@
+id: NIC-GH
+name: National Insurance Commission (Ghana)
+type: insurance
+scope: national
+country: GH
+website: https://nicgh.org
+established: 1989
+directives:
+  - id: Insurance-Act-1061-2021
+    name: Insurance Act, 2021 (Act 1061)
+    enacted: 2021-01-05
+    cyber_relevant_sections:
+      - section: Operational risk management (incl. cyber)
+        crosswalk:
+          nist_csf_2_0: [GV.RM-01, ID.RA-01]
+          iso_27001_2022: [A.5.7]
+  - id: NIC-IT-Directive
+    name: Information Technology and Cybersecurity Directive
+    cyber_relevant_sections:
+      - section: Cybersecurity baseline
+        crosswalk:
+          nist_csf_2_0: [PR.AA-01, DE.CM-01, RC.RP-01]
+          iso_27001_2022: [A.5.16, A.8.16, A.5.29]

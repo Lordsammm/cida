@@ -1,0 +1,14 @@
+id: FSC-MU
+name: Financial Services Commission (Mauritius)
+type: insurance
+scope: national
+country: MU
+website: https://www.fscmauritius.org
+directives:
+  - id: FSC-Cyber-Guideline-2023
+    name: FSC Cybersecurity and Cyber Resilience Guideline 2023
+    cyber_relevant_sections:
+      - section: Cyber resilience for FSIs
+        crosswalk:
+          nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01, RC.RP-01]
+          iso_27001_2022: [A.5.7, A.5.16, A.8.16, A.5.29]

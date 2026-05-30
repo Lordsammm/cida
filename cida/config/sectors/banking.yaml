@@ -1,0 +1,20 @@
+name: banking
+description: Commercial banking, retail banking, microfinance
+base_frequency_multipliers:
+  bec: 1.80
+  ransomware: 1.40
+  data_breach: 1.60
+  ddos: 1.50
+  insider: 1.40
+  third_party: 1.30
+  mobile_money_fraud: 2.00
+severity_multipliers:
+  bec: 1.80           # banking BEC losses are huge (wire-fraud)
+  ransomware: 1.50
+  data_breach: 1.80
+  ddos: 1.20
+  insider: 1.50
+  third_party: 1.40
+  mobile_money_fraud: 1.30
+required_frameworks: [nist-csf-2.0, iso-27001-2022, pci-dss-v4, fsca-js1-2023, malabo-convention]
+additional_controls: []

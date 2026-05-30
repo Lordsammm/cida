@@ -1,0 +1,14 @@
+id: TIRA
+name: Tanzania Insurance Regulatory Authority
+type: insurance
+scope: national
+country: TZ
+website: https://www.tira.go.tz
+directives:
+  - id: TIRA-ICT-Guidelines
+    name: TIRA ICT Risk Management Guidelines
+    cyber_relevant_sections:
+      - section: ICT governance and cyber risk
+        crosswalk:
+          nist_csf_2_0: [GV.RM-01, PR.AA-01]
+          iso_27001_2022: [A.5.7, A.5.16]

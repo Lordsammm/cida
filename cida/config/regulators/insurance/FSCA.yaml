@@ -1,0 +1,40 @@
+id: FSCA
+name: Financial Sector Conduct Authority
+type: insurance
+scope: national
+country: ZA
+co_regulator: Prudential-Authority-SARB
+website: https://www.fsca.co.za
+established: 2018
+
+directives:
+  - id: Joint-Standard-1-2023
+    name: Joint Standard 1 of 2023 - Cybersecurity and Cyber Resilience Requirements for Financial Institutions
+    enacted: 2023-05-17
+    effective: 2024-06-01
+    cyber_relevant_sections:
+      - section: "5. Cyber strategy and framework"
+        crosswalk:
+          nist_csf_2_0: [GV.OC-01, GV.RM-01, GV.SF-01, GV.SF-02]
+          iso_27001_2022: [A.5.1, A.5.2, A.5.30]
+          cis_v8: ["14.1"]
+      - section: "6. Cyber risk management"
+        crosswalk:
+          nist_csf_2_0: [ID.RA-01, ID.RA-04, ID.RA-05, PR.AA-01, PR.AA-05]
+          iso_27001_2022: [A.5.7, A.8.2, A.8.5]
+          cis_v8: ["6.3", "6.5", "17.1"]
+      - section: "7. Cyber resilience"
+        crosswalk:
+          nist_csf_2_0: [DE.CM-01, RC.RP-01, RC.RP-02, PR.DS-11]
+          iso_27001_2022: [A.5.29, A.5.30, A.8.13, A.8.14, A.8.15, A.8.16]
+          cis_v8: ["8.2", "11.1", "11.3", "13.1"]
+      - section: "8. Notification of material cyber incidents"
+        crosswalk:
+          nist_csf_2_0: [RS.CO-02, RS.CO-03, RS.MA-01]
+          iso_27001_2022: [A.5.24, A.5.26]
+          cis_v8: ["17.4"]
+          popia: ["§22"]
+
+reporting_requirements:
+  incident_notification_window_hours: 24
+  annual_cyber_attestation: true

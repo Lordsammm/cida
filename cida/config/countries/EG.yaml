@@ -1,0 +1,35 @@
+iso_a2: EG
+iso_a3: EGY
+name: Egypt
+region: North Africa
+sub_region: North Africa
+currency: EGP
+official_languages: [ar]
+ccTLDs: [.eg, .com.eg, .gov.eg, .edu.eg]
+
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.860
+  tier: T1
+
+disclosure_correction_factor: 3.0
+mobile_money_penetration: medium
+
+base_frequency_multipliers:
+  bec: 1.20
+  ransomware: 1.10
+  data_breach: 1.10
+  ddos: 1.10
+  insider: 1.10
+  third_party: 1.00
+  mobile_money_fraud: 1.50
+
+regulators:
+  insurance: FRA-EG
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+
+cert: EG-CERT
+intel_sources: []

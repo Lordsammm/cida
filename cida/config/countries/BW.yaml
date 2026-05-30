@@ -1,0 +1,33 @@
+iso_a2: BW
+iso_a3: BWA
+name: Botswana
+region: Southern Africa
+sub_region: Sub-Saharan Africa
+currency: BWP
+official_languages:
+- en
+- tn
+ccTLDs:
+- .bw
+disclosure_correction_factor: 3.0
+mobile_money_penetration: medium
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 1.75
+regulators:
+  insurance: NBFIRA
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: BW-CSIRT
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.715
+  tier: T2

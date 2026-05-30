@@ -1,0 +1,32 @@
+iso_a2: ST
+iso_a3: STP
+name: São Tomé and Príncipe
+region: Central Africa
+sub_region: Sub-Saharan Africa
+currency: STN
+official_languages:
+- pt
+ccTLDs:
+- .st
+disclosure_correction_factor: 5.0
+mobile_money_penetration: low
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 1.0
+regulators:
+  insurance: GENERIC-INS
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: null
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.298
+  tier: T4

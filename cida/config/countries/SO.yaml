@@ -1,0 +1,33 @@
+iso_a2: SO
+iso_a3: SOM
+name: Somalia
+region: East Africa
+sub_region: Sub-Saharan Africa
+currency: SOS
+official_languages:
+- so
+- ar
+ccTLDs:
+- .so
+disclosure_correction_factor: 5.5
+mobile_money_penetration: high
+base_frequency_multipliers:
+  bec: 1.2
+  ransomware: 0.85
+  data_breach: 1.05
+  ddos: 0.85
+  insider: 1.2
+  third_party: 1.0
+  mobile_money_fraud: 3.5
+regulators:
+  insurance: GENERIC-INS
+  data_protection: GENERIC-DP
+  central_bank: GENERIC-CB
+  sector: {}
+cert: null
+intel_sources: []
+itu_gci:
+  edition: 6
+  year: 2024
+  score: 0.19
+  tier: T4

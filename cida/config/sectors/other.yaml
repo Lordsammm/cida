@@ -1,0 +1,19 @@
+name: other
+description: Default overlay for sectors without specific tuning
+base_frequency_multipliers:
+  bec: 1.0
+  ransomware: 1.0
+  data_breach: 1.0
+  ddos: 1.0
+  insider: 1.0
+  third_party: 1.0
+  mobile_money_fraud: 0.5
+severity_multipliers:
+  bec: 1.0
+  ransomware: 1.0
+  data_breach: 1.0
+  ddos: 1.0
+  insider: 1.0
+  third_party: 1.0
+  mobile_money_fraud: 0.5
+required_frameworks: [nist-csf-2.0, iso-27001-2022]

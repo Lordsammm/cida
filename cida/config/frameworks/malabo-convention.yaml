@@ -1,0 +1,13 @@
+id: malabo-convention
+name: African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention)
+publisher: African Union
+year: 2014
+url: https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection
+note: Continental framework; ratified by 15+ African states. Establishes baseline data protection + cybercrime obligations.
+chapters:
+  - id: I
+    name: Electronic transactions
+  - id: II
+    name: Personal data protection
+  - id: III
+    name: Promoting cyber security and combating cybercrime

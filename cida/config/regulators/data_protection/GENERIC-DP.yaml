@@ -1,0 +1,11 @@
+id: GENERIC-DP
+name: Generic Data Protection Regulator (placeholder)
+type: data_protection
+scope: national
+note: "Used as fallback. References Malabo + GDPR-like baseline."
+directives:
+  - id: Malabo-DP-Baseline
+    name: Malabo Convention Data Protection Baseline
+    cyber_relevant_sections:
+      - section: Data security baseline
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02], iso_27001_2022: [A.5.34, A.8.24], gdpr: [Art.32], malabo: [Ch.II] }

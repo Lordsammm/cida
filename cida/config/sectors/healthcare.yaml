@@ -1,0 +1,19 @@
+name: healthcare
+description: Hospitals, clinics, diagnostic labs, HMOs, pharmacies
+base_frequency_multipliers:
+  bec: 1.10
+  ransomware: 2.00      # healthcare is the #1 ransomware target globally
+  data_breach: 2.00     # PHI is high-value
+  ddos: 0.80
+  insider: 1.30
+  third_party: 1.20
+  mobile_money_fraud: 0.30
+severity_multipliers:
+  bec: 1.10
+  ransomware: 2.00      # patient safety implications
+  data_breach: 2.20     # HIPAA-style penalties
+  ddos: 0.90
+  insider: 1.40
+  third_party: 1.20
+  mobile_money_fraud: 0.30
+required_frameworks: [nist-csf-2.0, iso-27001-2022, hipaa-security]
