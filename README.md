@@ -132,10 +132,15 @@ Questionnaire CSV  +  Org profile YAML  +  Assessment artefacts
 
         ▼
    3. Bayesian actuarial model (10 LossDrivers × 10,000 Monte Carlo sims)
-        λ = (α/β prior) × sector_mult × country_mult × disclosure_correction
-                        × Π over 14 vectors of (1 + score/100 × matrix_cell)
-        Gamma(λ) → Poisson(counts) → Lognormal(severity)
+        λ = (α/β prior) × sector_mult × country_mult × ctrl_mult × intel_mult
+                        × disclosure_correction_driver  (per-driver observability-weighted)
+        Gamma(λ) → correlated via Gaussian copula (Iman-Conover) → Poisson(counts)
+        → Lognormal(severity, revenue^elasticity_driver × sector_sev_mult)
         → EL, VaR₉₅, TVaR₉₉, P50/P90/P99 per driver + aggregate
+        Three improvements over a basic model:
+          * Loss driver correlation: single event triggers multiple coverage lines
+          * Per-driver disclosure: regulatory penalties (90% observed) vs. fraud (30%)
+          * Per-driver elasticity: BI scales at revenue^0.60; BEC at revenue^0.25
 
         ▼
    4. ML residual layer (XGBoost on log-EL residual; neutral 1.0× until trained)
@@ -207,6 +212,7 @@ frameworks are selected automatically based on sector and country.
 | FSCA Joint Standard 1:2023 | South African financial institutions |
 | FSCA Joint Standard 2:2024 | South African financial institutions (effective June 2025) |
 | CBN Risk-Based Cybersecurity Framework 2024 | Nigerian deposit money banks and payment service banks |
+| NIST SP 800-53 Rev 5 | All sectors; referenced in CBN 2024, BdM 2025, CBE frameworks |
 
 Full framework config → [`config/README.md`](config/README.md)
 
@@ -306,37 +312,53 @@ Run `cida list-regulators --kind <type>` where type is one of
 | NBR-INS | National Bank of Rwanda Insurance | Rwanda |
 | ...and 12 more | Full list: `cida list-regulators --kind insurance` | |
 
-**Data protection authorities (12)**
+**Data protection authorities (38)**
 
-| ID | Name | Law | Notification window |
-|----|------|-----|---------------------|
-| NDPC | Nigeria Data Protection Commission | NDPA 2023 | 72h |
-| IR-ZA | Information Regulator (POPIA) | POPIA 2013 | 72h |
-| ODPC-KE | Office of Data Protection Commissioner | DPA 2019 | 72h |
-| DPC-GH | Data Protection Commission | DPA 2012 | 72h |
-| CNDP-MA | Commission Nationale de controle des Donnees Personnelles | Law 09-08 (2009) | 72h |
-| INPDP-TN | Instance Nationale de Protection des Donnees Personnelles | Organic Law 2004-63 | 48h |
-| EGPDP-EG | Egypt Personal Data Protection (NTRA/MCIT) | PDPL Law 151/2020 | 72h |
-| PDPO-UG | Personal Data Protection Office | PDPA 2019 | 48h |
-| PDPC-TZ | Personal Data Protection Commission | PDPA 2022 | 72h |
-| DPC-MU | Data Protection Commissioner | DPA 2017 (GDPR-equivalent) | 72h |
-| CDP-SN | Commission des Donnees Personnelles | Law 2008-12 | 72h |
-| NCSA-RW | National Cyber Security Authority | Law 058/2021 | 72h |
+37 African countries with enacted data protection laws are mapped to a specific authority. 17 countries have no enacted law and correctly use a generic framework. Key entries:
 
-**Central banks and financial regulators (10)**
+| ID | Name | Law | Notification | Country |
+|----|------|-----|-------------|---------|
+| NDPC | Nigeria Data Protection Commission | NDPA 2023 | 72h | Nigeria |
+| IR-ZA | Information Regulator (POPIA) | POPIA 2013 | 72h | South Africa |
+| ODPC-KE | Office of Data Protection Commissioner | DPA 2019 | 72h | Kenya |
+| DPC-GH | Data Protection Commission | DPA 2012 | 72h | Ghana |
+| ODPC-ZM | Office of Data Protection Commissioner | DPA No. 3 of 2021 | 24h | Zambia |
+| POTRAZ-ZW | POTRAZ (Cyber and Data Protection) | Act 2021; SI 155/2024 | 24h | Zimbabwe |
+| MACRA-MW | Malawi Communications Regulatory Authority | DPA 2024 | 72h | Malawi |
+| ECA-ET | Ethiopian Communications Authority | Proclamation 1321/2024 | 72h | Ethiopia |
+| DPC-BW | Office of Data Protection Commissioner | DPA No. 18 of 2024 | 72h | Botswana |
+| IC-GM | Information Commission of The Gambia | PDPPA 2025 | 72h | Gambia |
+| IC-SC | Information Commission of Seychelles | DPA No. 24 of 2023 | 72h | Seychelles |
+| ANPDP-DZ | Autorite Nationale de Protection des Donnees | Law 18-07 (amended 2025) | 5 days | Algeria |
+| APD-AO | Agencia de Protecao de Dados | Law 22/11 of 2011 | 24h | Angola |
+| ANPDP-MZ | Agencia Nacional de Protecao de Dados Pessoais | Law 7/2021 | 72h | Mozambique |
+| DPDPA-SL | Data Protection and Privacy Authority | DPA 2022 | 72h | Sierra Leone |
+| ...and 23 more | Full list: `cida list-regulators --kind data_protection` | | |
+
+**Central banks and financial regulators (43)**
+
+All 54 African countries are mapped to a specific central bank or regional monetary authority. Key entries with published cybersecurity directives:
 
 | ID | Name | Key cyber directive | Scope |
 |----|------|---------------------|-------|
 | CBN | Central Bank of Nigeria | Risk-Based Cybersecurity Framework 2024 (effective July 2024) | Nigeria |
-| SARB | South African Reserve Bank | Directive 01/2024 (2hr RTO); Joint Standard 2/2024 | South Africa |
+| SARB | South African Reserve Bank | Directive 01/2024 (2hr RTO); Joint Standard 2/2024 (June 2025) | South Africa |
 | CBK | Central Bank of Kenya | Risk-Based Cybersecurity Framework | Kenya |
 | BoG | Bank of Ghana | Cybersecurity Directive | Ghana |
 | CBE | Central Bank of Egypt | Financial Cybersecurity Framework; sectoral CERT | Egypt |
-| BAM | Bank Al-Maghrib | Circular 5/W/2014; Resilience Directive 2023 | Morocco |
+| BAM | Bank Al-Maghrib | Circular 5/W/2014; Cyber Resilience Directive 2023 | Morocco |
 | BNR | National Bank of Rwanda | Cyber Regulation 2021 | Rwanda |
 | BoT | Bank of Tanzania | Cybersecurity Directive 2023 | Tanzania |
-| BCEAO | Banque Centrale des Etats de l'Afrique de l'Ouest | Regional framework | 8 UEMOA states |
-| BEAC | Banque des Etats de l'Afrique Centrale | Regional framework | 6 CEMAC states |
+| BOU-UG | Bank of Uganda | Cyber Risk Management Guidelines (mandatory December 2024) | Uganda |
+| RBZ-ZW | Reserve Bank of Zimbabwe | Cybersecurity and Resilience Guideline August 2025 | Zimbabwe |
+| NBE-ET | National Bank of Ethiopia | Directive MFI/33/2022; SBB/94/2025 | Ethiopia |
+| BDM-MZ | Banco de Mocambique | Notice 8/GBM/2025 (mandatory 24h incident reporting) | Mozambique |
+| CBL-LY | Central Bank of Libya | IT Governance Regulation 2023/21 (COBIT 2019, 105 pages) | Libya |
+| CBE-SZ | Central Bank of Eswatini | Guidelines on Cybersecurity No. 1 of 2021 (binding) | Eswatini |
+| BOM-MU | Bank of Mauritius | Cybersecurity Framework for Financial Institutions 2023 | Mauritius |
+| BCEAO | Banque Centrale des Etats de l Afrique de l Ouest | Regional framework | 8 UEMOA countries |
+| BEAC | Banque des Etats de l Afrique Centrale | Regional framework | 6 CEMAC countries |
+| ...and 26 more | Full list: `cida list-regulators --kind financial` | | |
 
 **Sector regulators (6)**
 
@@ -354,35 +376,45 @@ Full regulator config → [`config/README.md`](config/README.md)
 ## Repository layout
 
 ```
-cida/                        ← project root
+cida/                        ← project root (flat layout: source at root, not in a subfolder)
+  cli.py                     ← Typer CLI: score-project, score, demo, backtest, update-priors
+  models.py                  ← all Pydantic data models; single source of truth
   clients/                   ← client assessment folders (gitignored - sensitive data)
     _TEMPLATE/               ← copy this for each new client
       org_profile.yaml
       questionnaire.csv
-  cida/                      ← Python package
-    catalog/                 ← control catalog (YAML) + framework crosswalks
-    config/
-      countries/             ← 54 African country configs
-      regulators/            ← NAICOM / FSCA / IRA-KE / CIMA / NITDA / NDPC / …
-      sectors/               ← banking, insurance, fintech, pension, education, …
-      frameworks/            ← NIST CSF 2.0, ISO 27001, CIS v8, PCI-DSS v4, …
-      priors/                ← global.yaml + africa-overlay.yaml (source-cited)
-      vector_matrix.yaml     ← 14×10 ThreatVector × LossDriver multipliers
-    ingest/                  ← parsers: questionnaire CSV, Nessus, Burp, Prowler,
+  catalog/                   ← 41 controls with multi-framework crosswalks
+  config/
+    countries/               ← 54 African country configs (regulators, currency, multipliers)
+    regulators/
+      insurance/             ← 26 insurance supervisors (NAICOM, FSCA, CIMA, IRA-KE ...)
+      data_protection/       ← 38 data protection authorities (NDPC, IR-ZA, ODPC-KE ...)
+      financial/             ← 43 central banks and financial regulators
+      sector/                ← 6 sector regulators (NITDA, NCC, CA-KE ...)
+    sectors/                 ← sector frequency and severity overlays
+    frameworks/              ← 15 compliance frameworks (NIST CSF, ISO 27001, POPIA ...)
+    priors/
+      global.yaml            ← Bayesian priors (19 global sources, 10×10 copula matrix)
+      africa-overlay.yaml    ← Africa frequency adjustments + per-driver observability
+    fx_rates.yaml            ← indicative FX rates for local currency output
+    vector_matrix.yaml       ← 14×10 ThreatVector × LossDriver multiplier table
+    scoring_weights.yaml     ← domain weights (16 cited sources), severity penalties, tier bands
+  ingest/                    ← parsers: questionnaire CSV, Nessus, Burp, Prowler,
                              ←          Shodan, VAPT PDF, dark-web, DMARC
-    enrich/                  ← CVE / EPSS / KEV enrichment + news intel adapters
-    scoring/                 ← engine.py, vectors.py, risk_summary.py
-    actuarial/               ← model.py (Bayesian MC), premium.py, posterior_update.py
-    ml/                      ← XGBoost residual layer (neutral until trained)
-    posture/                 ← multi-framework compliance posture
-    report/                  ← HTML + PDF renderers + Jinja2 templates
-    backtest/                ← 10-case reference runner
-    cli.py                   ← Typer CLI
-    examples/                ← bundled sample data for `cida demo`
+  enrich/                    ← CVE / EPSS / KEV enrichment + news intel adapters
+  scoring/                   ← engine.py, vectors.py, risk_summary.py
+  actuarial/
+    model.py                 ← Bayesian MC with Gaussian copula, per-driver disclosure and elasticity
+    premium.py               ← premium construction + FX conversion
+    posterior_update.py      ← Bayesian update from observed claims
+  ml/                        ← XGBoost residual layer (neutral 1.0× until trained on claims data)
+  posture/                   ← multi-framework compliance posture + remediation roadmap
+  report/                    ← HTML + PDF renderers + Jinja2 templates
+  backtest/                  ← 10-case reference runner
+  examples/                  ← bundled sample data for `cida demo`
   tests/                     ← pytest suite + backtest cases
   docs/                      ← ARCHITECTURE.md + design notes
-  scripts/                   ← generate_countries.py (one-time scaffold utility)
-  foundation/                ← source reference documents (BRD, sample reports, …)
+  foundation/                ← source reference documents (gitignored)
 ```
 
 ## Status
@@ -395,13 +427,14 @@ cida/                        ← project root
 | ThreatVectors | 14 |
 | LossDrivers (coverage lines) | 10 |
 | African country configs | 54 |
-| Insurance regulators | 25+ |
-| Data protection authorities | 12 |
-| Central banks / financial regulators | 10 |
+| Insurance regulators | 26 |
+| Data protection authorities | 38 (37 countries with enacted laws) |
+| Central banks / financial regulators | 43 (all 54 countries covered) |
 | Sector regulators | 6 |
-| Compliance frameworks | 14 |
+| Compliance frameworks | 15 |
 | Domain weight source citations | 16 primary reports |
-| Actuarial prior sources | 30+ |
+| Actuarial prior sources | 31 (19 global + 12 Africa-specific) |
+| Actuarial model improvements | Gaussian copula; per-driver disclosure; per-driver elasticity |
 
 The ML residual layer ships neutral (1.0×) until trained on real African claim data. The Bayesian baseline carries the full prediction until then.
 

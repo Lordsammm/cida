@@ -119,11 +119,19 @@ Fourteen threat vectors are scored from a blend of technical findings and questi
 
 For each of ten insurance coverage lines (called Loss Drivers), the model computes annual frequency and severity using:
 
-* A Bayesian Gamma prior calibrated from global industry reports
-* An Africa-specific frequency overlay from continental research
+* A Bayesian Gamma prior calibrated from 19 global industry reports (see Prior Sources)
+* An Africa-specific frequency overlay from 13 continental sources (Interpol, Serianu, ngCERT, KE-CIRT, GSMA, and others)
 * A per-country adjustment for local threat environment and under-reporting rates
 * A sector multiplier for the organisation's industry
 * A vector-derived modifier: each threat vector score lifts or suppresses specific driver frequencies through a calibrated multiplier matrix
+
+**Three actuarial improvements beyond a basic model:**
+
+*Loss driver correlation (Gaussian copula).* Loss drivers are not independent — a single ransomware event simultaneously triggers business interruption, data recovery costs, and sometimes regulatory penalties. The model draws all ten driver frequency parameters together using the Iman-Conover rank-reordering method, which implements a Gaussian copula from a calibrated 10×10 correlation matrix without the numerical instability of quantile-inversion methods. This correctly inflates aggregate VaR and TVaR, which feed the risk loading in the premium.
+
+*Per-driver disclosure correction.* Africa's continental under-reporting factor (Interpol 2025: ~3.5× observed vs true incidents) is applied differently per driver based on how observable each event type is. Regulatory penalties are 90% observable (NDPC and POPIA publish every enforcement action). Funds transfer fraud is 35% observable (banks actively suppress). Computer fraud via USSD/mobile money is 30% observable. The formula is: effective_correction = 1 + (raw_factor − 1) × (1 − observability). This replaces a previous hard cap of 2× that was applied uniformly and incorrectly to all drivers.
+
+*Per-driver severity elasticity.* Severity scales with organisation revenue at different rates per coverage line. Business interruption scales steeply (revenue^0.60) because it is literally a revenue loss. BEC/social engineering fraud scales weakly (revenue^0.25) because attackers set the fraud ceiling, not the victim's balance sheet. Regulatory penalties scale at revenue^0.50 because African regulators (NDPC, POPIA, CBN) calibrate fines to annual turnover. Calibrated from NetDiligence 2024 size-band payouts per coverage line.
 
 The model runs 10,000 Monte Carlo simulations per assessment and produces:
 
@@ -189,16 +197,17 @@ Framework selection is automatic based on the organisation's sector and country.
 | Framework | Applies to |
 |-----------|-----------|
 | NIST Cybersecurity Framework 2.0 | All sectors |
+| NIST SP 800-53 Rev 5 | All sectors; referenced in CBN 2024, BdM 2025, and CBE frameworks |
 | ISO/IEC 27001:2022 | All sectors |
 | CIS Controls v8 | All sectors |
-| SOC 2 Trust Services Criteria | All sectors |
+| SOC 2 Trust Services Criteria | All sectors; required by enterprise clients for SaaS and data processors |
 | PCI-DSS v4.0 | Banks, fintechs, card issuers |
 | HIPAA Security Rule | Healthcare, HMOs |
 | EU GDPR | Any organisation handling EU personal data |
 | Nigeria NDPR / NDPA 2023 | Nigerian organisations |
 | South Africa POPIA | South African organisations |
-| CCPA | Organisations with California data subjects |
-| African Union Malabo Convention | AU member states |
+| CCPA / CPRA | Organisations with California data subjects (diaspora-facing services, US-listed) |
+| African Union Malabo Convention | AU member states (binding since June 2024) |
 | FSCA Joint Standard 1:2023 | South African financial institutions |
 | FSCA Joint Standard 2:2024 | South African financial institutions (effective June 2025) |
 | CBN Risk-Based Cybersecurity Framework 2024 | Nigerian deposit money banks and payment service banks |
@@ -237,39 +246,76 @@ Posture is measured as the percentage of crosswalked controls scoring 70 or abov
 | PIA-ZM | Pensions and Insurance Authority | Zambia |
 | RBM-INS | Reserve Bank of Malawi - Insurance | Malawi |
 
-### Data Protection Authorities
+### Data Protection Authorities (38 jurisdictions)
 
-| ID | Authority | Law | Country |
-|----|-----------|-----|---------|
-| NDPC | Nigeria Data Protection Commission | NDPA 2023 | Nigeria |
-| IR-ZA | Information Regulator (POPIA) | POPIA 2013 | South Africa |
-| ODPC-KE | Office of the Data Protection Commissioner | DPA 2019 | Kenya |
-| DPC-GH | Data Protection Commission | DPA 2012 | Ghana |
-| CNDP-MA | Commission Nationale de controle des Donnees Personnelles | Law 09-08 (2009) | Morocco |
-| INPDP-TN | Instance Nationale de Protection des Donnees Personnelles | Organic Law 2004-63 | Tunisia |
-| EGPDP-EG | Egypt Personal Data Protection (NTRA/MCIT oversight) | PDPL Law 151/2020 | Egypt |
-| PDPO-UG | Personal Data Protection Office | PDPA 2019 | Uganda |
-| PDPC-TZ | Personal Data Protection Commission | PDPA 2022 | Tanzania |
-| DPC-MU | Data Protection Commissioner | DPA 2017 (GDPR-equivalent) | Mauritius |
-| CDP-SN | Commission des Donnees Personnelles | Law 2008-12 | Senegal |
-| NCSA-RW | National Cyber Security Authority | Law 058/2021 | Rwanda |
+37 African countries with enacted data protection laws are mapped to their specific supervisory authority. 17 countries have no enacted comprehensive law and use a generic framework. Run `cida list-regulators --kind data_protection` for all entries.
 
-Breach notification windows: Nigeria 72h, South Africa 72h, Kenya 72h, Ghana 72h, Morocco 72h, Tunisia 48h, Egypt 72h, Uganda 48h, Tanzania 72h, Mauritius 72h, Senegal 72h, Rwanda 72h.
+| ID | Authority | Law | Notification | Country |
+|----|-----------|-----|-------------|---------|
+| NDPC | Nigeria Data Protection Commission | NDPA 2023 | 72h | Nigeria |
+| IR-ZA | Information Regulator (POPIA) | POPIA 2013 | 72h | South Africa |
+| ODPC-KE | Office of the Data Protection Commissioner | DPA 2019 | 72h | Kenya |
+| DPC-GH | Data Protection Commission | DPA 2012 | 72h | Ghana |
+| CNDP-MA | Commission Nationale de controle des Donnees Personnelles | Law 09-08 (2009) | 72h | Morocco |
+| INPDP-TN | Instance Nationale de Protection des Donnees Personnelles | Organic Law 2004-63 | 48h | Tunisia |
+| EGPDP-EG | Egypt Personal Data Protection (NTRA/MCIT) | PDPL Law 151/2020 | 72h | Egypt |
+| ANPDP-DZ | Autorite Nationale de Protection des Donnees | Law 18-07 (amended 2025) | 5 days | Algeria |
+| PDPO-UG | Personal Data Protection Office | PDPA 2019 | 48h | Uganda |
+| PDPC-TZ | Personal Data Protection Commission | PDPA 2022 | 72h | Tanzania |
+| DPC-MU | Data Protection Commissioner | DPA 2017 (GDPR-equivalent) | 72h | Mauritius |
+| CDP-SN | Commission des Donnees Personnelles | Law 2008-12 | 72h | Senegal |
+| NCSA-RW | National Cyber Security Authority | Law 058/2021 | 72h | Rwanda |
+| ECA-ET | Ethiopian Communications Authority | Proclamation No. 1321/2024 | 72h | Ethiopia |
+| APDCP-CM | Autorite de Protection des Donnees (pending) | Law 2024/017 | immediate | Cameroon |
+| MACRA-MW | Malawi Communications Regulatory Authority | DPA 2024 | 72h | Malawi |
+| DPC-BW | Office of the Data Protection Commissioner | DPA No. 18 of 2024 | 72h | Botswana |
+| ODPC-ZM | Office of the Data Protection Commissioner | DPA No. 3 of 2021 | 24h | Zambia |
+| POTRAZ-ZW | Postal and Telecommunications Regulatory Authority | Cyber and Data Protection Act 2021 | 24h | Zimbabwe |
+| ANPDP-MZ | Agencia Nacional de Protecao de Dados Pessoais | Law No. 7/2021 | 72h | Mozambique |
+| APD-AO | Agencia de Protecao de Dados | Law No. 22/11 of 2011 | 24h | Angola |
+| CNPD-CV | Comissao Nacional de Protecao de Dados Pessoais | Law 133-V-2001 (amended 2021) | 72h | Cape Verde |
+| IC-GM | Information Commission of The Gambia | PDPPA 2025 | 72h | Gambia |
+| IC-SC | Information Commission of Seychelles | DPA No. 24 of 2023 | 72h | Seychelles |
+| DPDPA-SL | Data Protection and Privacy Authority | DPA 2022 | 72h | Sierra Leone |
+| APDP-CI | Autorite de Protection des Donnees (ARTCI) | Law 2013-450 | unspecified | Cote d'Ivoire |
+| APDP-BJ | Autorite de Protection des Donnees Personnelles | Law 2009-09 (updated 2017) | unspecified | Benin |
+| CIL-BF | Commission de l Informatique et des Libertes | Law 010-2004/AN | unspecified | Burkina Faso |
+| HAPDP-NE | Haute Autorite de Protection des Donnees | Law 2022 | unspecified | Niger |
+| IPDCP-TG | Instance de Protection des Donnees (pending) | Law 2019-014 | 72h | Togo |
+| APD-CD | Autorite de Protection des Donnees (pending) | Digital Code 2023 | 8 days | DR Congo |
+| CNDP-CG | Commission Nationale (pending) | Law 29-2019 | 72h | Congo Brazzaville |
+| CNPDCP-GA | Commission Nationale de Protection des Donnees | Law 001/2011 | unspecified | Gabon |
+| APDP-GN | Autorite de Protection des Donnees | Organic Law 0023/2016 | 72h | Guinea |
+| CNDP-DJ | Commission Nationale (pending) | Digital Code 2025 | 72h | Djibouti |
+| CMIL-MG | Commission Malagasy sur l Informatique (partial) | Law 2014-038 | unspecified | Madagascar |
+| CNIL-MR | Commission Nationale de l Informatique | Law 2018-014 | unspecified | Mauritania |
+| NCSA-RW-DP | National Cyber Security Authority (data protection) | Law 058/2021 | 72h | Rwanda |
 
-### Central Banks and Financial Regulators
+### Central Banks and Financial Regulators (43 entries)
+
+All 54 African countries are mapped to a specific central bank or regional monetary authority. Run `cida list-regulators --kind financial` for all entries. Key entries with published cybersecurity directives:
 
 | ID | Authority | Key cyber directive | Scope |
 |----|-----------|---------------------|-------|
-| CBN | Central Bank of Nigeria | Risk-Based Cybersecurity Framework 2024 (effective 2024-07-01) | Nigeria |
-| SARB | South African Reserve Bank | Directive 01/2024 (2hr RTO, 8hr MTD for critical systems); Joint Standard 2/2024 | South Africa |
+| CBN | Central Bank of Nigeria | Risk-Based Cybersecurity Framework 2024 (effective July 2024) | Nigeria |
+| SARB | South African Reserve Bank | Directive 01/2024 (2hr RTO); Joint Standard 2/2024 (effective June 2025) | South Africa |
 | CBK | Central Bank of Kenya | Risk-Based Cybersecurity Framework | Kenya |
 | BoG | Bank of Ghana | Cybersecurity Directive | Ghana |
 | CBE | Central Bank of Egypt | Financial Cybersecurity Framework; sectoral CERT operator | Egypt |
 | BAM | Bank Al-Maghrib | Circular 5/W/2014; Cyber Resilience Directive 2023 | Morocco |
 | BNR | National Bank of Rwanda | Cyber Regulation 2021 | Rwanda |
 | BoT | Bank of Tanzania | Cybersecurity Directive 2023 | Tanzania |
-| BCEAO | Banque Centrale des Etats de l'Afrique de l'Ouest | Regional cybersecurity framework | 8 UEMOA countries |
-| BEAC | Banque des Etats de l'Afrique Centrale | Regional cybersecurity framework | 6 CEMAC countries |
+| BOU-UG | Bank of Uganda | Cyber Risk Management Guidelines (mandatory December 2024) | Uganda |
+| RBZ-ZW | Reserve Bank of Zimbabwe | Cybersecurity and Resilience Guideline August 2025 | Zimbabwe |
+| BOZ-ZM | Bank of Zambia | Cyber Security Act No. 3 of 2025 framework | Zambia |
+| NBE-ET | National Bank of Ethiopia | Directive MFI/33/2022; SBB/94/2025 | Ethiopia |
+| BDM-MZ | Banco de Mocambique | Notice 8/GBM/2025 (mandatory 24h incident reporting) | Mozambique |
+| CBL-LY | Central Bank of Libya | IT Governance Regulation 2023/21 (COBIT 2019, 105 pages) | Libya |
+| CBE-SZ | Central Bank of Eswatini | Guidelines on Cybersecurity No. 1 of 2021 (binding) | Eswatini |
+| BOM-MU | Bank of Mauritius | Cybersecurity Framework for Financial Institutions 2023 | Mauritius |
+| BCEAO | Banque Centrale des Etats de l Afrique de l Ouest | Regional framework | 8 UEMOA countries |
+| BEAC | Banque des Etats de l Afrique Centrale | Regional framework | 6 CEMAC countries |
+| ...and 25 more | Full list: `cida list-regulators --kind financial` | | |
 
 ### Sector Regulators
 
@@ -336,7 +382,7 @@ VAPT narrative PDFs, evidence screenshots (PNG/JPEG/SVG), CIDA narrative Word re
 | `_report.json` | Full machine-readable payload |
 | `_scored_block.json` | Compact underwriting summary for SaaS or API integration |
 
-The Policyholder Report report is designed for the insured organisation. It explains the risk score, shows what specific cyber incidents would cost, lists findings by severity, maps compliance gaps, and gives a prioritised list of what to fix first. It includes an evidence appendix with screenshots from the assessment.
+The Policyholder Report is designed for the insured organisation. It explains the risk score, shows what specific cyber incidents would cost, lists findings by severity, maps compliance gaps, and gives a prioritised list of what to fix first. It includes an evidence appendix with screenshots from the assessment.
 
 The underwriting scorecard is for the carrier's team. It includes actuarial detail, vector-to-driver contributions, peer comparison, premium construction, and proposed policy terms.
 
@@ -388,7 +434,7 @@ catalog/
 
 config/               All calibration in plain YAML, no code changes needed
   countries/          54 country configs (regulators, currency, multipliers)
-  regulators/         Insurance, data protection, financial, sector
+  regulators/         26 insurance + 38 data protection + 43 financial + 6 sector regulators
   sectors/            Sector frequency and severity overlays
   frameworks/         Compliance framework descriptors
   priors/             Global Bayesian priors + Africa-specific overlays
@@ -505,6 +551,8 @@ Ten reference cases validate the model across sectors and countries. Run `cida b
 
 ## Glossary
 
+**Copula**, a statistical function that couples individual probability distributions into a joint distribution while preserving their marginal behaviour. CIDA uses a Gaussian copula via the Iman-Conover method to model correlation between loss driver frequencies.
+
 **CVE**, Common Vulnerabilities and Exposures. A public identifier for a known software vulnerability.
 
 **EPSS**, Exploit Prediction Scoring System. A probability score (0 to 1) for how likely a CVE is to be exploited within 30 days.
@@ -513,9 +561,7 @@ Ten reference cases validate the model across sectors and countries. Run `cida b
 
 **KEV**, CISA Known Exploited Vulnerabilities. CVEs with confirmed active exploitation in the wild.
 
-**Loss Driver**, One of ten insurance coverage lines: what the carrier actually pays out for.
-
-**Monte Carlo simulation**, A technique that runs thousands of random scenarios to estimate a probability distribution. CIDA runs 10,000 simulations per assessment.
+**Monte Carlo simulation**, a technique that runs thousands of random scenarios to estimate a probability distribution. CIDA runs 10,000 simulations per assessment.
 
 **NDPR**, Nigeria Data Protection Regulation (2019), superseded by NDPA 2023.
 
@@ -529,4 +575,10 @@ Ten reference cases validate the model across sectors and countries. Run `cida b
 
 **VaR95**, Value at Risk at the 95th percentile. The loss level exceeded only 5% of simulated years.
 
-**Policyholder Report**, the client-facing HTML and PDF report produced for the insured organisation. Previously referred to as YOA (Year of Assessment) report.
+**Disclosure Observability**, a per-driver factor in [0, 1] representing what fraction of true cyber events are reported in industry data for African organisations. Regulatory penalties score 0.90 (nearly fully observed via published enforcement actions); computer fraud via USSD/mobile money scores 0.30 (mostly suppressed). Used to apply disclosure corrections proportionately rather than with a blunt cap.
+
+**Iman-Conover method**, a rank-based technique for inducing a target correlation structure among a set of independent random samples. CIDA uses it to implement the Gaussian copula without calling slow quantile-inversion functions, making the correlated loss driver draws fast enough for 10,000 Monte Carlo simulations.
+
+**Loss Driver**, one of ten insurance coverage lines that the carrier actually pays out for. Distinct from Threat Vectors, which describe how attackers get in.
+
+**Policyholder Report**, the client-facing HTML and PDF report produced for the insured organisation. Explains the risk score, incident cost estimates, findings, compliance gaps, and a prioritised remediation roadmap.
