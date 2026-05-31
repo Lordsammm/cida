@@ -80,13 +80,19 @@ def load_sector(name: str) -> SectorOverlay:
 def load_priors() -> Priors:
     global_p = _alias_driver_keys(_load_yaml(CONFIG_DIR / "priors" / "global.yaml"))
     africa = _alias_driver_keys(_load_yaml(CONFIG_DIR / "priors" / "africa-overlay.yaml"))
-    # Africa overlay shape: frequency_adjustments: { driver: { multiplier: x } }
     merged = dict(global_p)
+
+    # Frequency adjustments: Africa overlay multiplies the global alpha per driver.
     for driver, spec in africa.get("frequency_adjustments", {}).items():
         if driver not in merged.get("frequency_priors", {}):
             continue
         mult = spec.get("multiplier", 1.0) if isinstance(spec, dict) else float(spec)
         merged["frequency_priors"][driver]["alpha"] *= mult
+
+    # Disclosure observability: per-driver Africa observability factors.
+    if "disclosure_observability" in africa:
+        merged["disclosure_observability"] = africa["disclosure_observability"]
+
     merged.setdefault("source_notes", []).extend(africa.get("source_notes", []))
     return Priors.model_validate(merged)
 

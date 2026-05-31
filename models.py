@@ -518,5 +518,17 @@ class Priors(BaseModel):
     frequency_priors: dict[LossDriver, dict[str, float]]  # {driver: {alpha, beta}}
     severity_priors: dict[LossDriver, dict[str, float]]   # {driver: {mu, sigma}}
     sector_frequency_multipliers: dict[Sector, dict[LossDriver, float]] = Field(default_factory=dict)
-    size_severity_elasticity: float = 0.45  # severity scales with revenue^elasticity
+    # Legacy scalar elasticity kept for backward compatibility.
+    size_severity_elasticity: float = 0.45
+    # Per-driver severity elasticity: severity ~ revenue^elasticity_i.
+    # Overrides size_severity_elasticity when present. Calibrated from
+    # NetDiligence 2024 size-band payouts per coverage line.
+    severity_elasticities: dict[LossDriver, float] = Field(default_factory=dict)
+    # Gaussian copula correlation matrix across the 10 loss drivers (row-major,
+    # LossDriver enum order). None = independent draws (legacy). From global.yaml.
+    driver_correlation: list[list[float]] | None = None
+    # Per-driver disclosure observability in [0, 1]: fraction of true events that
+    # surface in industry data. Drives the Africa disclosure correction per driver.
+    # 0 = fully suppressed, 1 = fully observed. From africa-overlay.yaml.
+    disclosure_observability: dict[LossDriver, float] = Field(default_factory=dict)
     source_notes: list[str] = Field(default_factory=list)

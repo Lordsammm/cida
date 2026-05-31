@@ -162,9 +162,58 @@ sector_frequency_multipliers:
     regulatory_penalties: 1.00
     pci_fines: 0.50
 
-# Severity scales with revenue^elasticity.
-# 0.45 fits NetDiligence'24 size-band breakdown well (small/mid/large medians).
+# Legacy scalar severity elasticity (fallback when per-driver entries absent).
 size_severity_elasticity: 0.45
+
+# Per-driver severity elasticity: severity ~ revenue^elasticity_i.
+# Calibrated from NetDiligence 2024 size-band payouts per coverage line.
+# Ransomware and BI scale steeply with revenue (attackers and interruption
+# losses both proportional to organisation size). BEC/FTF fraud amounts are
+# set by the attacker and do not track the victim's revenue as closely.
+# Regulatory penalties are calibrated to turnover in most African frameworks,
+# justifying a higher elasticity than fraud-type losses.
+severity_elasticities:
+  cyber_extortion:        0.55   # Chainalysis'24: ransom demands scale with target size
+  business_interruption:  0.60   # NetDiligence'24: BI loss ~ revenue loss; linear at mid-market
+  data_recovery:          0.40   # Forensics + rebuild: some fixed cost, not pure revenue-proportional
+  funds_transfer_fraud:   0.30   # IC3'24: fraud amount set by attacker ceiling, not victim revenue
+  social_engineering:     0.25   # Coalition'24: BEC amounts small relative to company size
+  computer_fraud:         0.45   # Transaction-volume-proportional (USSD/switch/API)
+  privacy_liability:      0.45   # Per-record cost with some volume discount (IBM'24)
+  network_sec_liability:  0.50   # Third-party claims scale with connectivity / customer count
+  regulatory_penalties:   0.50   # Regulators in NG/ZA/KE calibrate fines to annual turnover
+  pci_fines:              0.20   # Card-scheme fines complex; weak revenue correlation
+
+# Gaussian copula correlation matrix across the 10 loss drivers.
+# Row / column order matches LossDriver enum:
+#   [cyber_extortion, business_interruption, data_recovery,
+#    funds_transfer_fraud, social_engineering, computer_fraud,
+#    privacy_liability, network_sec_liability, regulatory_penalties, pci_fines]
+#
+# Calibration basis:
+#   [NTD24]  NetDiligence 2024: ransomware triggers BI in 85%, data recovery in 90% of events
+#   [COA25]  Coalition 2025: 29% of BEC/social-engineering events lead to FTF
+#   [IBM24]  IBM/Ponemon 2024: average breach triggers 3.2 coverage lines simultaneously
+#   [DBR24]  Verizon DBIR 2024: 32% of ransomware events involve data exfiltration -> PL
+#   [MRE24]  Munich Re 2024: privacy liability and regulatory penalties co-triggered in ~65% of PL events
+#   [GEN]    General positive baseline ~0.18-0.22: same weak security posture lifts all drivers
+#
+# Values are correlation coefficients, not probabilities. They represent the
+# dependence structure of the Gamma frequency draws across drivers. A value of
+# 0.75 (ext-BI) means that when an org is hit by more ransomware events than
+# expected, it also tends to have more BI events in the same year.
+driver_correlation:
+  #              ext   BI    DR    FTF   SE    CF    PL    NSL   RP    PCI
+  - [ 1.00,  0.75,  0.72,  0.18,  0.22,  0.20,  0.35,  0.28,  0.30,  0.18]  # cyber_extortion   [NTD24]
+  - [ 0.75,  1.00,  0.78,  0.15,  0.18,  0.20,  0.30,  0.38,  0.28,  0.15]  # business_interruption [NTD24]
+  - [ 0.72,  0.78,  1.00,  0.18,  0.22,  0.22,  0.42,  0.35,  0.32,  0.18]  # data_recovery     [NTD24,IBM24]
+  - [ 0.18,  0.15,  0.18,  1.00,  0.60,  0.38,  0.28,  0.18,  0.32,  0.22]  # funds_transfer_fraud [COA25]
+  - [ 0.22,  0.18,  0.22,  0.60,  1.00,  0.32,  0.32,  0.18,  0.28,  0.18]  # social_engineering [COA25]
+  - [ 0.20,  0.20,  0.22,  0.38,  0.32,  1.00,  0.28,  0.28,  0.32,  0.28]  # computer_fraud     [GEN]
+  - [ 0.35,  0.30,  0.42,  0.28,  0.32,  0.28,  1.00,  0.42,  0.65,  0.38]  # privacy_liability  [DBR24,MRE24]
+  - [ 0.28,  0.38,  0.35,  0.18,  0.18,  0.28,  0.42,  1.00,  0.38,  0.22]  # network_sec_liability [GEN]
+  - [ 0.30,  0.28,  0.32,  0.32,  0.28,  0.32,  0.65,  0.38,  1.00,  0.42]  # regulatory_penalties [MRE24]
+  - [ 0.18,  0.15,  0.18,  0.22,  0.18,  0.28,  0.38,  0.22,  0.42,  1.00]  # pci_fines          [GEN]
 
 source_notes:
   - "Verizon Data Breach Investigations Report (DBIR) 2024"

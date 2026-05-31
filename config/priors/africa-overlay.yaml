@@ -41,6 +41,32 @@ frequency_adjustments:
 # Observed incidents are ~1 / 3.5 of true incidents; per-country YAMLs refine.
 disclosure_correction_factor_continental_mean: 3.5
 
+# Per-driver disclosure observability [0, 1]: fraction of true events that
+# surface in industry claims / incident data for African organisations.
+# The effective disclosure correction applied to each driver is:
+#   effective_disclosure = 1 + (country_raw_factor - 1) * (1 - observability)
+# A driver with observability=1.0 needs no correction (fully observed).
+# A driver with observability=0.0 receives the full country disclosure factor.
+#
+# Sources:
+#   [INT24] Interpol African Cyberthreat Assessment 2024
+#   [SER24] Serianu Africa Cybersecurity Report 2024
+#   [CBN24] CBN 2024: Nigerian banks required to report cyber incidents;
+#           compliance still partial for fraud events
+#   [NDP24] NDPC 2024: breach notification improving but FTF suppression ongoing
+#   [POP24] POPIA Information Regulator 2024 enforcement report
+disclosure_observability:
+  cyber_extortion:        0.55   # [INT24] Ransomware embarrassing; many pay silently and do not disclose
+  business_interruption:  0.80   # Operational disruption is externally visible; harder to suppress
+  data_recovery:          0.65   # Internal IT cost; disclosed when the breach is already public
+  funds_transfer_fraud:   0.35   # [CBN24][NDP24] Banks actively suppress FTF to avoid regulatory shame
+  social_engineering:     0.45   # [SER24] BEC rarely reported to police or regulators in Africa
+  computer_fraud:         0.30   # [INT24] Direct system theft most suppressed; MNO fraud hidden commercially
+  privacy_liability:      0.55   # Lawsuit settlements sometimes public; often settled quietly
+  network_sec_liability:  0.80   # Third-party liability claims surface in litigation and press
+  regulatory_penalties:   0.90   # [NDP24][POP24] NDPC and POPIA publish enforcement actions; public record
+  pci_fines:              0.85   # Card schemes notify acquiring banks; semi-public via Visa/Mastercard bulletins
+
 source_notes:
   - "Interpol African Cyberthreat Assessment Report 2024"
   - "Serianu Africa Cybersecurity Report 2024"

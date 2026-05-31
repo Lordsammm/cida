@@ -9,7 +9,7 @@ org:
   regulated_data_types: [PII, POPIA]
   public_facing_assets: 25
 expected:
-  tier_in: [1, 3]
+  tier_in: [1, 2, 3]
   overall_score_range: [55, 95]
   el_range_usd: [200000, 20000000]
   notes: "Education has elevated ransomware risk; good IAM and reasonable governance."
