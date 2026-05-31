@@ -1,20 +1,24 @@
 """Custom VAPT / Blackbox PDF report parser.
 
 Strategy:
-1. Try pdfplumber text extraction.
-2. Look for structured findings tables (Title | Severity | CVSS | CVE).
-3. If unstructured, return a single placeholder finding flagging that LLM-assisted
-   extraction is recommended - see `extract_with_llm` hook below.
+1. Try pdfplumber structured table extraction.
+2. CVE regex fallback over full text.
+3. Auto-trigger LLM extraction (extract_with_llm) when fewer than 3 findings
+   are found AND an API key is available — no explicit call needed.
 
-This is intentionally simple; production should layer an LLM-assisted extractor
-(OpenAI structured output, Pydantic schema) for arbitrary VAPT report formats.
+Also provides extract_narrative_context() which extracts scope, methodology,
+test period, and key risk themes from PDF text using keyword matching (no LLM).
 """
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 
 from models import Domain, Finding, Severity
+
+# Minimum findings before auto-triggering LLM extraction
+_MIN_FINDINGS_FOR_LLM_FALLBACK = 3
 
 _SEV_KEYWORDS = {
     "critical": Severity.CRITICAL,
@@ -31,6 +35,15 @@ _CVSS_RE = re.compile(r"CVSS\s*v?3?(?:\.\d+)?\s*[: ]\s*(\d+(?:\.\d+)?)", re.IGNO
 
 
 def parse_vapt_pdf(pdf_path: str | Path) -> list[Finding]:
+    """Parse a VAPT PDF into a list of Finding objects.
+
+    Attempts structured table extraction, then CVE regex fallback, then
+    auto-triggers LLM extraction when fewer than 3 findings are found and
+    an API key is available (ANTHROPIC_API_KEY or OPENAI_API_KEY).
+
+    Narrative context (scope, methodology, test period, risk themes) is
+    available separately via extract_narrative_context().
+    """
     try:
         import pdfplumber
     except ImportError:
@@ -83,7 +96,98 @@ def parse_vapt_pdf(pdf_path: str | Path) -> list[Finding]:
                 evidence=str(pdf_path.name),
             ))
 
+    # Auto-trigger LLM extraction when structured methods yield too few findings
+    if len(findings) < _MIN_FINDINGS_FOR_LLM_FALLBACK:
+        api_key_available = bool(
+            os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY")
+        )
+        if api_key_available:
+            try:
+                provider = "anthropic" if os.environ.get("ANTHROPIC_API_KEY") else "openai"
+                llm_findings = extract_with_llm(pdf_path, provider=provider)
+                if llm_findings:
+                    findings = llm_findings
+            except Exception as exc:
+                print(f"[vapt_pdf] LLM extraction attempted but failed: {exc}")
+
     return findings
+
+
+def extract_narrative_context(text: str) -> dict:
+    """Extract scope, methodology, test period, and key risk themes from PDF text.
+
+    Uses keyword matching — no LLM required. Returns a dict suitable for
+    storage in CIDAReport.assessment_context.
+    """
+    if not text or not text.strip():
+        return {}
+
+    context: dict = {}
+    lines = text.splitlines()
+
+    # Scope extraction: look for lines containing scope keywords
+    scope_patterns = [
+        r"(?:scope|in[\s-]scope|assessment scope)[:\s]+(.{10,200})",
+        r"(?:systems?\s+in\s+scope)[:\s]+(.{10,200})",
+        r"(?:target\s+(?:systems?|environment|scope))[:\s]+(.{10,200})",
+    ]
+    for pattern in scope_patterns:
+        m = re.search(pattern, text, re.IGNORECASE)
+        if m:
+            context["scope"] = m.group(1).strip()[:300]
+            break
+
+    # Methodology extraction
+    method_patterns = [
+        r"(?:methodology|approach|test(?:ing)?\s+approach)[:\s]+(.{10,200})",
+        r"(?:black[\s-]?box|grey[\s-]?box|white[\s-]?box|penetration\s+test|pentest)[:\s]+(.{10,200})",
+    ]
+    for pattern in method_patterns:
+        m = re.search(pattern, text, re.IGNORECASE)
+        if m:
+            context["methodology"] = m.group(1).strip()[:200]
+            break
+    else:
+        # Detect methodology type from document
+        for mtype in ("black-box", "black box", "grey-box", "grey box", "white-box", "white box"):
+            if mtype.lower() in text.lower():
+                context["methodology"] = mtype.title()
+                break
+
+    # Test period extraction
+    date_pattern = r"(?:test(?:ing)?\s+(?:period|date|conducted|performed)|assessment\s+date)[:\s]+([A-Za-z0-9\s,\-/]+(?:\d{4}))"
+    m = re.search(date_pattern, text, re.IGNORECASE)
+    if m:
+        context["test_period"] = m.group(1).strip()[:80]
+
+    # Key risk themes from finding titles and section headers
+    risk_keywords = {
+        "SQL Injection": ["sql injection", "sqli"],
+        "Cross-Site Scripting (XSS)": ["cross-site scripting", " xss"],
+        "Authentication Bypass": ["authentication bypass", "auth bypass", "broken authentication"],
+        "Insecure Direct Object Reference": ["idor", "insecure direct object"],
+        "Command Injection": ["command injection", "os injection", "rce"],
+        "Broken Access Control": ["broken access control", "privilege escalation", "unauthorised access"],
+        "Sensitive Data Exposure": ["sensitive data", "data exposure", "cleartext", "plaintext password"],
+        "Unpatched Vulnerabilities": ["unpatched", "outdated software", "end of life", "eol"],
+        "Weak Cryptography": ["weak cipher", "tls 1.0", "tls 1.1", "md5", "sha1", "weak encryption"],
+        "Information Disclosure": ["information disclosure", "directory listing", "stack trace"],
+        "Open Redirect": ["open redirect"],
+        "SSRF": ["server-side request forgery", "ssrf"],
+        "XXE": ["xml external entity", "xxe"],
+        "Misconfiguration": ["misconfiguration", "default credentials", "default password"],
+    }
+    found_themes = []
+    text_lower = text.lower()
+    for theme, keywords in risk_keywords.items():
+        if any(k in text_lower for k in keywords):
+            found_themes.append(theme)
+        if len(found_themes) >= 8:
+            break
+    if found_themes:
+        context["key_risk_themes"] = found_themes
+
+    return context
 
 
 def extract_with_llm(pdf_path: str | Path, provider: str = "openai", model: str | None = None) -> list[Finding]:

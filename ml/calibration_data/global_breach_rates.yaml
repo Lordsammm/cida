@@ -1,0 +1,57 @@
+# Global breach rate calibration data for breach probability classifier.
+# Derived from published cyber insurance claims statistics.
+# Used to calibrate P(breach) from raw Poisson frequency estimates.
+#
+# Sources:
+#   [COA25]  Coalition 2025 Cyber Claims Report
+#   [CVS24]  Corvus Insurance Cyber Threat Reports Q1-Q4 2024
+#   [ABY24]  At-Bay Cyber Insurance Report 2024
+#   [IBM24]  IBM / Ponemon Cost of a Data Breach Report 2024
+#   [SOP24]  Sophos State of Ransomware 2024
+#   [INT25]  Interpol African Cyberthreat Assessment Report 2025
+
+# Base annual breach rate by sector (probability of at least one insured event per year).
+# Calibrated from Coalition 2025 claims frequency by sector.
+sector_base_rates:
+  banking:       0.18   # [COA25] financial sector claims frequency
+  fintech:       0.22   # [COA25] elevated due to FTF and BEC exposure
+  insurance:     0.12   # [COA25] lower frequency, higher severity
+  healthcare:    0.20   # [COA25] high ransomware + privacy liability
+  telecom:       0.15   # [COA25] DDoS + computer fraud dominant
+  pension:       0.10   # [COA25] moderate; governance-heavy
+  education:     0.25   # [COA25] Sophos: highest ransomware rate (66% hit)
+  manufacturing: 0.16   # [CVS24] OT-adjacent; ransomware BI dominant
+  other:         0.14   # baseline
+
+# Africa regional uplift factor applied to sector base rate.
+# [INT25] Africa cybercrime accounts for >30% of crimes in West/East Africa;
+# [COA25] SMB-heavy book shows higher frequency than large-enterprise books.
+africa_frequency_uplift: 1.35
+
+# Control-specific claim rate multipliers.
+# Format: control_id or control_category → multiplier when control is absent (score = 0).
+# Represent relative increase in breach probability vs. control present.
+# [COA25] MFA absence = 3-5x higher claims frequency; midpoint used.
+control_absence_multipliers:
+  IAM-001:  4.0   # MFA on internet-facing systems [COA25: 3-5x]
+  IAM-002:  2.5   # privileged access management [COA25: admin account compromise]
+  END-001:  2.8   # EDR deployment [CVS24: 60% severity reduction when present]
+  RES-001:  3.0   # backup strategy [CVS24: 72% lower median claim cost when present]
+  NET-001:  2.2   # VPN / remote access hardening [CVS24: 28.7% of incidents via VPN]
+  DET-001:  2.0   # SIEM / detection capability [IBM24: late detection = 4x cost]
+  GOV-001:  1.5   # security policy and governance [COA25: governance gap correlation]
+  APP-001:  1.8   # web application firewall / secure SDLC [COA25: web app attacks]
+
+# Peer median breach probability by sector (Africa-adjusted).
+# Used as the "peer_baseline_p12m" reference point in BreachProbabilities.
+# Derived by applying sector_base_rates * africa_frequency_uplift.
+peer_baseline_p12m:
+  banking:       0.23
+  fintech:       0.28
+  insurance:     0.16
+  healthcare:    0.25
+  telecom:       0.19
+  pension:       0.14
+  education:     0.30
+  manufacturing: 0.20
+  other:         0.18

@@ -433,6 +433,12 @@ class CIDAReport(BaseModel):
     assessment_limitations: list[str] = Field(default_factory=list)  # scope limitation notes
     evidence_images: list[dict] = Field(default_factory=list)         # {filename, caption, path, size_bytes}
     unclassified_files: list[dict] = Field(default_factory=list)      # files the sniffer could not classify
+    # Predictive modeling outputs (populated when the respective modules run)
+    breach_probabilities: dict = Field(default_factory=dict)     # BreachProbabilities as dict
+    calibration_flags: list[dict] = Field(default_factory=list)  # score vs dark-web inconsistencies
+    anomaly_flags: list[dict] = Field(default_factory=list)      # underwriter-only review alerts
+    peer_comparison: dict = Field(default_factory=dict)          # PeerComparison as dict
+    assessment_context: dict = Field(default_factory=dict)       # VAPT narrative context
     disclaimer: str = (
         "CIDA Risk Assessment - Underwriting Decision Support. "
         "Final pricing and binding authority remain with the issuing carrier."

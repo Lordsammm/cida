@@ -1,0 +1,35 @@
+{
+  "insurance:west_africa": {
+    "n_orgs": 2,
+    "overall_sum": 130.0,
+    "overall_sum_sq": 8450.0,
+    "overall_mean": 65.0,
+    "overall_std": 1.0,
+    "domain_sums": {
+      "governance": 200.0,
+      "identity": 140.6,
+      "asset_data": 139.6,
+      "network": 125.4,
+      "endpoint": 185.0,
+      "appsec": 74.8,
+      "cloud": 133.0,
+      "third_party": 94.4,
+      "detect_respond": 131.6,
+      "resilience": 96.2
+    },
+    "domain_sum_sqs": {
+      "governance": 20000.0,
+      "identity": 9884.179999999998,
+      "asset_data": 9744.08,
+      "network": 7862.580000000001,
+      "endpoint": 17112.5,
+      "appsec": 2797.52,
+      "cloud": 8844.5,
+      "third_party": 4455.68,
+      "detect_respond": 8659.279999999999,
+      "resilience": 4627.22
+    },
+    "sector": "insurance",
+    "region": "west_africa"
+  }
+}

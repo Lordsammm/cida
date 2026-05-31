@@ -17,7 +17,11 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from actuarial.model import ActuarialResult
 from actuarial.premium import compute_premium
 from config.loader import context_for
+from enrich.calibration import calibrate_score
+from ml.anomaly import detect_anomalies
+from ml.breach_classifier import compute_breach_probabilities
 from ml.modifier import predict_modifier
+from ml.peer_store import _peer_store
 from models import (
     CIDAReport,
     CompanyIntelSnapshot,
@@ -100,12 +104,67 @@ def build_report(
     # --- Evidence images: generate base64 thumbnails ---
     evidence_image_dicts = _build_evidence_image_dicts(evidence_images or [])
 
+    # --- Predictive modeling features ---
+    sector_val = Sector(org.sector) if not isinstance(org.sector, Sector) else org.sector
+
+    # Feature 1: Breach probability classifier
+    breach_probs: dict = {}
+    try:
+        bp = compute_breach_probabilities(actuarial, scoring, sector=sector_val)
+        breach_probs = bp.to_dict()
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] Breach probability computation failed: {e}")
+
+    # Feature 2: Score calibration against dark web / credential evidence
+    calibration_flags: list[dict] = []
+    ci_low = scoring.overall_score_ci_low
+    ci_high = scoring.overall_score_ci_high
+    try:
+        cal = calibrate_score(scoring, all_findings, org)
+        calibration_flags = [f.__dict__ if hasattr(f, "__dict__") else f for f in cal.flags]
+        calibration_flags = [
+            {"flag_type": f.flag_type, "description": f.description,
+             "severity": f.severity, "recommendation": f.recommendation}
+            for f in cal.flags
+        ]
+        ci_low = cal.adjusted_ci_low
+        ci_high = cal.adjusted_ci_high
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] Score calibration failed: {e}")
+
+    # Feature 3: VAPT narrative context (extracted upstream in parse_vapt_pdf;
+    # assembled here from finding metadata if available)
+    assessment_context: dict = {}
+
+    # Feature 4: Anomaly detection on questionnaire responses
+    anomaly_flags: list[dict] = []
+    try:
+        flags = detect_anomalies(responses, all_findings, scoring, sector=sector_val)
+        anomaly_flags = [
+            {"flag_type": f.flag_type, "description": f.description,
+             "affected_domain": f.affected_domain, "severity": f.severity,
+             "recommendation": f.recommendation}
+            for f in flags
+        ]
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] Anomaly detection failed: {e}")
+
+    # Feature 5: Peer benchmarking
+    peer_comparison: dict = {}
+    try:
+        pc = _peer_store.get_percentiles(sector_val, org.country, scoring)
+        peer_comparison = pc.to_dict()
+        # Record this assessment for future peer comparisons (anonymised)
+        _peer_store.record(sector_val, org.country, scoring)
+    except Exception as e:  # noqa: BLE001
+        print(f"[warn] Peer benchmarking failed: {e}")
+
     return CIDAReport(
         org=org,
         generated_at=datetime.now(tz=timezone.utc),
         overall_score=scoring.overall_score,
-        overall_score_ci_low=scoring.overall_score_ci_low,
-        overall_score_ci_high=scoring.overall_score_ci_high,
+        overall_score_ci_low=ci_low,
+        overall_score_ci_high=ci_high,
         tier=scoring.tier,
         domain_scores=scoring.domain_scores,
         loss_estimates=actuarial.per_driver,
@@ -124,6 +183,12 @@ def build_report(
         assessment_limitations=assessment_limitations or [],
         evidence_images=evidence_image_dicts,
         unclassified_files=unclassified_files or [],
+        # Predictive modeling outputs
+        breach_probabilities=breach_probs,
+        calibration_flags=calibration_flags,
+        anomaly_flags=anomaly_flags,
+        peer_comparison=peer_comparison,
+        assessment_context=assessment_context,
     )
 
 
