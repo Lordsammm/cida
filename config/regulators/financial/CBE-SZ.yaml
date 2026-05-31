@@ -1,0 +1,17 @@
+id: CBE-SZ
+name: Central Bank of Eswatini
+type: financial
+scope: national
+country: SZ
+website: https://www.centralbank.org.sz
+directives:
+  - id: CBE-Cybersecurity-Guidelines-2021
+    name: "CBE Guidelines on Cybersecurity for Financial Institutions No. 1 of 2021"
+    enacted: "2021-03-01"
+    notes: "Binding guidelines for all CBE-supervised institutions. National Cybersecurity Strategy 2025 also in force."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

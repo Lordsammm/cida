@@ -21,7 +21,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.0
 regulators:
   insurance: CNA-DZ
-  data_protection: GENERIC-DP
+  data_protection: ANPDP-DZ
   central_bank: GENERIC-CB
   sector: {}
 cert: null

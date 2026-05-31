@@ -1,0 +1,17 @@
+id: RBZ-ZW
+name: Reserve Bank of Zimbabwe
+type: financial
+scope: national
+country: ZW
+website: https://www.rbz.co.zw
+directives:
+  - id: RBZ-Cybersecurity-2025
+    name: "Cybersecurity and Resilience Guideline August 2025"
+    enacted: "2025-08-01"
+    notes: "Binding on all supervised institutions. Requires independent CISO, KRIs/KPIs, internal and external cyber audits. Supersedes 2020 guideline."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

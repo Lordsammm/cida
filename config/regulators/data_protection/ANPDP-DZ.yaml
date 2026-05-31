@@ -1,0 +1,18 @@
+id: ANPDP-DZ
+name: Autorite Nationale de Protection des Donnees a Caractere Personnel
+type: data_protection
+scope: national
+country: DZ
+website: https://www.anpdp.dz
+directives:
+  - id: ANPDP-DZ-Law
+    name: "Law No. 18-07 as amended by Law No. 25-11 of July 2025"
+    enacted: "2025-07-24"
+    notes: "5 working days to notify ANPDP (Law 25-11). Longer than GDPR 72-hour window. Criminal and administrative penalties apply."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 120

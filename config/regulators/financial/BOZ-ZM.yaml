@@ -1,0 +1,17 @@
+id: BOZ-ZM
+name: Bank of Zambia
+type: financial
+scope: national
+country: ZM
+website: https://www.boz.zm
+directives:
+  - id: ZM-Cyber-Security-Act-2025
+    name: "Cyber Security Act No. 3 of 2025"
+    enacted: "2025-05-01"
+    notes: "Mandates critical infrastructure protection, annual cybersecurity audits, incident notification to national Cybersecurity Agency."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

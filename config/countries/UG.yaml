@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: IRA-UG
   data_protection: PDPO-UG
-  central_bank: GENERIC-CB
+  central_bank: BOU-UG
   sector: {}
 cert: UG-CERT
 intel_sources: []

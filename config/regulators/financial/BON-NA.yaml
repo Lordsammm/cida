@@ -1,0 +1,17 @@
+id: BON-NA
+name: Bank of Namibia
+type: financial
+scope: national
+country: NA
+website: https://www.bon.com.na
+directives:
+  - id: BON-FICC
+    name: "Financial Industry Cybersecurity Council Framework"
+    enacted: "2023-01-01"
+    notes: "BoN established the FICC to coordinate sector-wide cybersecurity. Virtual Assets Act 2023 adds rules for virtual asset service providers."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

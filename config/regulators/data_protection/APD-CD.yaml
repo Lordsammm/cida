@@ -1,0 +1,19 @@
+id: APD-CD
+name: Autorite de Protection des Donnees
+type: data_protection
+scope: national
+country: CD
+website: https://www.bcc.cd
+dpa_operational: false
+directives:
+  - id: APD-CD-Law
+    name: "DRC Digital Code Ordinance-Law No. 23/010 Title III on Personal Data Protection"
+    enacted: "2023-03-13"
+    notes: "Authority established in law but not yet operational as at research date. 8-day compliance period for controller response to authority directive. Max fine: 5% of annual turnover."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 192

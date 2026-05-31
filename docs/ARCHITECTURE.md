@@ -46,7 +46,7 @@ The client's environment is assessed across every attack surface:
 The outputs from all assessment tools are dropped into a client folder alongside the questionnaire CSV. One command processes everything:
 
 ```
-cida score-project "clients/Tangerine Bank 2025"
+cida score-project "clients/Apex Bank 2025"
 ```
 
 ## How CIDA Scores an Organisation
@@ -329,14 +329,14 @@ VAPT narrative PDFs, evidence screenshots (PNG/JPEG/SVG), CIDA narrative Word re
 
 | File | For |
 |------|-----|
-| `_yoa_report.html` | Client: risk score, incident costs, findings, compliance posture, remediation roadmap |
+| `_policyholder_report.html` | Client: risk score, incident costs, findings, compliance posture, remediation roadmap |
 | `_report.html` | Underwriter: actuarial tables, vector scores, premium breakdown, policy conditions |
-| `_yoa_report.pdf` | Client PDF |
+| `_policyholder_report.pdf` | Client PDF |
 | `_report.pdf` | Underwriter PDF |
 | `_report.json` | Full machine-readable payload |
 | `_scored_block.json` | Compact underwriting summary for SaaS or API integration |
 
-The YOA (Year of Assessment) report is designed for the insured organisation. It explains the risk score, shows what specific cyber incidents would cost, lists findings by severity, maps compliance gaps, and gives a prioritised list of what to fix first. It includes an evidence appendix with screenshots from the assessment.
+The Policyholder Report report is designed for the insured organisation. It explains the risk score, shows what specific cyber incidents would cost, lists findings by severity, maps compliance gaps, and gives a prioritised list of what to fix first. It includes an evidence appendix with screenshots from the assessment.
 
 The underwriting scorecard is for the carrier's team. It includes actuarial detail, vector-to-driver contributions, peer comparison, premium construction, and proposed policy terms.
 

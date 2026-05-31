@@ -1,0 +1,18 @@
+id: ECA-ET
+name: Ethiopian Communications Authority
+type: data_protection
+scope: national
+country: ET
+website: https://www.ethiotelecom.et
+directives:
+  - id: ECA-ET-Law
+    name: "Personal Data Protection Proclamation No. 1321/2024"
+    enacted: "2024-01-01"
+    notes: "72-hour notification to ECA. Max corporate penalty: 4% of global annual turnover. Criminal penalties up to 10 years imprisonment."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

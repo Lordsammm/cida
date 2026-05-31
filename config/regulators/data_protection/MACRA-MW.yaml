@@ -1,0 +1,18 @@
+id: MACRA-MW
+name: Malawi Communications Regulatory Authority
+type: data_protection
+scope: national
+country: MW
+website: https://www.macra.mw
+directives:
+  - id: MACRA-MW-Law
+    name: "Data Protection Act 2024 (commenced 31 May 2024)"
+    enacted: "2024-05-31"
+    notes: "72-hour notification to MACRA for both controllers and processors. Affected individuals also notified within 72 hours if high risk."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

@@ -427,7 +427,7 @@ class CIDAReport(BaseModel):
     remediation: list[RemediationItem]
     findings_summary: dict  # counts by severity, top CVEs/KEVs, etc.
     intel_summary: dict = Field(default_factory=dict)
-    # YOA client report fields
+    # Policyholder Report fields
     compromised_emails: list[str] = Field(default_factory=list)
     dns_records: dict[str, list[str]] = Field(default_factory=dict)  # A / MX / NS records
     assessment_limitations: list[str] = Field(default_factory=list)  # scope limitation notes

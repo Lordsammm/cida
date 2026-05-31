@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: CGA
   data_protection: INPDP-TN
-  central_bank: GENERIC-CB
+  central_bank: BCT-TN
   sector: {}
 cert: TN-CERT
 intel_sources: []

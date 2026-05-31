@@ -1,0 +1,17 @@
+id: BCT-TN
+name: Banque Centrale de Tunisie
+type: financial
+scope: national
+country: TN
+website: https://www.bct.gov.tn
+directives:
+  - id: TN-Cybersecurity-Law-2024
+    name: "Tunisia Law No. 2024/036 on Cybersecurity - financial sector IT audits"
+    enacted: "2024-01-01"
+    notes: "Mandates security policies and regular IT audits for public and regulated entities. BCT Circular 2025-08 covers risk management and data governance."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

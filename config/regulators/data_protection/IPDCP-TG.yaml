@@ -1,0 +1,19 @@
+id: IPDCP-TG
+name: Instance de Protection des Donnees a Caractere Personnel
+type: data_protection
+scope: national
+country: TG
+website: https://www.ipdcp.tg
+dpa_operational: false
+directives:
+  - id: IPDCP-TG-Law
+    name: "Law No. 2019-014 on Personal Data Protection"
+    enacted: "2019-01-01"
+    notes: "72-hour notification window. DPA established in law; operational status partial as of 2025. Max penalties: XOF 25,000,000 and/or 5 years imprisonment."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

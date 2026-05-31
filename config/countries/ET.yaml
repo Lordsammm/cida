@@ -20,7 +20,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.75
 regulators:
   insurance: NBE-INS
-  data_protection: GENERIC-DP
+  data_protection: ECA-ET
   central_bank: GENERIC-CB
   sector: {}
 cert: Eth-CERT

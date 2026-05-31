@@ -1,0 +1,17 @@
+id: BOU-UG
+name: Bank of Uganda
+type: financial
+scope: national
+country: UG
+website: https://www.bou.or.ug
+directives:
+  - id: BOU-Cyber-Risk-Guidelines-2024
+    name: "Cyber Risk Management Guidelines for Supervised Financial Institutions (mandatory December 2024)"
+    enacted: "2024-12-01"
+    notes: "Transitions from voluntary to binding. Covers cybersecurity and technology risk management with breach-reporting obligations and penalties."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

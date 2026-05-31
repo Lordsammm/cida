@@ -1,0 +1,16 @@
+id: BCV-CV
+name: Banco de Cabo Verde
+type: financial
+scope: national
+country: CV
+website: https://www.bcv.cv
+directives:
+  - id: CV-Cybersecurity-Strategy-2016
+    name: "National Cybersecurity Strategy 2016"
+    enacted: "2016-01-01"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 72

@@ -1,0 +1,9 @@
+id: BOE-ER
+name: Bank of Eritrea
+type: financial
+scope: national
+country: ER
+website: https://www.boe.gov.er
+directives:
+reporting_requirements:
+  incident_notification_window_hours: 24

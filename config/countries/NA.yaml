@@ -21,7 +21,7 @@ base_frequency_multipliers:
 regulators:
   insurance: NAMFISA
   data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  central_bank: BON-NA
   sector: {}
 cert: null
 intel_sources: []

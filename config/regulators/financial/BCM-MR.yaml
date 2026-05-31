@@ -1,0 +1,17 @@
+id: BCM-MR
+name: Banque Centrale de Mauritanie
+type: financial
+scope: national
+country: MR
+website: https://www.bcm.mr
+directives:
+  - id: MR-Digital-Security-Strategy-2022
+    name: "National Digital Security Strategy 2022-2025"
+    enacted: "2022-01-01"
+    notes: "BCM coordinates payment system security through GIMTEL. Laws 2016-007 and 2018-002 provide the legal baseline."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

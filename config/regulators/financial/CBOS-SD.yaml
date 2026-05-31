@@ -1,0 +1,16 @@
+id: CBOS-SD
+name: Central Bank of Sudan
+type: financial
+scope: national
+country: SD
+website: https://www.cbos.gov.sd
+directives:
+  - id: SD-Cybersecurity-Authority-2025
+    name: "Sudanese Cybersecurity Authority - Presidential Decree November 2025"
+    enacted: "2025-11-01"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

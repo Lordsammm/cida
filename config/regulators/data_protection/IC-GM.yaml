@@ -1,0 +1,18 @@
+id: IC-GM
+name: Information Commission of The Gambia
+type: data_protection
+scope: national
+country: GM
+website: https://www.ic.gm
+directives:
+  - id: IC-GM-Law
+    name: "Personal Data Protection and Privacy Act 2025 (assented 7 November 2025)"
+    enacted: "2025-11-07"
+    notes: "72-hour notification to Information Commission. Max corporate fine: 4% of annual global turnover. Criminal penalties up to 10 years imprisonment for aggravated offences."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

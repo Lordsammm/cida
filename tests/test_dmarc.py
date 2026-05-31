@@ -153,8 +153,8 @@ def test_multiple_domains_in_list(tmp_path):
 # ---------------------------------------------------------------------------
 
 def test_asset_is_domain_name(tmp_path):
-    p = _write(tmp_path, {"domain": "cornerstone.ng",
+    p = _write(tmp_path, {"domain": "apexbank.ng",
                            "dmarc": {"present": False}, "spf": {"present": False},
                            "dkim": {"present": False}, "mta_sts": {"present": False}})
     findings = parse_dmarc_check(p)
-    assert all(f.asset == "cornerstone.ng" for f in findings)
+    assert all(f.asset == "apexbank.ng" for f in findings)

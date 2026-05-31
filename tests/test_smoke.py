@@ -9,7 +9,7 @@ from actuarial.model import run_actuarial_model
 from ingest.findings import load_findings_from_dir
 from ingest.questionnaire import parse_questionnaire_csv
 from models import OrgProfile
-from report.renderer import build_report, render_json, render_html, render_yoa_html
+from report.renderer import build_report, render_json, render_html, render_policyholder_html
 from scoring.engine import score_organization
 
 import yaml
@@ -53,8 +53,8 @@ def test_smoke_end_to_end(tmp_path: Path) -> None:
     print(f"  Premium:      ${report.premium.technical_premium_usd:,.0f}")
 
 
-def test_yoa_report_renders(tmp_path: Path) -> None:
-    """YOA client report renders without error and contains key sections."""
+def test_policyholder_report_renders(tmp_path: Path) -> None:
+    """Policyholder Report renders without error and contains key sections."""
     org = OrgProfile.model_validate(
         yaml.safe_load((EXAMPLES / "sample_org_profile.yaml").read_text(encoding="utf-8"))
     )
@@ -64,7 +64,7 @@ def test_yoa_report_renders(tmp_path: Path) -> None:
     actuarial = run_actuarial_model(org, responses, seed=42)
     report = build_report(org, responses, scoring, actuarial, findings=findings)
 
-    html = render_yoa_html(report, findings=findings)
+    html = render_policyholder_html(report, findings=findings)
 
     assert "<html" in html.lower()
     assert org.name in html

@@ -1,0 +1,17 @@
+id: NBE-ET
+name: National Bank of Ethiopia
+type: financial
+scope: national
+country: ET
+website: https://nbe.gov.et
+directives:
+  - id: NBE-MFI-33-2022
+    name: "Directive No. MFI/33/2022 - IT Management of Financial Institutions"
+    enacted: "2022-01-01"
+    notes: "Mandates IT risk management, cybersecurity programmes, incident response, and disaster recovery aligned to INSA standards. SBB/94/2025 adds data localisation and IT audit requirements."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

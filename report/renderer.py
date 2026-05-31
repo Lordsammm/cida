@@ -2,7 +2,7 @@
 
 Two report types are produced:
   - Underwriting scorecard (report.html.j2)  → render_pdf() / render_html()
-  - YOA client report    (yoa_report.html.j2) → render_yoa_report()
+  - Policyholder Report    (policyholder_report.html.j2) → render_policyholder_report()
 """
 from __future__ import annotations
 
@@ -92,7 +92,7 @@ def build_report(
 
     risk_summary = build_risk_summary(org, scoring, actuarial, findings or [], intel=intel)
 
-    # --- Derive YOA report fields from findings ---
+    # --- Derive Policyholder Report fields from findings ---
     all_findings = findings or []
     compromised_emails = _extract_compromised_emails(all_findings)
     dns_records = _extract_dns_records(all_findings)
@@ -118,7 +118,7 @@ def build_report(
         remediation=remediation,
         findings_summary=scoring.findings_summary,
         intel_summary=intel_summary or {},
-        # YOA fields
+        # Policyholder report fields
         compromised_emails=compromised_emails,
         dns_records=dns_records,
         assessment_limitations=assessment_limitations or [],
@@ -221,14 +221,14 @@ def render_html(report: CIDAReport, out_path: str | Path | None = None) -> str:
     return html
 
 
-def render_yoa_html(
+def render_policyholder_html(
     report: CIDAReport,
     findings: list | None = None,
     out_path: str | Path | None = None,
 ) -> str:
-    """Render the YOA-format client report to HTML."""
+    """Render the Policyholder Report to HTML."""
     env = _make_jinja_env()
-    tmpl = env.get_template("yoa_report.html.j2")
+    tmpl = env.get_template("policyholder_report.html.j2")
     html = tmpl.render(report=report, findings=findings or [])
     if out_path:
         out_path = Path(out_path)
@@ -237,16 +237,16 @@ def render_yoa_html(
     return html
 
 
-def render_yoa_pdf(
+def render_policyholder_pdf(
     report: CIDAReport,
     findings: list | None = None,
     out_path: str | Path | None = None,
 ) -> Path:
-    """Render YOA-format client report to PDF."""
-    html = render_yoa_html(report, findings=findings)
+    """Render Policyholder Report to PDF."""
+    html = render_policyholder_html(report, findings=findings)
     if out_path is None:
         slug = re.sub(r"[^\w]", "_", report.org.name.lower())[:32]
-        out_path = Path(f"{slug}_yoa_report.pdf")
+        out_path = Path(f"{slug}_policyholder_report.pdf")
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 

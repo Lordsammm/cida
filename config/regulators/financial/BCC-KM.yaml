@@ -1,0 +1,16 @@
+id: BCC-KM
+name: Banque Centrale des Comores
+type: financial
+scope: national
+country: KM
+website: https://banque-comores.km
+directives:
+  - id: AU-Malabo-2024
+    name: "AU Malabo Convention on Cyber Security (entered into force June 2024)"
+    enacted: "2024-06-01"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

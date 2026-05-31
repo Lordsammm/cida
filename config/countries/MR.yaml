@@ -23,7 +23,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.6
 regulators:
   insurance: GENERIC-INS
-  data_protection: GENERIC-DP
+  data_protection: CNIL-MR
   central_bank: GENERIC-CB
   capital_markets: null
   telecoms: null

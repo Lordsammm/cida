@@ -1,0 +1,18 @@
+id: HAPDP-NE
+name: Haute Autorite de Protection des Donnees a Caractere Personnel
+type: data_protection
+scope: national
+country: NE
+website: https://www.hapdp.ne
+directives:
+  - id: HAPDP-NE-Law
+    name: "Law No. 2022 on Personal Data Protection"
+    enacted: "2022-01-01"
+    notes: "Notify HAPDP without delay upon awareness. High-risk breaches also require notification to data subjects as soon as possible. Max criminal fine: XOF 40,000,000."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

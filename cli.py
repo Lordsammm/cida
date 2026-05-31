@@ -25,7 +25,7 @@ from ingest.questionnaire import parse_questionnaire_csv
 from models import OrgProfile
 from report.renderer import (
     build_report, render_html, render_json, render_pdf,
-    render_yoa_html, render_yoa_pdf,
+    render_policyholder_html, render_policyholder_pdf,
 )
 from scoring.engine import score_organization
 
@@ -93,9 +93,9 @@ def score(
     render_html(report, html_out)
     typer.echo(f"[cida] HTML  -> {html_out}")
 
-    yoa_html_out = out.with_name(out.stem + "_yoa.html")
-    render_yoa_html(report, findings=found, out_path=yoa_html_out)
-    typer.echo(f"[cida] YOA HTML -> {yoa_html_out}")
+    policyholder_html_out = out.with_name(out.stem + "_policyholder.html")
+    render_policyholder_html(report, findings=found, out_path=policyholder_html_out)
+    typer.echo(f"[cida] Policyholder HTML -> {policyholder_html_out}")
 
 
 @app.command()
@@ -210,7 +210,7 @@ def score_project(
     ),
     offline: bool = typer.Option(False, "--offline", help="Skip CVE/EPSS/KEV enrichment and public-intel fetch"),
     seed: int = typer.Option(42, "--seed", help="Monte Carlo seed"),
-    yoa: bool = typer.Option(True, "--yoa/--no-yoa", help="Also render YOA-format client report"),
+    yoa: bool = typer.Option(True, "--policyholder/--no-policyholder", help="Also render Policyholder Report"),
     limitation: list[str] = typer.Option(
         [], "--limitation", help="Assessment scope limitation note (repeatable)"
     ),
@@ -221,14 +221,14 @@ def score_project(
     then run:
 
         cida score-project "cida/clients/XYZ Bank"
-        cida score-project "cida/clients/Cornerstone 2025" --limitation "GCP not assessed"
+        cida score-project "cida/clients/Summit 2025" --limitation "GCP not assessed"
 
     The folder must contain org_profile.yaml and questionnaire.csv.
     All other files are auto-discovered and classified by content (not filename).
 
     Output goes to cida/clients/<name>/output/:
         <org_id>_report.pdf           (underwriting scorecard)
-        <org_id>_yoa_report.pdf       (YOA client report, if --yoa)
+        <org_id>_policyholder_report.pdf       (Policyholder Report, if --yoa)
         <org_id>_report.json          (full data payload)
         <org_id>_scored_block.json    (compact underwriting payload)
     """
@@ -279,13 +279,13 @@ def score_project(
     typer.echo(f"[cida] Scorecard HTML -> {html_out}")
 
     if yoa:
-        yoa_path = render_yoa_pdf(report, findings=found,
-                                  out_path=out_dir / f"{slug}_yoa_report.pdf")
-        typer.echo(f"[cida] YOA PDF       -> {yoa_path}")
+        policyholder_path = render_policyholder_pdf(report, findings=found,
+                                  out_path=out_dir / f"{slug}_policyholder_report.pdf")
+        typer.echo(f"[cida] Policyholder PDF       -> {policyholder_path}")
 
-        yoa_html_out = out_dir / f"{slug}_yoa_report.html"
-        render_yoa_html(report, findings=found, out_path=yoa_html_out)
-        typer.echo(f"[cida] YOA HTML      -> {yoa_html_out}")
+        policyholder_html_out = out_dir / f"{slug}_policyholder_report.html"
+        render_policyholder_html(report, findings=found, out_path=policyholder_html_out)
+        typer.echo(f"[cida] Policyholder HTML      -> {policyholder_html_out}")
 
     # Compact scored block (for SaaS integration)
     rs = report.risk_summary

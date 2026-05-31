@@ -21,7 +21,7 @@ base_frequency_multipliers:
 regulators:
   insurance: ISSM
   data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  central_bank: BDM-MZ
   sector: {}
 cert: null
 intel_sources: []

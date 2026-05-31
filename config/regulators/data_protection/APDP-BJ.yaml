@@ -1,0 +1,18 @@
+id: APDP-BJ
+name: Autorite de Protection des Donnees Personnelles
+type: data_protection
+scope: national
+country: BJ
+website: https://apdp.bj
+directives:
+  - id: APDP-BJ-Law
+    name: "Law No. 2009-09 on Personal Data Protection (updated by Digital Code 2017-20)"
+    enacted: "2009-05-22"
+    notes: "Notify without delay (no numeric deadline). Max fine: XOF 50,000,000."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

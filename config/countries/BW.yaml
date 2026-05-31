@@ -21,7 +21,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.75
 regulators:
   insurance: NBFIRA
-  data_protection: GENERIC-DP
+  data_protection: DPC-BW
   central_bank: GENERIC-CB
   sector: {}
 cert: BW-CSIRT

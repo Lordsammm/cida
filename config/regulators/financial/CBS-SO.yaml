@@ -1,0 +1,16 @@
+id: CBS-SO
+name: Central Bank of Somalia
+type: financial
+scope: national
+country: SO
+website: https://centralbank.gov.so
+directives:
+  - id: SO-Cybersecurity-Law-2026
+    name: "National Cybersecurity Law 2026 - SOM-CIRT established"
+    enacted: "2026-01-01"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

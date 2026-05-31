@@ -1,0 +1,9 @@
+id: BRB-BI
+name: Banque de la Republique du Burundi
+type: financial
+scope: national
+country: BI
+website: https://www.brb.bi
+directives:
+reporting_requirements:
+  incident_notification_window_hours: 24

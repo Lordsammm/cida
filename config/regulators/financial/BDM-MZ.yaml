@@ -1,0 +1,17 @@
+id: BDM-MZ
+name: Banco de Mocambique
+type: financial
+scope: national
+country: MZ
+website: https://www.bancomoc.mz
+directives:
+  - id: BDM-Notice-8-2025
+    name: "Notice No. 8/GBM/2025 - Reporting of Technological and Cybersecurity Incidents"
+    enacted: "2025-01-01"
+    notes: "24-hour preliminary notification mandatory for all credit institutions. Must implement monitoring systems, response plans, and dedicated response teams."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

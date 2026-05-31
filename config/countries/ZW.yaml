@@ -22,7 +22,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.75
 regulators:
   insurance: IPEC
-  data_protection: GENERIC-DP
+  data_protection: POTRAZ-ZW
   central_bank: GENERIC-CB
   sector: {}
 cert: null

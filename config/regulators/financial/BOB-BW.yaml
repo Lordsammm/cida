@@ -1,0 +1,16 @@
+id: BOB-BW
+name: Bank of Botswana
+type: financial
+scope: national
+country: BW
+website: https://www.bankofbotswana.bw
+directives:
+  - id: BW-DPA-2024
+    name: "Data Protection Act 18 of 2024 - banking obligations (in force January 2025)"
+    enacted: "2025-01-14"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 72

@@ -1,0 +1,17 @@
+id: CBL-LY
+name: Central Bank of Libya
+type: financial
+scope: national
+country: LY
+website: https://cbl.gov.ly
+directives:
+  - id: CBL-IT-Governance-2023
+    name: "IT Governance Regulation No. 2023/21 (COBIT 2019 aligned, 105 pages)"
+    enacted: "2023-01-01"
+    notes: "Requires all Libyan banks to implement IT governance across 13 strategic goals. CBL Information Security Policy also in force."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

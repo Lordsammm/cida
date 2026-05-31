@@ -1,0 +1,16 @@
+id: BCRG-GN
+name: Banque Centrale de la Republique de Guinee
+type: financial
+scope: national
+country: GN
+website: https://www.bcrg-guinee.org
+directives:
+  - id: ECOWAS-Cybercrime-Directive-2011
+    name: "ECOWAS Cybercrime Directive C/DIR.1/08/11 2011 (regional framework)"
+    enacted: "2011-08-01"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

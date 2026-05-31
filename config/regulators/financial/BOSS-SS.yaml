@@ -1,0 +1,9 @@
+id: BOSS-SS
+name: Bank of South Sudan
+type: financial
+scope: national
+country: SS
+website: https://boss.gov.ss
+directives:
+reporting_requirements:
+  incident_notification_window_hours: 24

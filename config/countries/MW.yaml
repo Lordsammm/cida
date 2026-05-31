@@ -21,7 +21,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 2.8
 regulators:
   insurance: RBM-INS
-  data_protection: GENERIC-DP
+  data_protection: MACRA-MW
   central_bank: GENERIC-CB
   sector: {}
 cert: null

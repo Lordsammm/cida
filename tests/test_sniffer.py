@@ -373,7 +373,7 @@ class TestVulnScan:
     </ReportHost>
   </Report>
 </NessusClientData_v2>"""
-        p = _xml(tmp_path, "cornerstone_external_assessment_april_2026.xml", xml)
+        p = _xml(tmp_path, "client_external_assessment_april_2026.xml", xml)
         assert sniff(p).category == "vuln_scan"
 
 
@@ -817,7 +817,7 @@ class TestArbitraryFilenames:
     </ReportHost>
   </Report>
 </NessusClientData_v2>"""
-        p = _xml(tmp_path, "security_assessment_cornerstone_q1_2026.xml", xml)
+        p = _xml(tmp_path, "security_assessment_client_q1_2026.xml", xml)
         assert sniff(p).category == "vuln_scan"
 
     def test_shodan_in_generic_name(self, tmp_path):

@@ -1,0 +1,19 @@
+id: CNDP-DJ
+name: Commission Nationale de Protection des Donnees Personnelles
+type: data_protection
+scope: national
+country: DJ
+website: https://www.cndp.dj
+dpa_operational: false
+directives:
+  - id: CNDP-DJ-Law
+    name: "Djibouti Digital Code 2025 - Title on Personal Data Protection"
+    enacted: "2025-06-01"
+    notes: "72-hour notification to CNDP; data subjects notified without undue delay if high risk. Max fine: DJF 70,000,000 or 5% of global turnover. DPA mandated by Code; not yet fully operational."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

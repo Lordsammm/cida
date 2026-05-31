@@ -21,7 +21,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.0
 regulators:
   insurance: FSA-SC
-  data_protection: GENERIC-DP
+  data_protection: IC-SC
   central_bank: GENERIC-CB
   sector: {}
 cert: null

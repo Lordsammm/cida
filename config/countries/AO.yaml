@@ -21,7 +21,7 @@ base_frequency_multipliers:
 regulators:
   insurance: ARSEG
   data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  central_bank: BNA-AO
   sector: {}
 cert: null
 intel_sources: []

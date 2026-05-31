@@ -1,0 +1,17 @@
+id: BNA-AO
+name: Banco Nacional de Angola
+type: financial
+scope: national
+country: AO
+website: https://www.bna.ao
+directives:
+  - id: AO-NCIMF-2024
+    name: "Angola National Cybersecurity Incident Management Framework 2024"
+    enacted: "2024-01-01"
+    notes: "Co-ordinated by BNA, Angola-CSIRT, APD, and INACOM. APD Directive 02/APD/2024 requires immediate breach notification."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

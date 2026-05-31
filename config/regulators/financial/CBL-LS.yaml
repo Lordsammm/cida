@@ -1,0 +1,17 @@
+id: CBL-LS
+name: Central Bank of Lesotho
+type: financial
+scope: national
+country: LS
+website: https://www.centralbank.org.ls
+directives:
+  - id: LS-Cybersecurity-Bill-2024
+    name: "Computer Crime and Cybersecurity Bill 2024 (tabled in Parliament)"
+    enacted: "2024-01-01"
+    notes: "CBL completed EU-funded Cyber Incident Response Training September 2024."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

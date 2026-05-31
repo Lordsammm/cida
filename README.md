@@ -28,18 +28,18 @@ cida list-regulators --kind data_protection
 ## Scoring a real client
 
 ```powershell
-Copy-Item -Recurse "clients\_TEMPLATE" "clients\Tangerine Bank 2025"
+Copy-Item -Recurse "clients\_TEMPLATE" "clients\Apex Bank 2025"
 # fill in org_profile.yaml, drop in the questionnaire.csv export
 
-cida score-project "clients/Tangerine Bank 2025"
-cida score-project "clients/Tangerine Bank 2025" --offline  # skip live CVE/news
-cida score-project "clients/Tangerine Bank 2025" --limitation "GCP not in scope"
+cida score-project "clients/Apex Bank 2025"
+cida score-project "clients/Apex Bank 2025" --offline  # skip live CVE/news
+cida score-project "clients/Apex Bank 2025" --limitation "GCP not in scope"
 ```
 
 Drop any combination of artefacts in the folder, file names don't matter, content is auto-detected:
 
 ```
-clients/Tangerine Bank 2025/
+clients/Apex Bank 2025/
   org_profile.yaml          ← required
   questionnaire.csv         ← required (merged export from the CIDA platform)
   nessus_scan.xml           ← any name
@@ -51,11 +51,11 @@ clients/Tangerine Bank 2025/
   screenshot1.png
 ```
 
-Output goes to `clients/Tangerine Bank 2025/output/`:
+Output goes to `clients/Apex Bank 2025/output/`:
 
 | File | For |
 |------|-----|
-| `<org_id>_yoa_report.html` | Client |
+| `<org_id>_policyholder_report.html` | Client |
 | `<org_id>_report.html` | Underwriter |
 | `<org_id>_report.json` | Full data payload |
 | `<org_id>_scored_block.json` | Compact underwriting summary |
@@ -64,7 +64,7 @@ Terminal output (Nigerian org, all figures in USD + NGN):
 
 ```
 -- UNDERWRITING SUMMARY --------------------------------------------------
-  Organisation    : Tangerine Bank Plc  (banking / NG)
+  Organisation    : Apex Bank Plc  (banking / NG)
   Currency        : NGN  (1 USD = 1,610.00 NGN)
   Security Posture: 58%  (ELEVATED RISK)
   Tier            : 3 -- Adequate
@@ -181,7 +181,7 @@ Classification is content-based, file names and extensions do not matter.
 | **Dark web / credential intel** | SpyCloud, DeHashed, Hudson Rock, Flare, HIBP, stealer log dumps (RedLine, Raccoon, Vidar, Lumma) |
 | **Email security** | checkdmarc, hardenize, dmarcian, mail-tester |
 | **VAPT reports** | Any PDF - pdfplumber text + table extraction |
-| **Evidence** | PNG, JPEG, SVG, WebP screenshots - embedded in YOA report |
+| **Evidence** | PNG, JPEG, SVG, WebP screenshots - embedded in Policyholder Report |
 | **Pre-normalised** | CIDA Finding JSON (skip parsing, go straight to scoring) |
 
 Full tool list with supported formats → [`ingest/README.md`](ingest/README.md)

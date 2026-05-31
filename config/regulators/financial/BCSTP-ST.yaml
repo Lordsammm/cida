@@ -1,0 +1,9 @@
+id: BCSTP-ST
+name: Banco Central de Sao Tome e Principe
+type: financial
+scope: national
+country: ST
+website: https://www.bcstp.st
+directives:
+reporting_requirements:
+  incident_notification_window_hours: 24

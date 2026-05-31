@@ -1,0 +1,17 @@
+id: BCD-DJ
+name: Banque Centrale de Djibouti
+type: financial
+scope: national
+country: DJ
+website: https://banque-centrale.dj
+directives:
+  - id: DJ-Digital-Code-2025
+    name: "National Digital Code 2025 - cybersecurity and data protection"
+    enacted: "2025-06-01"
+    notes: "Approximately 800 articles. National Cybersecurity Strategy 2024-2030 in force."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 72

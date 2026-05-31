@@ -1,0 +1,17 @@
+id: CBS-SC
+name: Central Bank of Seychelles
+type: financial
+scope: national
+country: SC
+website: https://www.cbs.sc
+directives:
+  - id: SC-Cybersecurity-Strategy-2019
+    name: "National Cybersecurity Strategy 2019-2024 (CBS CISO + defence-in-depth)"
+    enacted: "2019-01-01"
+    notes: "CBS has established internal CISO role and defence-in-depth architecture. Collaborates with National Cybersecurity Coordinating Committee."
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

@@ -20,7 +20,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.75
 regulators:
   insurance: CIMA
-  data_protection: GENERIC-DP
+  data_protection: CNDP-CG
   central_bank: BEAC
   sector: {}
 cert: null

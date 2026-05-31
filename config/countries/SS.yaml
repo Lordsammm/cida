@@ -21,7 +21,7 @@ base_frequency_multipliers:
 regulators:
   insurance: GENERIC-INS
   data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  central_bank: BOSS-SS
   sector: {}
 cert: null
 intel_sources: []

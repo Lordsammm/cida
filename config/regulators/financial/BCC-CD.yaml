@@ -1,0 +1,16 @@
+id: BCC-CD
+name: Banque Centrale du Congo
+type: financial
+scope: national
+country: CD
+website: https://www.bcc.cd
+directives:
+  - id: CD-Digital-Code-2023
+    name: "DRC Digital Code Ordinance-Law No. 23/010 - cybersecurity provisions"
+    enacted: "2023-03-13"
+    cyber_relevant_sections:
+      - section: Cybersecurity framework
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.24] }
+
+reporting_requirements:
+  incident_notification_window_hours: 24

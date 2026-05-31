@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: FSRA-SZ
   data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  central_bank: CBE-SZ
   sector: {}
 cert: null
 intel_sources: []
