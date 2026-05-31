@@ -15,14 +15,14 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full technical design.
 pip install -e .
 
 # Run the built-in demo (bundled sample data, no internet required)
-python -m cida.cli demo --offline
+cida demo --offline
 
 # Validate the model against the 10 reference cases
-python -m cida.cli backtest
+cida backtest
 
 # Inspect supported jurisdictions
-python -m cida.cli list-countries
-python -m cida.cli list-regulators --kind data_protection
+cida list-countries
+cida list-regulators --kind data_protection
 ```
 
 ## Scoring a real client
@@ -31,9 +31,9 @@ python -m cida.cli list-regulators --kind data_protection
 Copy-Item -Recurse "clients\_TEMPLATE" "clients\Tangerine Bank 2025"
 # fill in org_profile.yaml, drop in the questionnaire.csv export
 
-python -m cida.cli score-project "clients/Tangerine Bank 2025"
-python -m cida.cli score-project "clients/Tangerine Bank 2025" --offline  # skip live CVE/news
-python -m cida.cli score-project "clients/Tangerine Bank 2025" --limitation "GCP not in scope"
+cida score-project "clients/Tangerine Bank 2025"
+cida score-project "clients/Tangerine Bank 2025" --offline  # skip live CVE/news
+cida score-project "clients/Tangerine Bank 2025" --limitation "GCP not in scope"
 ```
 
 Drop any combination of artefacts in the folder, file names don't matter, content is auto-detected:
@@ -83,7 +83,7 @@ Terminal output (Nigerian org, all figures in USD + NGN):
 
 ## Pricing and local currency
 
-All actuarial calculations, expected loss, VaR, TVaR, premium, are computed in USD, which is the universal reinsurance reference currency. At output time, every monetary figure is converted to the org's local currency using the rate from `cida/config/fx_rates.yaml`.
+All actuarial calculations, expected loss, VaR, TVaR, premium, are computed in USD, which is the universal reinsurance reference currency. At output time, every monetary figure is converted to the org's local currency using the rate from `config/fx_rates.yaml`.
 
 The conversion is automatic: the org's `country` field in `org_profile.yaml` resolves the currency code from the country config (e.g. `NG → NGN`, `ZA → ZAR`, `KE → KES`), which maps to the FX rate table. No manual input needed.
 
@@ -104,7 +104,7 @@ The FX rates in `fx_rates.yaml` are indicative mid-2026 mid-market estimates. Up
 For scripting or CI, pass files directly instead of using a folder:
 
 ```powershell
-python -m cida.cli score `
+cida score `
   --org-profile path/to/org.yaml `
   --questionnaire path/to/responses.csv `
   --findings path/to/scanner_outputs/ `
@@ -165,7 +165,7 @@ Classification is content-based, file names and extensions do not matter.
 | **Evidence** | PNG, JPEG, SVG, WebP screenshots - embedded in YOA report |
 | **Pre-normalised** | CIDA Finding JSON (skip parsing, go straight to scoring) |
 
-Full tool list with supported formats → [`cida/ingest/README.md`](cida/ingest/README.md)
+Full tool list with supported formats → [`ingest/README.md`](ingest/README.md)
 
 ## Compliance frameworks
 
@@ -187,12 +187,12 @@ frameworks are selected automatically based on sector and country.
 | African Union Malabo Convention | AU member states |
 | FSCA Joint Standard 1:2023 | South African financial services |
 
-Full framework config → [`cida/config/README.md`](cida/config/README.md)
+Full framework config → [`config/README.md`](config/README.md)
 
 ## Supported countries (54)
 
 All actuarial, regulatory, and disclosure parameters are calibrated per country.
-Run `python -m cida.cli list-countries` for the full table, or see below:
+Run `cida list-countries` for the full table, or see below:
 
 | Code | Country | Currency | Region |
 |------|---------|----------|--------|
@@ -259,12 +259,11 @@ universal base currency. In `org_profile.yaml`:
 * `annual_revenue_usd`, used by the actuarial model for severity scaling
 * `annual_revenue_local` + `local_currency`, displayed in the report header for the client's reference, not used in calculations
 
-Exchange rates are not applied automatically. If the client's revenue is stated
-in a local currency, convert to USD before entering it in `annual_revenue_usd`.
+FX conversion is automatic: the org's country resolves the currency code (e.g. NG gives NGN, ZA gives ZAR), which maps to the rate in `config/fx_rates.yaml`. Revenue should always be entered in USD in `annual_revenue_usd` for accurate actuarial scaling.
 
 ## Supported regulators
 
-Run `python -m cida.cli list-regulators --kind <type>` where type is one of
+Run `cida list-regulators --kind <type>` where type is one of
 `insurance`, `data_protection`, `financial`, or `sector`.
 
 | ID | Name | Type | Country / Scope |
@@ -291,7 +290,7 @@ Run `python -m cida.cli list-regulators --kind <type>` where type is one of
 | PenCom | National Pension Commission | sector | NG |
 | SEC-NG | Securities and Exchange Commission | sector | NG |
 
-Full regulator config → [`cida/config/README.md`](cida/config/README.md)
+Full regulator config → [`config/README.md`](config/README.md)
 
 ## Repository layout
 
@@ -348,7 +347,7 @@ The ML residual layer ships neutral (1.0×) until trained on real African claim 
 Once pilot carriers feed back observed claims:
 
 ```powershell
-python -m cida.cli update-priors --claims path/to/claims.yaml --out cida/config/priors/global.yaml
+cida update-priors --claims path/to/claims.yaml --out config/priors/global.yaml
 ```
 
 The command runs Gamma (frequency) and Lognormal (severity) conjugate posterior updates and writes the updated priors back to the config. This sharpens all future assessments without retraining the ML layer.

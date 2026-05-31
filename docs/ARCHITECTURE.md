@@ -46,7 +46,7 @@ The client's environment is assessed across every attack surface:
 The outputs from all assessment tools are dropped into a client folder alongside the questionnaire CSV. One command processes everything:
 
 ```
-python -m cida.cli score-project "clients/Tangerine Bank 2025"
+cida score-project "clients/Tangerine Bank 2025"
 ```
 
 ## How CIDA Scores an Organisation
@@ -272,7 +272,7 @@ Posture is measured as the percentage of crosswalked controls scoring 70 or abov
 | Central Africa | CM, CD, CG, CF, TD, GA, GQ, AO, ST |
 | North Africa | EG, MA, DZ, TN, LY |
 
-Each country carries: base frequency multipliers, disclosure correction factor, mobile money penetration level, currency code, and regulator references. Run `python -m cida.cli list-countries` for the full table.
+Each country carries: base frequency multipliers, disclosure correction factor, mobile money penetration level, currency code, and regulator references. Run `cida list-countries` for the full table.
 
 ## Supported Assessment Tools
 
@@ -323,62 +323,65 @@ The underwriting scorecard is for the carrier's team. It includes actuarial deta
 ## Technical Architecture
 
 ```
-cida/
-  cli.py               Typer CLI: score-project, score, demo, backtest, update-priors
-  models.py            All Pydantic data models - single source of truth
+cli.py                Typer CLI: score-project, score, demo, backtest, update-priors
+models.py             All Pydantic data models, single source of truth
 
-  ingest/              File parsing
-    sniffer.py         Content-based file classifier
-    findings.py        Routes files to the right parser
-    questionnaire.py   Questionnaire CSV parser
-    project.py         Drop-zone loader - discovers all files recursively
-    nessus.py          Nessus / Qualys / OpenVAS / Rapid7 parser
-    vapt_pdf.py        PDF extraction (pdfplumber + optional LLM assist)
-    attack_surface.py  Shodan / Censys / Amass parser
-    cspm_aws.py        Prowler / Security Hub parser
-    cspm_azure.py      Defender for Cloud / ScoutSuite Azure parser
-    cspm_gcp.py        GCP Security Command Center parser
-    darkweb.py         Credential leak / stealer log / forum mention parser
-    dmarc.py           DMARC / SPF / DKIM parser
-    cida_docx.py       CIDA narrative Word report parser
+ingest/               File parsing
+  sniffer.py          Content-based file classifier (never uses filenames)
+  findings.py         Routes files to the right parser
+  questionnaire.py    Questionnaire CSV parser
+  project.py          Drop-zone loader, discovers all files recursively
+  nessus.py           Nessus, Qualys, OpenVAS, Rapid7 parser
+  vapt_pdf.py         PDF extraction (pdfplumber + optional LLM assist)
+  attack_surface.py   Shodan, Censys, Amass parser
+  cspm_aws.py         Prowler, Security Hub parser
+  cspm_azure.py       Defender for Cloud, ScoutSuite Azure parser
+  cspm_gcp.py         GCP Security Command Center parser
+  darkweb.py          Credential leak, stealer log, forum mention parser
+  dmarc.py            DMARC, SPF, DKIM parser
+  cida_docx.py        CIDA narrative Word report parser
 
-  enrich/              External data enrichment
-    cve.py             CVE / EPSS / KEV enrichment (NVD, FIRST, CISA)
-    cwe.py             CWE and OWASP Top 10 mapping
-    intel/             Public intelligence (Proshare, BusinessDay)
+enrich/               External data enrichment
+  cve.py              CVE, EPSS, KEV enrichment (NVD, FIRST, CISA)
+  cwe.py              CWE and OWASP Top 10 mapping
+  intel/              Public intelligence (Proshare, BusinessDay)
 
-  scoring/
-    engine.py          Control scoring, domain rollup, overall score, tier
-    vectors.py         14 threat vector scores
-    risk_summary.py    Coalition-style risk summary builder
+scoring/
+  engine.py           Control scoring, domain rollup, overall score, tier
+  vectors.py          14 threat vector scores
+  risk_summary.py     Coalition-style risk summary builder
 
-  actuarial/
-    model.py           Bayesian frequency x severity x 10k Monte Carlo
-    premium.py         Premium construction + FX conversion to local currency
-    posterior_update.py  Bayesian update from observed claims
+actuarial/
+  model.py            Bayesian frequency x severity x 10k Monte Carlo
+  premium.py          Premium construction + FX conversion to local currency
+  posterior_update.py Bayesian update from observed claims
 
-  ml/
-    modifier.py        XGBoost residual on log(EL) - neutral until trained
+ml/
+  modifier.py         XGBoost residual on log(EL), neutral until trained
 
-  posture/
-    compliance.py      Framework posture scoring + remediation roadmap
+posture/
+  compliance.py       Framework posture scoring + remediation roadmap
 
-  catalog/
-    control_catalog.yaml  41 controls with multi-framework crosswalks
-    loader.py
+catalog/
+  control_catalog.yaml  41 controls with multi-framework crosswalks
+  loader.py
 
-  config/              All calibration in plain YAML - no code changes needed
-    countries/         54 country configs (regulators, currency, multipliers)
-    regulators/        Insurance, data protection, financial, sector
-    sectors/           Sector frequency and severity overlays
-    frameworks/        Compliance framework descriptors
-    priors/            Global Bayesian priors + Africa-specific overlays
-    fx_rates.yaml      Indicative FX rates for local currency output
-    vector_matrix.yaml 14x10 ThreatVector x LossDriver multiplier table
+config/               All calibration in plain YAML, no code changes needed
+  countries/          54 country configs (regulators, currency, multipliers)
+  regulators/         Insurance, data protection, financial, sector
+  sectors/            Sector frequency and severity overlays
+  frameworks/         Compliance framework descriptors
+  priors/             Global Bayesian priors + Africa-specific overlays
+  fx_rates.yaml       Indicative FX rates for local currency output
+  vector_matrix.yaml  14x10 ThreatVector x LossDriver multiplier table
 
-  report/
-    renderer.py        CIDAReport builder + HTML and PDF renderer
-    templates/         Jinja2 templates for both report types
+report/
+  renderer.py         CIDAReport builder + HTML and PDF renderer
+  templates/          Jinja2 templates for both report types
+
+clients/              Client assessment folders (gitignored)
+docs/                 ARCHITECTURE.md and design notes
+tests/                pytest suite and 10 backtest cases
 ```
 
 ### Data Flow
@@ -413,19 +416,19 @@ org_profile.yaml + questionnaire.csv + assessment artefacts
 
 ### Extending the model
 
-**New country**: add `{ISO2}.yaml` to `cida/config/countries/`
+**New country**: add `{ISO2}.yaml` to `config/countries/`
 
-**New regulator**: add a YAML to the relevant `cida/config/regulators/` subfolder, reference it from the country config
+**New regulator**: add a YAML to the relevant `config/regulators/` subfolder, reference it from the country config
 
 **New assessment tool**: write a parser returning `list[Finding]`, add signals to `sniffer.py`, add a dispatch case in `findings.py`
 
-**New compliance framework**: add a YAML to `cida/config/frameworks/`, add crosswalk entries in the control catalog
+**New compliance framework**: add a YAML to `config/frameworks/`, add crosswalk entries in the control catalog
 
-**Update priors from real claims**: `python -m cida.cli update-priors --claims claims.yaml --out cida/config/priors/global.yaml`
+**Update priors from real claims**: `cida update-priors --claims claims.yaml --out config/priors/global.yaml`
 
 ## Calibration and Validation
 
-Ten reference cases validate the model across sectors and countries. Run `python -m cida.cli backtest` after any config change.
+Ten reference cases validate the model across sectors and countries. Run `cida backtest` after any config change.
 
 | Case | Sector | Country | Primary validation |
 |------|--------|---------|-------------------|
