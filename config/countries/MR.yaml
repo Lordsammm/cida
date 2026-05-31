@@ -24,7 +24,7 @@ base_frequency_multipliers:
 regulators:
   insurance: GENERIC-INS
   data_protection: CNIL-MR
-  central_bank: GENERIC-CB
+  central_bank: BCM-MR
   capital_markets: null
   telecoms: null
   sector: {}

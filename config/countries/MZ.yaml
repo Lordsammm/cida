@@ -20,7 +20,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 2.5
 regulators:
   insurance: ISSM
-  data_protection: GENERIC-DP
+  data_protection: ANPDP-MZ
   central_bank: BDM-MZ
   sector: {}
 cert: null

@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: GENERIC-INS
   data_protection: CMIL-MG
-  central_bank: GENERIC-CB
+  central_bank: BFM-MG
   sector: {}
 cert: null
 intel_sources: []

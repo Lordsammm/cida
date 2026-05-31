@@ -1,0 +1,16 @@
+id: BFM-MG
+name: Banky Foiben i Madagasikara (Central Bank of Madagascar)
+type: financial
+scope: national
+country: MG
+website: https://www.banky-foiben-i-madagasikara.gov.mg
+directives:
+  - id: MG-AU-Malabo-2024
+    name: AU Malabo Convention on Cyber Security and Personal Data Protection (entered into force June 2024)
+    enacted: "2024-06-01"
+    notes: "Madagascar is an AU member state. Malabo Convention now binding. National cybersecurity framework under development with World Bank support."
+    cyber_relevant_sections:
+      - section: AU continental cybersecurity obligations
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.DS-01, RS.CO-02], iso_27001_2022: [A.5.1, A.5.34] }
+reporting_requirements:
+  incident_notification_window_hours: 24

@@ -1,0 +1,22 @@
+id: BOM-MU
+name: Bank of Mauritius
+type: financial
+scope: national
+country: MU
+website: https://www.bom.mu
+directives:
+  - id: BOM-Cybersecurity-Framework-2023
+    name: Bank of Mauritius Cybersecurity Framework for Financial Institutions 2023
+    enacted: "2023-01-01"
+    notes: "Applies to all BOM-licensed institutions. Mauritius has one of Africa's most mature regulatory frameworks, aligned with NIST CSF and ISO 27001. BOM is a member of the Bank for International Settlements (BIS) consultative group on cybersecurity. Financial Services Act 2007 and Bank of Mauritius Act 2004 provide the statutory basis."
+    cyber_relevant_sections:
+      - section: Cybersecurity governance and risk management
+        crosswalk: { nist_csf_2_0: [GV.OC-01, GV.RM-01, GV.SF-01], iso_27001_2022: [A.5.1, A.5.2, A.5.36] }
+      - section: Access controls and identity management
+        crosswalk: { nist_csf_2_0: [PR.AA-01, PR.AA-03, PR.AA-05], iso_27001_2022: [A.8.2, A.8.5] }
+      - section: Security monitoring and incident response
+        crosswalk: { nist_csf_2_0: [DE.CM-01, RS.MA-01, RS.CO-02], iso_27001_2022: [A.8.16, A.5.24, A.5.26] }
+      - section: Business continuity and cyber resilience
+        crosswalk: { nist_csf_2_0: [PR.DS-11, RC.RP-01, RC.RP-02], iso_27001_2022: [A.5.29, A.5.30, A.8.13, A.8.14] }
+reporting_requirements:
+  incident_notification_window_hours: 24

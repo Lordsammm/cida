@@ -20,7 +20,7 @@ base_frequency_multipliers:
   mobile_money_fraud: 1.75
 regulators:
   insurance: GENERIC-INS
-  data_protection: GENERIC-DP
+  data_protection: APDP-GN
   central_bank: BCRG-GN
   sector: {}
 cert: null

@@ -1,0 +1,19 @@
+id: DPDPA-SL
+name: Data Protection and Privacy Authority (Sierra Leone)
+type: data_protection
+scope: national
+country: SL
+website: https://www.dataprotection.gov.sl
+established: 2022
+directives:
+  - id: SL-Data-Protection-Act-2022
+    name: Data Protection and Privacy Act 2022
+    enacted: "2022-01-01"
+    notes: "Sierra Leone enacted comprehensive data protection legislation in 2022. Establishes the Data Protection and Privacy Authority as the supervisory body. The National Cybersecurity and Crime Act 2021 provides the broader cybersecurity framework. GDPR-influenced provisions including breach notification obligations."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification to Authority
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

@@ -21,7 +21,7 @@ base_frequency_multipliers:
 regulators:
   insurance: NBE-INS
   data_protection: ECA-ET
-  central_bank: GENERIC-CB
+  central_bank: NBE-ET
   sector: {}
 cert: Eth-CERT
 intel_sources: []

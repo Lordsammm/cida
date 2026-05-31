@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: FSA-SC
   data_protection: IC-SC
-  central_bank: GENERIC-CB
+  central_bank: CBS-SC
   sector: {}
 cert: null
 intel_sources: []

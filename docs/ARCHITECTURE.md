@@ -529,4 +529,4 @@ Ten reference cases validate the model across sectors and countries. Run `cida b
 
 **VaR95**, Value at Risk at the 95th percentile. The loss level exceeded only 5% of simulated years.
 
-**YOA**, Year of Assessment. The client-facing report format.
+**Policyholder Report**, the client-facing HTML and PDF report produced for the insured organisation. Previously referred to as YOA (Year of Assessment) report.

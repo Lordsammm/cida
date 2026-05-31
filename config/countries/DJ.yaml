@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: GENERIC-INS
   data_protection: CNDP-DJ
-  central_bank: GENERIC-CB
+  central_bank: BCD-DJ
   sector: {}
 cert: null
 intel_sources: []

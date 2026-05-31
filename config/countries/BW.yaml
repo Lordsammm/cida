@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: NBFIRA
   data_protection: DPC-BW
-  central_bank: GENERIC-CB
+  central_bank: BOB-BW
   sector: {}
 cert: BW-CSIRT
 intel_sources: []

@@ -1,0 +1,22 @@
+id: nist_sp_800_53_r5
+name: NIST Special Publication 800-53 Revision 5 - Security and Privacy Controls
+version: "Revision 5 (September 2020, updated December 2020)"
+jurisdiction: global
+applies_to:
+  sectors: [banking, insurance, fintech, pension, healthcare, telecom, education, manufacturing, other]
+  countries: []
+  trigger: "US federal agencies (mandatory); widely adopted by regulated industries globally including African financial institutions dealing with US correspondent banking or US government contracts"
+regulator: NIST
+key_requirements:
+  - "20 control families covering access control, audit, configuration, contingency, identification, incident response, maintenance, media, personnel, physical, planning, program management, risk assessment, SA, system communications, system integrity"
+  - "Three-tier risk management framework: organization, mission/business process, system"
+  - "Privacy controls integrated throughout (not separate)"
+  - "Supply chain risk management controls"
+  - "Four impact baselines: low, moderate, high, privacy"
+cyber_crosswalk:
+  access_control_family: { nist_csf_2_0: [PR.AA-01, PR.AA-03, PR.AA-05], iso_27001_2022: [A.8.2, A.8.3, A.8.5] }
+  incident_response_family: { nist_csf_2_0: [RS.MA-01, RS.CO-02, RC.RP-01], iso_27001_2022: [A.5.24, A.5.26, A.5.29] }
+  risk_assessment_family: { nist_csf_2_0: [ID.RA-01, ID.RA-04, ID.RA-05], iso_27001_2022: [A.5.7, A.8.8] }
+  contingency_planning: { nist_csf_2_0: [PR.DS-11, RC.RP-01, RC.RP-02], iso_27001_2022: [A.5.29, A.5.30, A.8.13, A.8.14] }
+notes: "Broadly referenced in African financial sector directives. CBN 2024, BdM Notice 8/2025, and CBE Cybersecurity Framework all align to NIST standards. SP 800-53 crosswalks are embedded in the control catalog."
+source: "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"

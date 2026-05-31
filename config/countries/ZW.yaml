@@ -23,7 +23,7 @@ base_frequency_multipliers:
 regulators:
   insurance: IPEC
   data_protection: POTRAZ-ZW
-  central_bank: GENERIC-CB
+  central_bank: RBZ-ZW
   sector: {}
 cert: null
 intel_sources: []

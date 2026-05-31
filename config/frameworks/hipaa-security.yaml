@@ -1,0 +1,108 @@
+id: hipaa_security
+name: Health Insurance Portability and Accountability Act - Security Rule (HIPAA)
+publisher: U.S. Department of Health & Human Services (HHS / OCR)
+year: 2003   # Security Rule effective date; Omnibus updates 2013
+jurisdiction: United States (applies globally to orgs handling US PHI)
+url: https://www.hhs.gov/hipaa/for-professionals/security/index.html
+applies_to:
+  - Covered Entities (health plans, healthcare clearinghouses, healthcare providers)
+  - Business Associates that handle Protected Health Information (PHI) on their behalf
+  - African health-sector orgs that exchange data with US-affiliated partners
+
+# HIPAA Security Rule is structured into Administrative, Physical, and Technical safeguards.
+# Each safeguard has Required and Addressable implementation specifications.
+safeguards:
+  - id: HIPAA-164.308
+    name: Administrative Safeguards
+    domain: governance
+    specifications:
+      - id: 164.308(a)(1)
+        type: required
+        name: Security Management Process
+        summary: Risk analysis, risk management, sanction policy, information system activity review.
+      - id: 164.308(a)(3)
+        type: required
+        name: Workforce Security
+        summary: Access authorisation, supervision, workforce clearance, termination procedures.
+      - id: 164.308(a)(4)
+        type: required
+        name: Information Access Management
+        summary: Isolating healthcare clearinghouse functions; access authorisation and modification.
+      - id: 164.308(a)(5)
+        type: addressable
+        name: Security Awareness and Training
+        summary: Malicious software protection, log-in monitoring, password management.
+      - id: 164.308(a)(6)
+        type: required
+        name: Security Incident Procedures
+        summary: Identify, respond to, and document security incidents.
+      - id: 164.308(a)(7)
+        type: required
+        name: Contingency Plan
+        summary: Data backup, disaster recovery, emergency operations, testing, applications criticality.
+      - id: 164.308(a)(8)
+        type: required
+        name: Evaluation
+        summary: Periodic technical and non-technical evaluation of security posture.
+
+  - id: HIPAA-164.310
+    name: Physical Safeguards
+    domain: asset_data
+    specifications:
+      - id: 164.310(a)(1)
+        type: required
+        name: Facility Access Controls
+        summary: Contingency operations, facility security plan, access control and validation.
+      - id: 164.310(b)
+        type: required
+        name: Workstation Use
+        summary: Policies for proper workstation functions and physical attributes.
+      - id: 164.310(d)(1)
+        type: required
+        name: Device and Media Controls
+        summary: Disposal, media re-use, accountability, data backup and storage.
+
+  - id: HIPAA-164.312
+    name: Technical Safeguards
+    domain: endpoint
+    specifications:
+      - id: 164.312(a)(1)
+        type: required
+        name: Access Control
+        summary: Unique user identification, emergency access, automatic logoff, encryption/decryption.
+      - id: 164.312(b)
+        type: required
+        name: Audit Controls
+        summary: Hardware, software, and procedural mechanisms that record and examine activity.
+      - id: 164.312(c)(1)
+        type: required
+        name: Integrity Controls
+        summary: Protect ePHI from improper alteration or destruction.
+      - id: 164.312(d)
+        type: required
+        name: Authentication
+        summary: Verify that a person or entity seeking access to ePHI is who they claim to be.
+      - id: 164.312(e)(1)
+        type: required
+        name: Transmission Security
+        summary: Guard against unauthorised access to ePHI during transmission (encryption, integrity controls).
+
+# Penalty tiers (2023 adjusted figures):
+# Tier 1 - did not know: $127–$63,973 per violation, max $1,919,173/year
+# Tier 2 - reasonable cause: $1,280–$63,973 per violation, max $1,919,173/year
+# Tier 3 - wilful neglect (corrected): $12,794–$63,973 per violation, max $1,919,173/year
+# Tier 4 - wilful neglect (not corrected): $63,973–$1,919,173 per violation
+penalties:
+  min_per_violation_usd: 127
+  max_per_violation_usd: 1919173
+  max_per_year_usd: 1919173
+  criminal_referral: true   # DOJ can prosecute wilful violations
+
+risk_to_loss_drivers:
+  - regulatory_penalties
+  - privacy_liability
+  - data_recovery
+
+sector_applicability: [healthcare]
+country_codes: []   # US federal law; relevant wherever US PHI is handled
+cida_framework_key: hipaa_security

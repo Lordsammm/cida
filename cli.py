@@ -210,7 +210,7 @@ def score_project(
     ),
     offline: bool = typer.Option(False, "--offline", help="Skip CVE/EPSS/KEV enrichment and public-intel fetch"),
     seed: int = typer.Option(42, "--seed", help="Monte Carlo seed"),
-    yoa: bool = typer.Option(True, "--policyholder/--no-policyholder", help="Also render Policyholder Report"),
+    policyholder: bool = typer.Option(True, "--policyholder/--no-policyholder", help="Also render Policyholder Report"),
     limitation: list[str] = typer.Option(
         [], "--limitation", help="Assessment scope limitation note (repeatable)"
     ),
@@ -228,7 +228,7 @@ def score_project(
 
     Output goes to cida/clients/<name>/output/:
         <org_id>_report.pdf           (underwriting scorecard)
-        <org_id>_policyholder_report.pdf       (Policyholder Report, if --yoa)
+        <org_id>_policyholder_report.pdf       (Policyholder Report, if --policyholder)
         <org_id>_report.json          (full data payload)
         <org_id>_scored_block.json    (compact underwriting payload)
     """
@@ -278,7 +278,7 @@ def score_project(
     render_html(report, html_out)
     typer.echo(f"[cida] Scorecard HTML -> {html_out}")
 
-    if yoa:
+    if policyholder:
         policyholder_path = render_policyholder_pdf(report, findings=found,
                                   out_path=out_dir / f"{slug}_policyholder_report.pdf")
         typer.echo(f"[cida] Policyholder PDF       -> {policyholder_path}")

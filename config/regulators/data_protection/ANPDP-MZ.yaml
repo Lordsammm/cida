@@ -1,0 +1,19 @@
+id: ANPDP-MZ
+name: Agencia Nacional de Protecao de Dados Pessoais (Mozambique)
+type: data_protection
+scope: national
+country: MZ
+website: https://www.anpdp.mz
+established: 2021
+directives:
+  - id: MZ-Law-7-2021
+    name: Law No. 7/2021 on Personal Data Protection
+    enacted: "2021-06-01"
+    notes: "Mozambique's comprehensive data protection law, enacted June 2021. Establishes the ANPDP as the independent supervisory authority. Aligned with SADC data protection model law framework. BdM Notice 8/GBM/2025 adds mandatory 24-hour incident reporting obligations for the financial sector."
+    cyber_relevant_sections:
+      - section: Technical and organisational security measures
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification obligations
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

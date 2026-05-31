@@ -21,7 +21,7 @@ base_frequency_multipliers:
 regulators:
   insurance: ARCA
   data_protection: APD-CD
-  central_bank: GENERIC-CB
+  central_bank: BCC-CD
   sector: {}
 cert: null
 intel_sources: []

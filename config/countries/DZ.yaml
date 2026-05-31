@@ -22,7 +22,7 @@ base_frequency_multipliers:
 regulators:
   insurance: CNA-DZ
   data_protection: ANPDP-DZ
-  central_bank: GENERIC-CB
+  central_bank: BA-DZ
   sector: {}
 cert: null
 intel_sources: []

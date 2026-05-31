@@ -1,0 +1,28 @@
+id: soc2_tsc
+name: SOC 2 Trust Services Criteria
+version: "2017 (updated 2022)"
+jurisdiction: global
+applies_to:
+  sectors: [banking, insurance, fintech, pension, healthcare, telecom, education, other]
+  countries: []
+  trigger: "Service organisations processing, storing, or transmitting customer data; voluntary but often required by enterprise clients"
+regulator: AICPA
+key_requirements:
+  - "CC1: Control environment (governance, risk assessment, monitoring)"
+  - "CC2: Communication and information"
+  - "CC3: Risk assessment and risk mitigation"
+  - "CC4: Monitoring of controls"
+  - "CC5: Control activities"
+  - "CC6: Logical and physical access controls (most security-relevant)"
+  - "CC7: System operations (change management, incident management)"
+  - "CC8: Change management"
+  - "CC9: Risk mitigation (vendor management, business continuity)"
+  - "Optional: Availability (A1), Confidentiality (C1), Processing Integrity (PI1), Privacy (P1-P8)"
+penalties:
+  notes: "No statutory penalties. Non-compliance results in adverse audit opinion, reputational damage, and potential contract termination by enterprise clients."
+cyber_crosswalk:
+  access_controls: { nist_csf_2_0: [PR.AA-01, PR.AA-03, PR.AA-05], iso_27001_2022: [A.8.2, A.8.3, A.8.5] }
+  system_operations: { nist_csf_2_0: [DE.CM-01, RS.MA-01, RC.RP-01], iso_27001_2022: [A.8.16, A.5.24, A.5.29] }
+  risk_assessment: { nist_csf_2_0: [ID.RA-01, ID.RA-04, ID.RA-05], iso_27001_2022: [A.5.7, A.8.8] }
+  vendor_management: { nist_csf_2_0: [GV.SC-01, GV.SC-03, GV.SC-07], iso_27001_2022: [A.5.19, A.5.21] }
+source: "https://us.aicpa.org/content/dam/aicpa/interestareas/frc/assuranceadvisoryservices/downloadabledocuments/trust-services-criteria.pdf"

@@ -68,7 +68,7 @@ def test_policyholder_report_renders(tmp_path: Path) -> None:
 
     assert "<html" in html.lower()
     assert org.name in html
-    # Key YOA sections must be present
+    # Key Policyholder Report sections must be present
     assert "Risk Summary" in html
     assert "Email Security" in html
     assert "Vulnerabilities" in html

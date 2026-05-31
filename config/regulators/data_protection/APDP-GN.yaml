@@ -1,0 +1,19 @@
+id: APDP-GN
+name: Autorite de Protection des Donnees a Caractere Personnel (Guinea)
+type: data_protection
+scope: national
+country: GN
+website: https://www.apdp.gn
+established: 2016
+directives:
+  - id: GN-Organic-Law-0023-2016
+    name: Organic Law No. L/2016/0023/AN on Personal Data Protection
+    enacted: "2016-01-01"
+    notes: "Establishes the APDP as the independent supervisory authority for personal data protection in Guinea. Controllers must register with APDP before processing personal data. Cross-border transfer restrictions apply."
+    cyber_relevant_sections:
+      - section: Security obligations for data controllers
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02], iso_27001_2022: [A.5.34] }
+      - section: Breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24] }
+reporting_requirements:
+  incident_notification_window_hours: 72

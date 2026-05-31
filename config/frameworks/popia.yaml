@@ -1,0 +1,27 @@
+id: popia
+name: Protection of Personal Information Act (POPIA)
+version: "2013 (enforcement commenced July 2021)"
+jurisdiction: ZA
+applies_to:
+  sectors: [banking, insurance, fintech, pension, healthcare, telecom, education, manufacturing, other]
+  countries: [ZA]
+  trigger: "Any organisation processing personal information of South African data subjects"
+regulator: IR-ZA
+key_requirements:
+  - "Eight conditions for lawful processing of personal information"
+  - "Data subject rights: access, correction, deletion, objection"
+  - "Mandatory appointment of Information Officer (registered with Information Regulator)"
+  - "Security safeguards: reasonable technical and organisational measures"
+  - "Breach notification to Information Regulator and data subjects without unreasonable delay"
+  - "Cross-border transfer restrictions to countries with adequate protection"
+  - "Special personal information (health, biometric, children) requires explicit consent"
+penalties:
+  max_fine_zar: 10000000
+  max_imprisonment_years: 10
+  notes: "Maximum ZAR 10 million administrative fine. Criminal penalties up to 10 years imprisonment for offences including unlawful processing and breach of confidentiality."
+cyber_crosswalk:
+  security_safeguards: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01, PR.AA-03], iso_27001_2022: [A.5.34, A.8.24, A.8.2, A.8.3] }
+  breach_notification: { nist_csf_2_0: [RS.CO-02, RS.CO-03, DE.AE-07], iso_27001_2022: [A.5.24, A.5.26] }
+  access_controls: { nist_csf_2_0: [PR.AA-01, PR.AA-05], iso_27001_2022: [A.8.2, A.8.3, A.8.5] }
+breach_notification_hours: 72
+source: "https://www.gov.za/sites/default/files/gcis_document/202009/43461rg11136gon912.pdf"
