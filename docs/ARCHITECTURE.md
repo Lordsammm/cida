@@ -67,18 +67,20 @@ Technical findings apply additional penalties. A Critical finding deducts 8 poin
 
 Controls roll up into ten security domains, each scored as the weighted mean of its controls minus technical penalties from findings.
 
-| Domain | Weight |
-|--------|--------|
-| Governance | 10% |
-| Identity and Access Management | 14% |
-| Asset and Data Management | 10% |
-| Network Security | 10% |
-| Endpoint Security | 12% |
-| Application Security | 9% |
-| Cloud Security | 8% |
-| Third-Party and Supply Chain | 7% |
-| Detection and Response | 12% |
-| Resilience and Recovery | 8% |
+Weights are loaded from `config/scoring_weights.yaml` and calibrated from 16 primary claims and threat-intelligence sources (see Prior Sources). Every weight has an inline citation in that file and can be adjusted by the carrier without touching Python code.
+
+| Domain | Weight | Calibration basis |
+|--------|--------|-------------------|
+| Identity and Access Management | 16% | Coalition 2025: 60% of claims from BEC/FTF; Verizon DBIR 2024: credentials in 38% of breaches; CrowdStrike 2025: 35% of cloud incidents = valid account misuse |
+| Endpoint Security | 13% | Sophos 2024: ransomware hit 59% of orgs; Corvus 2024: EDR presence = 60% severity reduction |
+| Detection and Response | 13% | IBM Ponemon 2024: AI/automation saves $1.88M per breach; Mandiant M-Trends 2025: internal detection = 5-day dwell vs 26-day external notification |
+| Resilience and Recovery | 10% | Corvus 2024: backup presence = 72% lower median claim cost; Sophos 2024: ransom payments up 500% for orgs without clean backups |
+| Network Security | 10% | Corvus Q3 2024: VPN vulnerabilities = 28.7% of ransomware incidents; Mandiant M-Trends 2025: exploits = 33% of initial access |
+| Third-Party and Supply Chain | 9% | WEF 2024: 41% of firms affected by third-party incident; GSMA 2024: mobile money API exposure; Smile ID 2024: KYC API supply-chain risk |
+| Governance | 8% | Beazley 2024: 75% of executives over-estimate preparedness; regulatory mandates (CBN 2024, FSCA JS2 2024, SARB Directive 01/2024, CBE framework) |
+| Asset and Data Management | 8% | CrowdStrike 2025: 52% of vulnerabilities tied to initial access require asset visibility to detect; Mandiant: 34% of initial vectors unknown due to unmanaged assets |
+| Application Security | 7% | Mandiant M-Trends 2025: exploits = 33% initial access; lower weighting reflects Africa's current credential-dominant threat profile vs global benchmark |
+| Cloud Security | 6% | Africa-specific: cloud penetration below global average; weight to be reviewed upward annually as hyperscaler adoption increases |
 
 ### Stage 3: Overall Score and Tier
 
@@ -197,7 +199,9 @@ Framework selection is automatic based on the organisation's sector and country.
 | South Africa POPIA | South African organisations |
 | CCPA | Organisations with California data subjects |
 | African Union Malabo Convention | AU member states |
-| FSCA Joint Standard 1:2023 | South African financial services |
+| FSCA Joint Standard 1:2023 | South African financial institutions |
+| FSCA Joint Standard 2:2024 | South African financial institutions (effective June 2025) |
+| CBN Risk-Based Cybersecurity Framework 2024 | Nigerian deposit money banks and payment service banks |
 
 Posture is measured as the percentage of crosswalked controls scoring 70 or above. A prioritised remediation roadmap ranks the highest-value controls to fix first, ordered by expected score improvement and annual loss reduction per unit of remediation effort.
 
@@ -235,23 +239,37 @@ Posture is measured as the percentage of crosswalked controls scoring 70 or abov
 
 ### Data Protection Authorities
 
-| ID | Authority | Country |
-|----|-----------|---------|
-| NDPC | Nigeria Data Protection Commission | Nigeria |
-| IR-ZA | Information Regulator (POPIA) | South Africa |
-| ODPC-KE | Office of the Data Protection Commissioner | Kenya |
-| DPC-GH | Data Protection Commission | Ghana |
+| ID | Authority | Law | Country |
+|----|-----------|-----|---------|
+| NDPC | Nigeria Data Protection Commission | NDPA 2023 | Nigeria |
+| IR-ZA | Information Regulator (POPIA) | POPIA 2013 | South Africa |
+| ODPC-KE | Office of the Data Protection Commissioner | DPA 2019 | Kenya |
+| DPC-GH | Data Protection Commission | DPA 2012 | Ghana |
+| CNDP-MA | Commission Nationale de controle des Donnees Personnelles | Law 09-08 (2009) | Morocco |
+| INPDP-TN | Instance Nationale de Protection des Donnees Personnelles | Organic Law 2004-63 | Tunisia |
+| EGPDP-EG | Egypt Personal Data Protection (NTRA/MCIT oversight) | PDPL Law 151/2020 | Egypt |
+| PDPO-UG | Personal Data Protection Office | PDPA 2019 | Uganda |
+| PDPC-TZ | Personal Data Protection Commission | PDPA 2022 | Tanzania |
+| DPC-MU | Data Protection Commissioner | DPA 2017 (GDPR-equivalent) | Mauritius |
+| CDP-SN | Commission des Donnees Personnelles | Law 2008-12 | Senegal |
+| NCSA-RW | National Cyber Security Authority | Law 058/2021 | Rwanda |
+
+Breach notification windows: Nigeria 72h, South Africa 72h, Kenya 72h, Ghana 72h, Morocco 72h, Tunisia 48h, Egypt 72h, Uganda 48h, Tanzania 72h, Mauritius 72h, Senegal 72h, Rwanda 72h.
 
 ### Central Banks and Financial Regulators
 
-| ID | Authority | Scope |
-|----|-----------|-------|
-| CBN | Central Bank of Nigeria | Nigeria |
-| SARB | South African Reserve Bank | South Africa |
-| CBK | Central Bank of Kenya | Kenya |
-| BoG | Bank of Ghana | Ghana |
-| BCEAO | Banque Centrale des Etats de l'Afrique de l'Ouest | 8 UEMOA countries |
-| BEAC | Banque des Etats de l'Afrique Centrale | 6 CEMAC countries |
+| ID | Authority | Key cyber directive | Scope |
+|----|-----------|---------------------|-------|
+| CBN | Central Bank of Nigeria | Risk-Based Cybersecurity Framework 2024 (effective 2024-07-01) | Nigeria |
+| SARB | South African Reserve Bank | Directive 01/2024 (2hr RTO, 8hr MTD for critical systems); Joint Standard 2/2024 | South Africa |
+| CBK | Central Bank of Kenya | Risk-Based Cybersecurity Framework | Kenya |
+| BoG | Bank of Ghana | Cybersecurity Directive | Ghana |
+| CBE | Central Bank of Egypt | Financial Cybersecurity Framework; sectoral CERT operator | Egypt |
+| BAM | Bank Al-Maghrib | Circular 5/W/2014; Cyber Resilience Directive 2023 | Morocco |
+| BNR | National Bank of Rwanda | Cyber Regulation 2021 | Rwanda |
+| BoT | Bank of Tanzania | Cybersecurity Directive 2023 | Tanzania |
+| BCEAO | Banque Centrale des Etats de l'Afrique de l'Ouest | Regional cybersecurity framework | 8 UEMOA countries |
+| BEAC | Banque des Etats de l'Afrique Centrale | Regional cybersecurity framework | 6 CEMAC countries |
 
 ### Sector Regulators
 
@@ -261,6 +279,8 @@ Posture is measured as the percentage of crosswalked controls scoring 70 or abov
 | NCC | Nigerian Communications Commission | Telecoms | Nigeria |
 | PenCom | National Pension Commission | Pension | Nigeria |
 | SEC-NG | Securities and Exchange Commission | Capital markets | Nigeria |
+| CA-KE | Communications Authority of Kenya | Telecoms / CII | Kenya |
+| NCSA-RW-SECTOR | Rwanda National Cyber Security Authority | Cross-sector CII | Rwanda |
 
 ## Supported Countries (54)
 
@@ -374,6 +394,7 @@ config/               All calibration in plain YAML, no code changes needed
   priors/             Global Bayesian priors + Africa-specific overlays
   fx_rates.yaml       Indicative FX rates for local currency output
   vector_matrix.yaml  14x10 ThreatVector x LossDriver multiplier table
+  scoring_weights.yaml  Domain weights, severity penalties, tier bands (sourced from 16 reports)
 
 report/
   renderer.py         CIDAReport builder + HTML and PDF renderer
@@ -445,9 +466,42 @@ Ten reference cases validate the model across sectors and countries. Run `cida b
 
 ## Prior Sources
 
-**Global** (frequency and severity priors): Verizon DBIR, NetDiligence Cyber Claims, Coalition Cyber Claims Report, IBM/Ponemon Cost of a Data Breach, Sophos State of Ransomware, Hiscox Cyber Readiness Report, FBI IC3 Internet Crime Report, ENISA Threat Landscape, Mandiant M-Trends, CrowdStrike Global Threat Report, Cyentia IRIS, Munich Re Cyber, CRO Forum Cyber Risk, Chainalysis Crypto Crime Report, Dragos Year in Review, CBN Annual Report, NDPC Enforcement Actions, POPIA Information Regulator Annual Report, AON Cyber Risk Report.
+**Global** (actuarial priors and domain weight calibration):
 
-**Africa-specific** (frequency overlays): Interpol Africa Cybercrime Assessment, Serianu Africa Cybersecurity Report, GSMA Mobile Money, Mastercard Africa Fraud Report, Smile ID Digital Identity Report, KE-CIRT Threat Intelligence, ngCERT Annual Report, CSEAN Nigeria Cybersecurity, AON Africa Report, African Development Bank Digital Finance data.
+* Verizon Data Breach Investigations Report 2024 and 2025
+* Coalition Cyber Claims Report 2024 and 2025
+* IBM / Ponemon Cost of a Data Breach Report 2024
+* Sophos State of Ransomware 2024
+* Mandiant M-Trends 2025 (frontline IR engagement data)
+* CrowdStrike Global Threat Report 2025
+* Munich Re Cyber Insurance Risks and Trends 2024
+* Corvus Insurance Ransomware and Cyber Threat Reports Q1-Q4 2024
+* Beazley Spotlight on Cyber and Technology Risk 2024
+* At-Bay Cyber Insurance Report 2024
+* NetDiligence Cyber Claims Study
+* Hiscox Cyber Readiness Report
+* FBI IC3 Internet Crime Report
+* ENISA Threat Landscape 2024
+* World Economic Forum Global Cybersecurity Outlook 2024
+* Cyentia IRIS
+* Chainalysis Crypto Crime Report
+* Dragos Year in Review (OT / ICS threats)
+* AON Cyber Risk Report
+
+**Africa-specific** (frequency overlays and regional calibration):
+
+* Interpol African Cyberthreat Assessment Report 2024 and 2025
+* Serianu Africa Cybersecurity Report 2024/2025
+* GSMA Mobile Money State of the Industry 2024
+* Smile ID State of KYC in Africa 2024
+* Mastercard Cybersecurity in Africa 2024
+* KE-CIRT (Kenya) Quarterly Threat Intelligence Reports 2024
+* ngCERT (Nigeria) Incident Bulletins 2024
+* CSEAN Cyber Threat Report Nigeria 2024
+* AON Africa Survey
+* African Development Bank Digital Finance Inclusion data
+* CBN Annual Report and NDPC Enforcement Actions
+* POPIA Information Regulator Annual Report (South Africa)
 
 ## Glossary
 

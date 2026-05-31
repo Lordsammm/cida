@@ -119,6 +119,10 @@ Questionnaire CSV  +  Org profile YAML  +  Assessment artefacts
         ▼
    1. Scoring engine
         per-control score (0–100) → per-domain rollup → overall score → Tier 1–5
+        Domain weights loaded from config/scoring_weights.yaml
+        Calibrated from 16 primary sources (Verizon DBIR, Coalition, IBM,
+        Sophos, Mandiant, CrowdStrike, Munich Re, Corvus, Beazley, Interpol
+        Africa, Serianu, GSMA, Smile ID, At-Bay, WEF, Munich Re)
 
         ▼
    2. Threat vector scoring (14 vectors)
@@ -144,6 +148,21 @@ Questionnaire CSV  +  Org profile YAML  +  Assessment artefacts
         ▼
    JSON + HTML + PDF reports
 ```
+
+Domain weights by source (from `config/scoring_weights.yaml`):
+
+| Domain | Weight | Key evidence |
+|--------|--------|--------------|
+| Identity and Access Management | 16% | Coalition 2025: 60% of claims = BEC/FTF; Verizon DBIR 2024: credentials in 38% of breaches |
+| Endpoint Security | 13% | Corvus 2024: EDR = 60% severity reduction; Sophos 2024: ransomware hit 59% of orgs |
+| Detection and Response | 13% | IBM Ponemon 2024: AI/automation saves $1.88M per breach |
+| Resilience and Recovery | 10% | Corvus 2024: backup presence = 72% lower median claim cost |
+| Network Security | 10% | Corvus Q3 2024: VPN vulns = 28.7% of ransomware incidents |
+| Third-Party and Supply Chain | 9% | WEF 2024: 41% of firms affected by third-party incident; GSMA 2024: mobile money API risk |
+| Governance | 8% | Mandatory under CBN 2024, FSCA JS2 2024, SARB Directive 01/2024 |
+| Asset and Data Management | 8% | CrowdStrike 2025: 52% of vulns require asset visibility to detect |
+| Application Security | 7% | Mandiant M-Trends 2025: exploits = 33% of initial access |
+| Cloud Security | 6% | Africa-specific: cloud penetration below global average |
 
 ## Supported assessment artefacts
 
@@ -185,7 +204,9 @@ frameworks are selected automatically based on sector and country.
 | South Africa POPIA | South African organisations |
 | CCPA | Orgs with California data subjects |
 | African Union Malabo Convention | AU member states |
-| FSCA Joint Standard 1:2023 | South African financial services |
+| FSCA Joint Standard 1:2023 | South African financial institutions |
+| FSCA Joint Standard 2:2024 | South African financial institutions (effective June 2025) |
+| CBN Risk-Based Cybersecurity Framework 2024 | Nigerian deposit money banks and payment service banks |
 
 Full framework config → [`config/README.md`](config/README.md)
 
@@ -266,29 +287,67 @@ FX conversion is automatic: the org's country resolves the currency code (e.g. N
 Run `cida list-regulators --kind <type>` where type is one of
 `insurance`, `data_protection`, `financial`, or `sector`.
 
-| ID | Name | Type | Country / Scope |
-|----|------|------|----------------|
-| NAICOM | National Insurance Commission | insurance | NG |
-| FSCA | Financial Sector Conduct Authority | insurance | ZA |
-| IRA-KE | Insurance Regulatory Authority | insurance | KE |
-| NIC-GH | National Insurance Commission | insurance | GH |
-| CIMA | Conférence Interafricaine des Marchés d'Assurances | insurance | UEMOA/CEMAC |
-| TIRA | Tanzania Insurance Regulatory Authority | insurance | TZ |
-| IRA-UG | Insurance Regulatory Authority | insurance | UG |
-| IPEC | Insurance and Pensions Commission | insurance | ZW |
-| NDPC | Nigeria Data Protection Commission | data_protection | NG |
-| IR-ZA | Information Regulator (POPIA) | data_protection | ZA |
-| ODPC-KE | Office of Data Protection Commissioner | data_protection | KE |
-| DPC-GH | Data Protection Commission | data_protection | GH |
-| CBN | Central Bank of Nigeria | financial | NG |
-| SARB | South African Reserve Bank | financial | ZA |
-| CBK | Central Bank of Kenya | financial | KE |
-| BoG | Bank of Ghana | financial | GH |
-| BCEAO | Banque Centrale des États de l'Afrique de l'Ouest | financial | UEMOA |
-| NITDA | National IT Development Agency | sector | NG |
-| NCC | Nigerian Communications Commission | sector | NG |
-| PenCom | National Pension Commission | sector | NG |
-| SEC-NG | Securities and Exchange Commission | sector | NG |
+**Insurance supervisors (25+)**
+
+| ID | Name | Country / Scope |
+|----|------|----------------|
+| NAICOM | National Insurance Commission | Nigeria |
+| FSCA | Financial Sector Conduct Authority | South Africa |
+| IRA-KE | Insurance Regulatory Authority | Kenya |
+| NIC-GH | National Insurance Commission | Ghana |
+| CIMA | Conference Interafricaine des Marches d'Assurances | UEMOA/CEMAC (14 states) |
+| TIRA | Tanzania Insurance Regulatory Authority | Tanzania |
+| IRA-UG | Insurance Regulatory Authority | Uganda |
+| IPEC | Insurance and Pensions Commission | Zimbabwe |
+| ACAPS | Autorite de Controle des Assurances | Morocco |
+| FRA-EG | Financial Regulatory Authority | Egypt |
+| FSC-MU | Financial Services Commission | Mauritius |
+| NAMFISA | Namibia Financial Institutions Supervisory Authority | Namibia |
+| NBR-INS | National Bank of Rwanda Insurance | Rwanda |
+| ...and 12 more | Full list: `cida list-regulators --kind insurance` | |
+
+**Data protection authorities (12)**
+
+| ID | Name | Law | Notification window |
+|----|------|-----|---------------------|
+| NDPC | Nigeria Data Protection Commission | NDPA 2023 | 72h |
+| IR-ZA | Information Regulator (POPIA) | POPIA 2013 | 72h |
+| ODPC-KE | Office of Data Protection Commissioner | DPA 2019 | 72h |
+| DPC-GH | Data Protection Commission | DPA 2012 | 72h |
+| CNDP-MA | Commission Nationale de controle des Donnees Personnelles | Law 09-08 (2009) | 72h |
+| INPDP-TN | Instance Nationale de Protection des Donnees Personnelles | Organic Law 2004-63 | 48h |
+| EGPDP-EG | Egypt Personal Data Protection (NTRA/MCIT) | PDPL Law 151/2020 | 72h |
+| PDPO-UG | Personal Data Protection Office | PDPA 2019 | 48h |
+| PDPC-TZ | Personal Data Protection Commission | PDPA 2022 | 72h |
+| DPC-MU | Data Protection Commissioner | DPA 2017 (GDPR-equivalent) | 72h |
+| CDP-SN | Commission des Donnees Personnelles | Law 2008-12 | 72h |
+| NCSA-RW | National Cyber Security Authority | Law 058/2021 | 72h |
+
+**Central banks and financial regulators (10)**
+
+| ID | Name | Key cyber directive | Scope |
+|----|------|---------------------|-------|
+| CBN | Central Bank of Nigeria | Risk-Based Cybersecurity Framework 2024 (effective July 2024) | Nigeria |
+| SARB | South African Reserve Bank | Directive 01/2024 (2hr RTO); Joint Standard 2/2024 | South Africa |
+| CBK | Central Bank of Kenya | Risk-Based Cybersecurity Framework | Kenya |
+| BoG | Bank of Ghana | Cybersecurity Directive | Ghana |
+| CBE | Central Bank of Egypt | Financial Cybersecurity Framework; sectoral CERT | Egypt |
+| BAM | Bank Al-Maghrib | Circular 5/W/2014; Resilience Directive 2023 | Morocco |
+| BNR | National Bank of Rwanda | Cyber Regulation 2021 | Rwanda |
+| BoT | Bank of Tanzania | Cybersecurity Directive 2023 | Tanzania |
+| BCEAO | Banque Centrale des Etats de l'Afrique de l'Ouest | Regional framework | 8 UEMOA states |
+| BEAC | Banque des Etats de l'Afrique Centrale | Regional framework | 6 CEMAC states |
+
+**Sector regulators (6)**
+
+| ID | Name | Sector | Country |
+|----|------|--------|---------|
+| NITDA | National IT Development Agency | Technology / data | Nigeria |
+| NCC | Nigerian Communications Commission | Telecoms | Nigeria |
+| PenCom | National Pension Commission | Pension | Nigeria |
+| SEC-NG | Securities and Exchange Commission | Capital markets | Nigeria |
+| CA-KE | Communications Authority of Kenya | Telecoms / critical infrastructure | Kenya |
+| NCSA-RW-SECTOR | Rwanda National Cyber Security Authority | Cross-sector CII | Rwanda |
 
 Full regulator config → [`config/README.md`](config/README.md)
 
@@ -336,9 +395,13 @@ cida/                        ← project root
 | ThreatVectors | 14 |
 | LossDrivers (coverage lines) | 10 |
 | African country configs | 54 |
-| Regulator profiles | 30+ |
-| Compliance frameworks | 13 |
-| Source citations in priors | 20+ |
+| Insurance regulators | 25+ |
+| Data protection authorities | 12 |
+| Central banks / financial regulators | 10 |
+| Sector regulators | 6 |
+| Compliance frameworks | 14 |
+| Domain weight source citations | 16 primary reports |
+| Actuarial prior sources | 30+ |
 
 The ML residual layer ships neutral (1.0×) until trained on real African claim data. The Bayesian baseline carries the full prediction until then.
 
