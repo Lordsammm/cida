@@ -1,0 +1,20 @@
+# Data protection regulator - Morocco
+id: CNDP-MA
+name: Commission Nationale de contrôle de la protection des Données à caractère Personnel
+type: data_protection
+scope: national
+country: MA
+website: https://www.cndp.ma
+established: 2009
+directives:
+  - id: Law-09-08
+    name: Law No. 09-08 on the Protection of Individuals with regard to the Processing of Personal Data
+    enacted: 2009-02-18
+    notes: "One of Africa's earliest data protection laws. Amendment under active discussion to align with GDPR. Controllers must notify CNDP before processing; cross-border transfer restrictions apply."
+    cyber_relevant_sections:
+      - section: Security obligations for data controllers
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.8.24, A.5.34] }
+      - section: Breach notification to CNDP
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 72

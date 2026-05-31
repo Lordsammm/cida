@@ -27,8 +27,8 @@ base_frequency_multipliers:
 
 regulators:
   insurance: FRA-EG
-  data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  data_protection: EGPDP-EG
+  central_bank: CBE
   sector: {}
 
 cert: EG-CERT

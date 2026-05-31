@@ -21,8 +21,8 @@ base_frequency_multipliers:
   mobile_money_fraud: 4.9
 regulators:
   insurance: TIRA
-  data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  data_protection: PDPC-TZ
+  central_bank: BoT
   sector: {}
 cert: TZ-CERT
 intel_sources: []

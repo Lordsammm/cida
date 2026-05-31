@@ -1,0 +1,25 @@
+# Central Bank of Egypt
+id: CBE
+name: Central Bank of Egypt
+type: financial
+scope: national
+country: EG
+website: https://www.cbe.org.eg
+directives:
+  - id: CBE-Financial-Cybersecurity-Framework
+    name: Egypt Financial Cybersecurity Framework
+    enacted: 2022-01-01
+    notes: "Egypt's first national Financial Cybersecurity Framework, issued by CBE. Establishes Egypt's sectoral CERT for the financial sector (first sectoral CERT in Egypt). Aligned with international standards including NIST CSF and ISO 27001. Mandatory readiness assessments for all licensed financial institutions."
+    cyber_relevant_sections:
+      - section: Cybersecurity governance
+        crosswalk: { nist_csf_2_0: [GV.OC-01, GV.RM-01, GV.RR-01], iso_27001_2022: [A.5.1, A.5.2] }
+      - section: Risk assessment and threat intelligence
+        crosswalk: { nist_csf_2_0: [ID.RA-01, ID.RA-02, ID.RA-04], iso_27001_2022: [A.5.7, A.8.8] }
+      - section: Security controls and continuous monitoring
+        crosswalk: { nist_csf_2_0: [PR.AA-01, PR.DS-01, DE.CM-01], iso_27001_2022: [A.8.2, A.8.5, A.8.16], cis_v8: ["6.3", "7.4", "8.2"] }
+      - section: Incident response and CERT coordination
+        crosswalk: { nist_csf_2_0: [RS.MA-01, RS.MA-02, RS.CO-02], iso_27001_2022: [A.5.24, A.5.26] }
+      - section: Business continuity and cyber resilience
+        crosswalk: { nist_csf_2_0: [PR.DS-11, RC.RP-01, RC.RP-02], iso_27001_2022: [A.5.29, A.5.30, A.8.13, A.8.14] }
+reporting_requirements:
+  incident_notification_window_hours: 24

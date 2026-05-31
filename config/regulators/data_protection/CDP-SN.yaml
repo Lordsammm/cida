@@ -1,0 +1,20 @@
+# Data protection regulator - Senegal
+id: CDP-SN
+name: Commission des Données Personnelles
+type: data_protection
+scope: national
+country: SN
+website: https://www.cdp.sn
+established: 2008
+directives:
+  - id: Law-2008-12
+    name: Law No. 2008-12 on Personal Data Protection
+    enacted: 2008-01-25
+    notes: "CDP is an independent administrative authority. Controllers must file declarations or seek authorisation before processing. Amendment discussions ongoing to align with AU Convention on Cyber Security and Personal Data Protection."
+    cyber_relevant_sections:
+      - section: Security obligations
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02], iso_27001_2022: [A.5.34] }
+      - section: Cross-border transfer restrictions
+        crosswalk: { nist_csf_2_0: [GV.SC-07], iso_27001_2022: [A.5.33] }
+reporting_requirements:
+  incident_notification_window_hours: 72

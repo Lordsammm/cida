@@ -1,0 +1,22 @@
+# Data protection regulator - Egypt
+id: EGPDP-EG
+name: Egypt Personal Data Protection Authority (under MCIT / NTRA oversight)
+type: data_protection
+scope: national
+country: EG
+website: https://www.mcit.gov.eg
+established: 2020
+directives:
+  - id: PDPL-151-2020
+    name: Personal Data Protection Law No. 151 of 2020
+    enacted: 2020-07-14
+    notes: "Implementing regulations issued August 2020. A dedicated standalone DPA has not yet been fully operationalised; NTRA (National Telecom Regulatory Authority) and MCIT currently perform oversight functions. Extraterritorial scope: applies to processing of Egyptian resident data regardless of where the controller is located."
+    cyber_relevant_sections:
+      - section: Security of personal data
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Data breach notification
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+      - section: Cross-border transfer controls
+        crosswalk: { nist_csf_2_0: [GV.SC-07], iso_27001_2022: [A.5.33] }
+reporting_requirements:
+  incident_notification_window_hours: 72

@@ -1,0 +1,21 @@
+# Communications Authority of Kenya
+id: CA-KE
+name: Communications Authority of Kenya
+type: sector
+scope: national
+country: KE
+website: https://www.ca.go.ke
+directives:
+  - id: CA-KE-Cybersecurity-Regulations-2022
+    name: Kenya Information and Communications (Cybersecurity) Regulations 2022
+    enacted: 2022-09-30
+    notes: "Applies to licensed telecoms, ISPs, and critical information infrastructure operators. Mandatory cybersecurity baseline assessments, incident reporting to CA within 24 hours, and periodic audits by approved third parties."
+    cyber_relevant_sections:
+      - section: Cybersecurity baseline controls
+        crosswalk: { nist_csf_2_0: [PR.AA-01, PR.DS-01, DE.CM-01], iso_27001_2022: [A.8.2, A.8.5, A.8.16] }
+      - section: Incident notification to CA
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+      - section: Critical information infrastructure protection
+        crosswalk: { nist_csf_2_0: [GV.OC-02, ID.RA-06, RC.RP-01], iso_27001_2022: [A.5.30, A.8.13, A.8.14] }
+reporting_requirements:
+  incident_notification_window_hours: 24

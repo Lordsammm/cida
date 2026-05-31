@@ -1,0 +1,28 @@
+# Bank Al-Maghrib - Morocco central bank
+id: BAM
+name: Bank Al-Maghrib
+type: financial
+scope: national
+country: MA
+website: https://www.bkam.ma
+directives:
+  - id: BAM-Circular-5-2014
+    name: Bank Al-Maghrib Circular No. 5/W/2014 on IT Security Management in Credit Institutions
+    enacted: 2014-01-01
+    notes: "Requires all licensed credit institutions to implement an IT security management system, conduct regular audits, and report significant IT incidents. Aligned with ISO 27001."
+    cyber_relevant_sections:
+      - section: IT security management system
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.1, A.8.2, A.8.16] }
+      - section: Incident reporting to BAM
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24] }
+  - id: BAM-Cyber-Resilience-2023
+    name: Bank Al-Maghrib Cybersecurity Resilience Directive 2023
+    enacted: 2023-01-01
+    notes: "Updated cybersecurity requirements emphasising resilience, third-party risk, and cloud security for Moroccan financial institutions."
+    cyber_relevant_sections:
+      - section: Third-party and cloud risk management
+        crosswalk: { nist_csf_2_0: [GV.SC-01, GV.SC-03, GV.SC-07], iso_27001_2022: [A.5.19, A.5.21, A.5.23] }
+      - section: Cyber resilience and BCP
+        crosswalk: { nist_csf_2_0: [RC.RP-01, RC.RP-02, PR.DS-11], iso_27001_2022: [A.5.29, A.5.30, A.8.14] }
+reporting_requirements:
+  incident_notification_window_hours: 24

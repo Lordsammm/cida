@@ -1,0 +1,19 @@
+# Rwanda National Cyber Security Authority - sector mandate
+id: NCSA-RW-SECTOR
+name: Rwanda National Cyber Security Authority (Sector Mandate)
+type: sector
+scope: national
+country: RW
+website: https://www.ncsa.gov.rw
+directives:
+  - id: RW-National-Cybersecurity-Policy-2024
+    name: Rwanda National Cybersecurity Policy and Strategy 2024
+    enacted: 2024-01-01
+    notes: "NCSA coordinates national cybersecurity across all sectors. Critical information infrastructure operators (financial services, energy, telecoms, health) must comply with mandatory security baselines, conduct annual audits, and report incidents within 24 hours."
+    cyber_relevant_sections:
+      - section: Critical infrastructure protection requirements
+        crosswalk: { nist_csf_2_0: [GV.OC-02, ID.RA-06, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.30, A.8.16] }
+      - section: Incident response coordination
+        crosswalk: { nist_csf_2_0: [RS.MA-01, RS.CO-02, RS.CO-05], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 24

@@ -22,8 +22,8 @@ base_frequency_multipliers:
   mobile_money_fraud: 2.8
 regulators:
   insurance: NBR-INS
-  data_protection: GENERIC-DP
-  central_bank: GENERIC-CB
+  data_protection: NCSA-RW
+  central_bank: BNR
   sector: {}
 cert: RW-CSIRT
 intel_sources: []

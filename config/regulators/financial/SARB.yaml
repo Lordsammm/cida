@@ -12,10 +12,31 @@ directives:
     cyber_relevant_sections:
       - section: See FSCA Joint-Standard-1-2023
         crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.7, A.5.16, A.8.16], fsca_js1_2023: ["5","6","7","8"] }
+  - id: Joint-Standard-2-2024
+    name: Joint Standard 2 of 2024 (with FSCA) - Cybersecurity and Cyber Resilience Requirements
+    enacted: 2024-05-16
+    effective: 2025-06-01
+    note: "Co-issued with FSCA. Full crosswalk in FSCA regulator file."
+    cyber_relevant_sections:
+      - section: See FSCA Joint-Standard-2-2024
+        crosswalk: { nist_csf_2_0: [GV.RM-01, PR.AA-01, PR.AA-03, DE.CM-01], iso_27001_2022: [A.5.1, A.8.5, A.8.8, A.8.24] }
+  - id: SARB-Directive-01-2024
+    name: SARB Directive No. 01 of 2024 - Cybersecurity and Cyber Resilience in the National Payment System
+    enacted: 2024-05-17
+    notes: "Applies to payment system participants. Critical financial systems must resume operations within 2 hours of disruption; maximum recovery time 8 hours. Mandates MFA, encryption, and regular security patch updates."
+    cyber_relevant_sections:
+      - section: Operational resilience and RTO requirements
+        crosswalk: { nist_csf_2_0: [RC.RP-01, RC.RP-02, PR.DS-11], iso_27001_2022: [A.5.29, A.5.30, A.8.13, A.8.14] }
+      - section: Mandatory controls (MFA, encryption, patch management)
+        crosswalk: { nist_csf_2_0: [PR.AA-01, PR.AA-03, PR.PS-02], iso_27001_2022: [A.8.2, A.8.5, A.8.8, A.8.24], cis_v8: ["6.3", "7.4"] }
+      - section: Incident reporting
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
   - id: Directive-1-2019
-    name: Directive 1 of 2019 - Reporting of material information technology and/or cyber incidents
+    name: Directive 1 of 2019 - Reporting of material IT and cyber incidents
     cyber_relevant_sections:
       - section: Incident reporting
         crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24] }
 reporting_requirements:
   incident_notification_window_hours: 24
+  rto_critical_systems_hours: 2
+  mtd_critical_systems_hours: 8

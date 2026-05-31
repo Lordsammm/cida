@@ -1,0 +1,21 @@
+# National Bank of Rwanda
+id: BNR
+name: National Bank of Rwanda
+type: financial
+scope: national
+country: RW
+website: https://www.bnr.rw
+directives:
+  - id: BNR-Cyber-Regulation-2021
+    name: BNR Regulation on Cybersecurity Requirements for Financial Institutions
+    enacted: 2021-01-01
+    notes: "Mandatory baseline cybersecurity controls for all BNR-supervised financial institutions including banks, insurers, and payment service providers. Annual cybersecurity assessments required."
+    cyber_relevant_sections:
+      - section: Cybersecurity governance and strategy
+        crosswalk: { nist_csf_2_0: [GV.OC-01, GV.RM-01], iso_27001_2022: [A.5.1, A.5.2] }
+      - section: Access management and authentication
+        crosswalk: { nist_csf_2_0: [PR.AA-01, PR.AA-03, PR.AA-05], iso_27001_2022: [A.8.2, A.8.5, A.8.3] }
+      - section: Incident reporting
+        crosswalk: { nist_csf_2_0: [RS.MA-01, RS.CO-02], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 24

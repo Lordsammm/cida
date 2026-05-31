@@ -1,0 +1,23 @@
+# Data protection regulator - Mauritius
+id: DPC-MU
+name: Data Protection Commissioner
+type: data_protection
+scope: national
+country: MU
+website: https://dataprotection.govmu.org
+established: 2018
+directives:
+  - id: DPA-MU-2017
+    name: Data Protection Act 2017
+    enacted: 2017-11-01
+    notes: "One of Africa's most mature and GDPR-aligned frameworks. Mauritius holds an EU adequacy-equivalent status for data transfers. DPC has active enforcement track record including monetary penalties. Controllers must appoint a Data Protection Officer for high-risk processing."
+    cyber_relevant_sections:
+      - section: Security of personal data processing
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01, PR.AA-03], iso_27001_2022: [A.5.34, A.8.24, A.8.2], gdpr: [Art.32] }
+      - section: Data breach notification (72-hour window)
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03, DE.AE-07], iso_27001_2022: [A.5.24, A.5.26], gdpr: [Art.33, Art.34] }
+      - section: Data Protection Officer requirement
+        crosswalk: { nist_csf_2_0: [GV.RR-01, GV.OC-01], iso_27001_2022: [A.5.2, A.5.4], gdpr: [Art.37] }
+reporting_requirements:
+  incident_notification_window_hours: 72
+  dpo_required: true

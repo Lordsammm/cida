@@ -1,0 +1,20 @@
+# Data protection regulator - Uganda
+id: PDPO-UG
+name: Personal Data Protection Office
+type: data_protection
+scope: national
+country: UG
+website: https://www.pdpo.go.ug
+established: 2021
+directives:
+  - id: PDPA-2019
+    name: Personal Data Protection and Privacy Act 2019
+    enacted: 2019-02-15
+    notes: "Enforced by the Personal Data Protection Office under the National Information Technology Authority (NITA-U). Controllers must register with PDPO. Cross-border transfers require adequacy assessment."
+    cyber_relevant_sections:
+      - section: Data security safeguards
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification to PDPO and data subjects
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+reporting_requirements:
+  incident_notification_window_hours: 48

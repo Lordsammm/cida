@@ -1,0 +1,27 @@
+# Data protection and cybersecurity regulator - Rwanda
+id: NCSA-RW
+name: National Cyber Security Authority
+type: data_protection
+scope: national
+country: RW
+website: https://www.ncsa.gov.rw
+established: 2017
+directives:
+  - id: Law-058-2021
+    name: Law No. 058/2021 Governing the Protection of Personal Data and Privacy
+    enacted: 2021-10-15
+    notes: "GDPR-influenced framework. Applies to controllers processing Rwandan data regardless of location. NCSA acts as both the data protection supervisory authority and the national cybersecurity authority. Mandatory registration of high-risk processing activities."
+    cyber_relevant_sections:
+      - section: Technical and organisational security measures
+        crosswalk: { nist_csf_2_0: [PR.DS-01, PR.DS-02, PR.AA-01], iso_27001_2022: [A.5.34, A.8.24] }
+      - section: Breach notification to NCSA and data subjects
+        crosswalk: { nist_csf_2_0: [RS.CO-02, RS.CO-03], iso_27001_2022: [A.5.24, A.5.26] }
+  - id: RW-Cybersecurity-Policy-2024
+    name: National Cybersecurity Policy and Strategy 2024
+    enacted: 2024-01-01
+    notes: "Sets mandatory baseline security standards for critical information infrastructure operators, including financial services and healthcare."
+    cyber_relevant_sections:
+      - section: Critical infrastructure protection
+        crosswalk: { nist_csf_2_0: [GV.OC-02, ID.RA-06, PR.AA-01, DE.CM-01], iso_27001_2022: [A.5.30, A.8.16] }
+reporting_requirements:
+  incident_notification_window_hours: 72

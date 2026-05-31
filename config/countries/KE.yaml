@@ -29,7 +29,8 @@ regulators:
   insurance: IRA-KE
   data_protection: ODPC-KE
   central_bank: CBK
-  sector: {}
+  sector:
+    telecoms: CA-KE
 
 cert: KE-CIRT
 intel_sources: []
