@@ -2,11 +2,12 @@
 
 Pipeline:
 1. Per-control score (from questionnaire response, 0-100).
-2. Per-domain rollup: weighted mean of control scores − technical-findings penalty.
+2. Per-domain rollup: weighted mean of control scores minus technical-findings penalty.
 3. Overall score: weighted GEOMETRIC mean of domain scores (penalizes any one weak domain).
 4. Tier assignment 1-5.
 
-All weights and tier thresholds are config-driven.
+All weights, penalties, and tier thresholds are loaded from config/scoring_weights.yaml.
+Sources and calibration rationale are documented in that file.
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ from typing import Iterable
 import numpy as np
 
 from catalog.loader import load_catalog
+from config.loader import load_scoring_weights
 from models import (
     Control,
     ControlCatalog,
@@ -28,42 +30,29 @@ from models import (
 )
 
 
-# Domain weights - sum to 1.0
-DOMAIN_WEIGHTS: dict[Domain, float] = {
-    Domain.GOVERNANCE: 0.10,
-    Domain.IDENTITY: 0.14,
-    Domain.ASSET_DATA: 0.10,
-    Domain.NETWORK: 0.10,
-    Domain.ENDPOINT: 0.12,
-    Domain.APPSEC: 0.09,
-    Domain.CLOUD: 0.08,
-    Domain.THIRD_PARTY: 0.07,
-    Domain.DETECT_RESPOND: 0.12,
-    Domain.RESILIENCE: 0.08,
-}
-
-# Penalty per technical finding by severity (points off the domain score).
-SEVERITY_PENALTY: dict[Severity, float] = {
-    Severity.CRITICAL: 8.0,
-    Severity.HIGH: 3.5,
-    Severity.MEDIUM: 1.0,
-    Severity.LOW: 0.25,
-    Severity.INFO: 0.0,
-}
-
-# KEV-listed CVE adds a flat extra penalty (in points).
-KEV_BONUS_PENALTY = 6.0
-
-MAX_DOMAIN_TECH_PENALTY = 35.0  # cap so one noisy scanner can't zero a domain
+def _build_domain_weights() -> dict[Domain, float]:
+    cfg = load_scoring_weights()["domain_weights"]
+    return {Domain(k): float(v) for k, v in cfg.items()}
 
 
-TIER_BANDS = [
-    (85, TierAssignment(tier=1, label="Excellent", description="Mature program; preferred risk")),
-    (70, TierAssignment(tier=2, label="Good", description="Strong program with minor gaps; standard terms")),
-    (55, TierAssignment(tier=3, label="Adequate", description="Acceptable risk with required remediations")),
-    (40, TierAssignment(tier=4, label="Below Standard", description="Material gaps; restricted terms or sub-limits required")),
-    (0,  TierAssignment(tier=5, label="High Risk", description="Significant deficiencies; declination or conditional cover")),
-]
+def _build_severity_penalties() -> dict[Severity, float]:
+    cfg = load_scoring_weights()["severity_penalties"]
+    return {Severity(k): float(v) for k, v in cfg.items()}
+
+
+def _build_tier_bands() -> list[tuple[int, TierAssignment]]:
+    bands = load_scoring_weights()["tier_bands"]
+    return [
+        (b["threshold"], TierAssignment(tier=b["tier"], label=b["label"], description=b["description"]))
+        for b in bands
+    ]
+
+
+DOMAIN_WEIGHTS: dict[Domain, float] = _build_domain_weights()
+SEVERITY_PENALTY: dict[Severity, float] = _build_severity_penalties()
+KEV_BONUS_PENALTY: float = float(load_scoring_weights()["kev_penalty"])
+MAX_DOMAIN_TECH_PENALTY: float = float(load_scoring_weights()["max_domain_tech_penalty"])
+TIER_BANDS: list[tuple[int, TierAssignment]] = _build_tier_bands()
 
 
 @dataclass

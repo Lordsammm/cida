@@ -129,6 +129,12 @@ def fx_rate_for_currency(currency_code: str) -> float | None:
     return load_fx_rates().get(currency_code.upper())
 
 
+@functools.lru_cache(maxsize=None)
+def load_scoring_weights() -> dict:
+    """Load domain weights, severity penalties, and tier bands from scoring_weights.yaml."""
+    return _load_yaml(CONFIG_DIR / "scoring_weights.yaml")
+
+
 def list_countries() -> list[str]:
     return sorted(p.stem for p in (CONFIG_DIR / "countries").glob("*.yaml"))
 

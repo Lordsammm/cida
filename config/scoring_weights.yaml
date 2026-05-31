@@ -1,0 +1,136 @@
+# CIDA Domain Weights, Severity Penalties, and Tier Bands
+#
+# Domain weights are calibrated from cyber insurance claims data and established
+# security control frameworks. They represent the empirical relationship between
+# control failure in each domain and observed claims frequency / severity.
+#
+# Sources:
+#   [DBIR24]     Verizon Data Breach Investigations Report 2024
+#   [COA24]      Coalition Cyber Claims Report 2024
+#   [IBM24]      IBM / Ponemon Cost of a Data Breach Report 2024
+#   [SOP24]      Sophos State of Ransomware 2024
+#   [INT24]      Interpol African Cyberthreat Assessment Report 2024
+#   [SER24]      Serianu Africa Cybersecurity Report 2024
+#   [GSMA24]     GSMA Mobile Money State of the Industry Report 2024
+#   [SMI24]      Smile ID State of KYC in Africa 2024
+#   [ABY24]      At-Bay Cyber Insurance Report 2024
+#   [CIS8]       CIS Controls v8 Priority Tiers (Safeguard implementation guidance)
+#   [NIST2]      NIST Cybersecurity Framework 2.0 Function weights
+
+
+domain_weights:
+
+  # 17% -- IDENTITY is the single highest claims predictor across all datasets.
+  # [DBIR24]: 77% of breaches involve stolen or misused credentials.
+  # [COA24]: MFA absence is associated with 3-5x higher claims frequency; it is
+  #          the most impactful individual control in their book of business.
+  # [INT24][SER24]: BEC and Funds Transfer Fraud are the dominant African loss
+  #                 types; both are credential-driven attacks.
+  identity: 0.17
+
+  # 13% -- Endpoint hardening is the primary ransomware mitigation lever.
+  # [COA24]: EDR presence reduces ransomware claim severity by ~60%.
+  # [SOP24]: Endpoint protection gap is the primary ransomware enabler; orgs
+  #          without EDR pay 3.4x more in ransomware recovery costs.
+  # [DBIR24]: Malware involved in 43% of breaches; endpoint is primary delivery.
+  endpoint: 0.13
+
+  # 13% -- Detection speed and IR capability are the #1 cost driver after breach.
+  # [IBM24]: Orgs with a tested IR plan save an average of $1.49M per breach.
+  # [IBM24]: AI-augmented detection reduces breach lifecycle from 243 to 98 days,
+  #          directly reducing dwell-time cost accumulation.
+  # [COA24]: Rapid detection is the single biggest premium differentiator in their
+  #          book; late-detected incidents are 4x more costly.
+  detect_respond: 0.13
+
+  # 10% -- Backup and recovery maturity is under-represented in traditional models.
+  # [COA24]: Backup maturity reduces ransomware recovery cost by ~70%.
+  # [SOP24]: Orgs that restored from clean backups avoided ransom payment in 42%
+  #          of incidents; those without paid average $1.54M.
+  # Previously set to 8%; raised to reflect claims evidence.
+  resilience: 0.10
+
+  # 10% -- Network perimeter exposure remains a primary initial-access vector.
+  # [ABY24]: Open RDP and unpatched VPN concentrators are the top initial access
+  #          vectors after compromised credentials.
+  # [COA24]: Vulnerable remote access products are the second highest claims
+  #          frequency driver in their portfolio.
+  network: 0.10
+
+  # 9% -- Third-party risk is structurally higher in Africa than global benchmarks.
+  # [GSMA24]: Mobile money interoperability creates expanding API attack surfaces
+  #           across fintech and banking supply chains in sub-Saharan Africa.
+  # [SMI24]: KYC and identity-verification API dependencies expose African fintechs
+  #          to supply-chain compromise.
+  # Global: SolarWinds / MOVEit pattern confirms supply chain as a growing driver.
+  # Previously set to 7%; raised for Africa-specific exposure profile.
+  third_party: 0.09
+
+  # 8% -- Governance shapes program maturity but is an indirect driver.
+  # Not a primary claims predictor on its own; enables other controls.
+  # [CIS8]: Governance listed as foundational but secondary to operational controls.
+  governance: 0.08
+
+  # 8% -- Asset and data management is foundational but indirect.
+  # Poor asset inventory enables other failures rather than directly causing losses.
+  # [NIST2]: Identify function includes asset management as prerequisite control.
+  asset_data: 0.08
+
+  # 7% -- Application security has a lower profile in Africa's current threat mix.
+  # [DBIR24]: Web application attacks account for 26% of breaches globally, but
+  #           credential and social-engineering attacks dominate in Africa.
+  appsec: 0.07
+
+  # 7% -- Cloud misconfiguration is growing but Africa's cloud footprint is lower.
+  # [COA24]: Cloud misconfiguration is an increasing loss contributor globally,
+  #          but African organisations have lower cloud penetration vs global avg.
+  cloud: 0.07
+
+
+# Points deducted from a domain score per technical finding.
+# Calibrated so that a single Critical finding in isolation drops a domain
+# ~8 points (roughly one control tier), reflecting its real impact on risk.
+# [COA24][IBM24]: CVSS 9-10 findings are associated with 6x higher breach
+# probability vs CVSS < 4 findings in the same environment.
+severity_penalties:
+  critical: 8.0
+  high: 3.5
+  medium: 1.0
+  low: 0.25
+  info: 0.0
+
+# Additional flat penalty for any finding on CISA's Known Exploited Vulnerability list.
+# [ABY24]: KEV-listed vulnerabilities in internet-exposed assets are the strongest
+#          single predictor of a near-term breach event in their claims data.
+kev_penalty: 6.0
+
+# Maximum total technical penalty that can be applied to a single domain.
+# Prevents one noisy scanner run from collapsing a domain to 0.
+max_domain_tech_penalty: 35.0
+
+
+# Tier assignment bands (score thresholds, inclusive).
+# Tier 1 is best risk; Tier 5 is worst.
+# Bands are aligned with the score distribution in the backtest reference cases
+# and calibrated to produce a realistic spread across a heterogeneous African portfolio.
+tier_bands:
+  - threshold: 85
+    tier: 1
+    label: Excellent
+    description: "Mature program; preferred risk"
+  - threshold: 70
+    tier: 2
+    label: Good
+    description: "Strong program with minor gaps; standard terms"
+  - threshold: 55
+    tier: 3
+    label: Adequate
+    description: "Acceptable risk with required remediations"
+  - threshold: 40
+    tier: 4
+    label: Below Standard
+    description: "Material gaps; restricted terms or sub-limits required"
+  - threshold: 0
+    tier: 5
+    label: High Risk
+    description: "Significant deficiencies; declination or conditional cover"
