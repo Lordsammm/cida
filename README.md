@@ -20,6 +20,9 @@ cida demo --offline
 # Validate the model against the 10 reference cases
 cida backtest
 
+# Score an analyst-delivered CIDA narrative Word report directly
+cida score-doc --doc "KOA CIDA Report.docx" --offline --out out/koa_report.pdf
+
 # Inspect supported jurisdictions
 cida list-countries
 cida list-regulators --kind data_protection
